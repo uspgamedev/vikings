@@ -54,10 +54,10 @@ function love.keyreleased (button)
 end
 
 function love.draw ()
-  for i=1,15 do
-    for j=1,20 do
-      if map[i][j].img then
-        love.graphics.draw(map[i][j].img, 32*(j-1), 32*(i-1))
+  for y,row in ipairs(map) do
+    for x,tile in ipairs(row) do
+      if tile.img then
+        love.graphics.draw(tile.img, 32*(x-1), 32*(y-1))
       end
     end
   end
