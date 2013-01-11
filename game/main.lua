@@ -23,7 +23,7 @@ function love.load ()
     tile.floor = true
   end
   player.pos = { x=1, y=9 }
-  player.spd = { x=0, y=0 }
+  player.spd = { x=0, y=5 }
   player.img = love.graphics.newImage "sprite/male_spritesheet.png"
   player.frame = { i=4, j=1 }
   for i=1,13 do
@@ -38,9 +38,16 @@ function love.load ()
   end
 end
 
+local function colliding ()
+  local i,j = math.floor(player.pos.y), math.floor(player.pos.x)
+  return map[i] and (map[i][j] and map[i][j].floor) or false
+end
+
 function love.update (dt)
   player.pos.x = player.pos.x + player.spd.x*dt
-  player.pos.y = player.pos.y + player.spd.y*dt
+  if not colliding() then
+    player.pos.y = player.pos.y + player.spd.y*dt
+  end
 end
 
 local movehack = {
