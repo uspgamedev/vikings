@@ -4,7 +4,8 @@ local camera_pos = {}
 local player = {}
 local map
 local img
---zuei
+local quads = {}
+
 function love.load ()
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
   camera_pos = { x=w/2, y=h/2 }
@@ -23,6 +24,18 @@ function love.load ()
   end
   player.pos = { x=1, y=9 }
   player.spd = { x=0, y=0 }
+  player.img = love.graphics.newImage "sprite/male_spritesheet.png"
+  player.frame = { i=4, j=1 }
+  for i=1,13 do
+    quads[i] = {}
+    for j=1,9 do
+      quads[i][j] = love.graphics.newQuad(
+        64*(j-1),
+        64*(i-1),
+        64, 64, player.img:getWidth(), player.img:getHeight()
+      )
+    end
+  end
 end
 
 function love.update (dt)
@@ -61,6 +74,11 @@ function love.draw ()
       end
     end
   end
-  love.graphics.print("VIKING", 32*(player.pos.x-1), 32*(player.pos.y-1))
+  love.graphics.drawq(
+    player.img,
+    quads[player.frame.i][player.frame.j],
+    32*(player.pos.x-1), 32*(player.pos.y-1),
+    0, 1, 1,
+    32, 64)
 end
 

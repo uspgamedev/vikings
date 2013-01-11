@@ -1,0 +1,7 @@
+
+game/sprite/male_spritesheet.png
+Source: [LPC] 2 Characters - http://opengameart.org/content/lpc-2-characters
+By: pennomi, laetissima and makrohn. Also LPC base sprite artists, since this is
+    a derivative work of those as well.
+License: CC3.0-BY-SA
+
