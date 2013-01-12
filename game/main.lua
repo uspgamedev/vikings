@@ -10,7 +10,7 @@ local quads = {}
 
 function love.load ()
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
-  camera_pos = { x=w/2, y=h/2 }
+  camera_pos = vec2:new{ w/2, h/2 }
   img = love.graphics.newImage "ice.png"
   map = {}
   for i=1,15 do
@@ -24,8 +24,8 @@ function love.load ()
     tile.img = img
     tile.floor = true
   end
-  player.pos = { x=1, y=9 }
-  player.spd = { x=0, y=5 }
+  player.pos = vec2:new{ 1, 9 }
+  player.spd = vec2:new{ 0, 5 }
   player.img = love.graphics.newImage "sprite/male_spritesheet.png"
   player.frame = { i=4, j=1 }
   for i=1,13 do
@@ -53,25 +53,23 @@ function love.update (dt)
 end
 
 local movehack = {
-  up = { x=0, y=-1 },
-  down = { x=0, y=1 },
-  left = { x=-1, y=0 },
-  right = { x=1, y=0 }
+  up    = vec2:new{ 0, -1 },
+  down  = vec2:new{ 0, 1 },
+  left  = vec2:new{ -1, 0 },
+  right = vec2:new{ 1, 0 }
 }
 
 function love.keypressed (button)
   local move = movehack[button]
   if move then
-    player.spd.x = player.spd.x + move.x*3
-    player.spd.y = player.spd.y + move.y*3
+    player.spd:add(3*move)
   end
 end
 
 function love.keyreleased (button)
   local move = movehack[button]
   if move then
-    player.spd.x = player.spd.x - move.x*3
-    player.spd.y = player.spd.y - move.y*3
+    player.spd:sub(3*move)
   end
 end
 
