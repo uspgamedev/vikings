@@ -46,11 +46,6 @@ function love.keypressed (button)
   if dv then
     player.addspeed(dv)
   end
-  if button == 'right' then
-    player.faceright()
-  elseif button == 'left' then
-    player.faceleft()
-  end
 end
 
 function love.keyreleased (button)
