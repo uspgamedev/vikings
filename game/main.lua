@@ -7,6 +7,7 @@ local player = {}
 local map
 local img
 local quads = {}
+local tasks = {}
 
 function love.load ()
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
@@ -50,6 +51,9 @@ function love.update (dt)
   if colliding() then
     player.pos.y = player.pos.y - player.spd.y*dt
   end
+  for k,v in pairs(tasks) do
+    v()
+  end
 end
 
 local movehack = {
@@ -78,17 +82,41 @@ function love.keyreleased (button)
   end
 end
 
-function love.mousereleased (x, y, button)
+local function getmousetile ()
+  local x,y = love.mouse.getPosition()
   local i,j = math.floor(y/32)+1, math.floor(x/32)+1
-  local tile = map[i] and map[i][j]
+  return map[i] and map[i][j]
+end
+
+local function addtile ()
+  local tile = getmousetile()
   if tile then
-    if button == 'l' then
-      tile.img = img
-      tile.floor = true
-    elseif button == 'r' then
-      tile.img = nil
-      tile.floor = false
-    end
+    tile.img = img
+    tile.floor = true
+  end
+end
+
+local function removetile ()
+  local tile = getmousetile()
+  if tile then
+    tile.img = nil
+    tile.floor = false
+  end
+end
+
+function love.mousepressed (x, y, button)
+  if button == 'l' then
+    tasks.addtile = addtile
+  elseif button == 'r' and not tasks.addtile then
+    tasks.removetile = removetile
+  end
+end
+
+function love.mousereleased (x, y, button)
+  if button == 'l' then
+    tasks.addtile = nil
+  elseif button == 'r' then
+    tasks.removetile = nil
   end
 end
 
