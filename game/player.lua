@@ -13,7 +13,7 @@ function load (graphics)
   pos = vec2:new{ 1, 9 }
   spd = vec2:new{ 0, 5 }
   img = graphics.newImage "sprite/male_spritesheet.png"
-  faceright()
+  frame.i = 4
   for i=1,13 do
     quads[i] = {}
     for j=1,9 do
@@ -36,22 +36,15 @@ function move (map, dt)
   if colliding(map) then
     pos.y = pos.y - spd.y*dt
   end
+  if spd.x > 0 then
+    frame.i = 4
+  elseif spd.x < 0 then
+    frame.i = 2
+  end
 end
 
-function addspeed (dv)
+function accelerate (dv)
   spd:add(dv)
-end
-
-function subspeed (dv)
-  spd:sub(dv)
-end
-
-function faceright ()
-  frame.i = 4
-end
-
-function faceleft ()
-  frame.i = 2
 end
 
 function draw (graphics)
@@ -60,5 +53,6 @@ function draw (graphics)
     quads[frame.i][frame.j],
     32*(pos.x-1), 32*(pos.y-1),
     0, 1, 1,
-    32, 62)
+    32, 62
+  )
 end

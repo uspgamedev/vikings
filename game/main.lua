@@ -44,19 +44,14 @@ local speedhack = {
 function love.keypressed (button)
   local dv = speedhack[button]
   if dv then
-    player.addspeed(dv)
-  end
-  if button == 'right' then
-    player.faceright()
-  elseif button == 'left' then
-    player.faceleft()
+    player.accelerate(dv)
   end
 end
 
 function love.keyreleased (button)
   local dv = speedhack[button]
   if dv then
-    player.subspeed(dv)
+    player.accelerate(-dv)
   end
 end
 

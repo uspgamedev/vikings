@@ -32,6 +32,10 @@ function vec2.__sub (lhs, rhs)
     lhs[2] - rhs[2]
   }
 end
+
+function vec2.__unm (v)
+  return vec2:new { -v.x, -v.y }
+end
  
 function vec2.__mul (lhs, rhs)
   if type(lhs) == "number" then
