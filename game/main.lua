@@ -62,14 +62,14 @@ local movehack = {
 function love.keypressed (button)
   local move = movehack[button]
   if move then
-    player.spd:add(3*move)
+    player.spd:add(6*move)
   end
 end
 
 function love.keyreleased (button)
   local move = movehack[button]
   if move then
-    player.spd:sub(3*move)
+    player.spd:sub(6*move)
   end
 end
 
