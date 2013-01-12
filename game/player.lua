@@ -2,6 +2,7 @@
 module ('player', package.seeall)
 
 require 'vec2'
+require 'map'
 
 local pos   = nil
 local spd   = nil
@@ -26,14 +27,15 @@ function load (graphics)
   end
 end
 
-local function colliding (map)
+local function colliding ()
   local i,j = math.floor(pos.y), math.floor(pos.x)
-  return map[i] and (map[i][j] and map[i][j].floor) or false
+  local tile = map.get_tile(i, j)
+  return tile and tile.floor or false
 end
 
-function move (map, dt)
+function move (dt)
   pos:add(spd*dt)
-  if colliding(map) then
+  if colliding() then
     pos.y = pos.y - spd.y*dt
   end
   if spd.x > 0 then
