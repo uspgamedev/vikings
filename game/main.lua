@@ -46,30 +46,30 @@ local function colliding ()
 end
 
 function love.update (dt)
-  player.pos.x = player.pos.x + player.spd.x*dt
-  if not colliding() then
-    player.pos.y = player.pos.y + player.spd.y*dt
+  player.pos:add(player.spd*dt)
+  if colliding() then
+    player.pos.y = player.pos.y - player.spd.y*dt
   end
 end
 
 local movehack = {
-  up    = vec2:new{ 0, -1 },
-  down  = vec2:new{ 0, 1 },
-  left  = vec2:new{ -1, 0 },
-  right = vec2:new{ 1, 0 }
+  up    = vec2:new{  0, -10 },
+  down  = vec2:new{  0,  0 },
+  left  = vec2:new{ -6,  0 },
+  right = vec2:new{  6,  0 }
 }
 
 function love.keypressed (button)
   local move = movehack[button]
   if move then
-    player.spd:add(6*move)
+    player.spd:add(move)
   end
 end
 
 function love.keyreleased (button)
   local move = movehack[button]
   if move then
-    player.spd:sub(6*move)
+    player.spd:sub(move)
   end
 end
 
