@@ -1,31 +1,18 @@
 
-require "vec2"
-require "player"
+require 'vec2'
+require 'map'
+require 'player'
 
 local w,h
 local camera_pos
-local map
-local img
 local tasks = {}
 
 function love.load ()
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
   camera_pos = vec2:new{ w/2, h/2 }
-  img = love.graphics.newImage "tile/ice.png"
-  map = {}
-  for i=1,15 do
-    map[i] = {}
-    for j=1,20 do
-      map[i][j] = {}
-    end
-  end
-  for i=1,20 do
-    local tile = map[10][i]
-    tile.img = img
-    tile.floor = true
-  end
+  map.load(love.graphics)
   player.load(love.graphics)
-  tasks.move = function (dt) player.move(map, dt) end
+  tasks.move = player.move
 end
 
 
@@ -55,33 +42,23 @@ function love.keyreleased (button)
   end
 end
 
-local function getmousetile ()
+local function mousetotile ()
   local x,y = love.mouse.getPosition()
-  local i,j = math.floor(y/32)+1, math.floor(x/32)+1
-  return map[i] and map[i][j]
+  return math.floor(y/32)+1, math.floor(x/32)+1
 end
 
-local function addtile ()
-  local tile = getmousetile()
-  if tile then
-    tile.img = img
-    tile.floor = true
-  end
-end
-
-local function removetile ()
-  local tile = getmousetile()
-  if tile then
-    tile.img = nil
-    tile.floor = false
+local function tilesetter (typeid)
+  return function ()
+    local i, j = mousetotile()
+    map.set_tile(i, j, typeid)
   end
 end
 
 function love.mousepressed (x, y, button)
   if button == 'l' then
-    tasks.addtile = addtile
+    tasks.addtile = tilesetter 'ice'
   elseif button == 'r' and not tasks.addtile then
-    tasks.removetile = removetile
+    tasks.removetile = tilesetter 'empty'
   end
 end
 
@@ -94,14 +71,7 @@ function love.mousereleased (x, y, button)
 end
 
 function love.draw ()
-  love.graphics.rectangle('line', 0, 0, #map[1]*32, #map*32)
-  for y,row in ipairs(map) do
-    for x,tile in ipairs(row) do
-      if tile.img then
-        love.graphics.draw(tile.img, 32*(x-1), 32*(y-1))
-      end
-    end
-  end
+  map.draw(love.graphics)
   player.draw(love.graphics)
 end
 
