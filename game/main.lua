@@ -64,6 +64,11 @@ function love.keypressed (button)
   if move then
     player.spd:add(move)
   end
+  if button == 'right' then
+    player.frame.i = 4
+  elseif button == 'left' then
+    player.frame.i = 2
+  end
 end
 
 function love.keyreleased (button)
