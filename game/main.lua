@@ -11,7 +11,7 @@ local quads = {}
 function love.load ()
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
   camera_pos = vec2:new{ w/2, h/2 }
-  img = love.graphics.newImage "ice.png"
+  img = love.graphics.newImage "tile/ice.png"
   map = {}
   for i=1,15 do
     map[i] = {}
