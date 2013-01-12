@@ -78,6 +78,20 @@ function love.keyreleased (button)
   end
 end
 
+function love.mousereleased (x, y, button)
+  local i,j = math.floor(y/32)+1, math.floor(x/32)+1
+  local tile = map[i] and map[i][j]
+  if tile then
+    if button == 'l' then
+      tile.img = img
+      tile.floor = true
+    elseif button == 'r' then
+      tile.img = nil
+      tile.floor = false
+    end
+  end
+end
+
 function love.draw ()
   for y,row in ipairs(map) do
     for x,tile in ipairs(row) do
