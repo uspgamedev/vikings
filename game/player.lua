@@ -43,12 +43,8 @@ function move (map, dt)
   end
 end
 
-function addspeed (dv)
+function accelerate (dv)
   spd:add(dv)
-end
-
-function subspeed (dv)
-  spd:sub(dv)
 end
 
 function draw (graphics)
