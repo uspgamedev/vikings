@@ -86,6 +86,6 @@ function love.draw ()
     quads[player.frame.i][player.frame.j],
     32*(player.pos.x-1), 32*(player.pos.y-1),
     0, 1, 1,
-    32, 64)
+    32, 62)
 end
 
