@@ -47,21 +47,18 @@ local function mousetotile ()
   return math.floor(y/32)+1, math.floor(x/32)+1
 end
 
-local function addtile ()
-  local i, j = mousetotile()
-  map.set_tile_type(i, j, 'ice')
-end
-
-local function removetile ()
-  local i, j = mousetotile()
-  map.set_tile_type(i, j, 'empty')
+local function tilesetter (typeid)
+  return function ()
+    local i, j = mousetotile()
+    map.set_tile(i, j, typeid)
+  end
 end
 
 function love.mousepressed (x, y, button)
   if button == 'l' then
-    tasks.addtile = addtile
+    tasks.addtile = tilesetter 'ice'
   elseif button == 'r' and not tasks.addtile then
-    tasks.removetile = removetile
+    tasks.removetile = tilesetter 'empty'
   end
 end
 

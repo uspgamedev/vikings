@@ -15,7 +15,7 @@ function load (graphics)
     end
   end
   for j=1,20 do
-    set_tile_type(10, j, 'ice')
+    set_tile(10, j, 'ice')
   end
 end
 
@@ -23,7 +23,7 @@ function get_tile (i, j)
   return tiles[i] and tiles[i][j]
 end
 
-function set_tile_type (i, j, typeid)
+function set_tile (i, j, typeid)
   local tile = get_tile(i,j)
   local type = tileset[typeid] or tileset.empty
   if tile then
