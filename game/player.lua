@@ -53,5 +53,6 @@ function draw (graphics)
     quads[frame.i][frame.j],
     32*(pos.x-1), 32*(pos.y-1),
     0, 1, 1,
-    32, 62)
+    32, 62
+  )
 end
