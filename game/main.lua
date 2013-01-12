@@ -1,6 +1,8 @@
 
+require "vec2"
+
 local w,h
-local camera_pos = {}
+local camera_pos
 local player = {}
 local map
 local img
