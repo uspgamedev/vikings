@@ -9,10 +9,11 @@ local spd   = nil
 local img   = nil
 local frame = { i=1, j=1 }
 local quads = {}
+local gravity = vec2:new{ 0, 8 }
 
 function load (graphics)
   pos = vec2:new{ 1, 9 }
-  spd = vec2:new{ 0, 5 }
+  spd = vec2:new{ 0, 0 }
   img = graphics.newImage "sprite/male_spritesheet.png"
   frame.i = 4
   for i=1,13 do
@@ -35,8 +36,11 @@ end
 
 function move (dt)
   pos:add(spd*dt)
-  if colliding() then
+  if not colliding() then
+    spd:add(gravity * dt)
+  else
     pos.y = pos.y - spd.y*dt
+    spd.y = 0
   end
   if spd.x > 0 then
     frame.i = 4
