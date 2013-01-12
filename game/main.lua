@@ -121,6 +121,7 @@ function love.mousereleased (x, y, button)
 end
 
 function love.draw ()
+  love.graphics.rectangle('line', 0, 0, #map[1]*32, #map*32)
   for y,row in ipairs(map) do
     for x,tile in ipairs(row) do
       if tile.img then
