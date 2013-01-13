@@ -23,8 +23,8 @@ function love.update (dt)
 end
 
 local speedhack = {
-  left  = vec2:new{ -6,  0 },
-  right = vec2:new{  6,  0 }
+  left  = vec2:new{ -5,  0 },
+  right = vec2:new{  5,  0 }
 }
 -- these allows for double maximum speed...
 speedhack.a = speedhack.left 

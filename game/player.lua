@@ -10,7 +10,7 @@ local img       = nil
 local frame     = { i=1, j=1 }
 local maxframe  = { i=13, j=9 }
 local frametime = 0
-local animfps   = 10
+local animfps   = 25
 local quads     = {}
 local quadsize  = 64
 local jumpspd   = vec2:new{  0, -12 }
