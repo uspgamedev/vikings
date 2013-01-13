@@ -49,8 +49,9 @@ function love.keyreleased (button)
 end
 
 local function mousetotile ()
-  local x,y = love.mouse.getPosition()
-  return math.floor(y/32)+1, math.floor(x/32)+1
+  local x,y       = love.mouse.getPosition()
+  local tilesize  = map.get_tilesize()
+  return math.floor(y/tilesize)+1, math.floor(x/tilesize)+1
 end
 
 local function tilesetter (typeid)
