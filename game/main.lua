@@ -12,7 +12,7 @@ function love.load ()
   camera_pos = vec2:new{ w/2, h/2 }
   map.load(love.graphics)
   player.load(love.graphics)
-  tasks.move = player.move
+  tasks.updateplayer = player.update
 end
 
 
