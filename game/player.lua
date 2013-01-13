@@ -9,8 +9,8 @@ local spd   = nil
 local img   = nil
 local frame = { i=1, j=1 }
 local quads = {}
-local jumpspd = vec2:new{ 0, -8 }
-local gravity = vec2:new{ 0,  8 }
+local jumpspd = vec2:new{ 0, -12 }
+local gravity = vec2:new{ 0,  30 }
 
 function load (graphics)
   pos = vec2:new{ 1, 9 }
