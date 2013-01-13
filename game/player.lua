@@ -8,8 +8,9 @@ local pos       = nil
 local spd       = nil
 local img       = nil
 local frame     = { i=1, j=1 }
-local quadsize  = 64
+local maxframe  = { i=13, j=9 }
 local quads     = {}
+local quadsize  = 64
 local jumpspd   = vec2:new{  0, -12 }
 local gravity   = vec2:new{  0,  30 }
 local maxspd    = vec2:new{ 30,  30 }
@@ -19,9 +20,9 @@ function load (graphics)
   spd = vec2:new{ 0, 0 }
   img = graphics.newImage "sprite/male_spritesheet.png"
   frame.i = 4
-  for i=1,13 do
+  for i=1,maxframe.i do
     quads[i] = {}
-    for j=1,9 do
+    for j=1,maxframe.j do
       quads[i][j] = graphics.newQuad(
         quadsize*(j-1),
         quadsize*(i-1),
