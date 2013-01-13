@@ -1,7 +1,7 @@
 
 module ('map', package.seeall)
 
-local width, height = 20, 15
+local width, height = 25, 18
 local tilesize      = 32
 local tiles         = {}
 local tileset       = {}
