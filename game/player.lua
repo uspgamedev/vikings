@@ -84,6 +84,6 @@ function draw (graphics)
     quads[frame.i][frame.j],
     tilesize*(pos.x-1), tilesize*(pos.y-1),
     0, 1, 1,
-    quadsize/2, quadsize-2
+    quadsize/2, quadsize-4
   )
 end
