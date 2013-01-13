@@ -42,7 +42,8 @@ end
 
 
 function move (dt)
-  spd.x = math.min(math.max(-maxspd.x, spd.x), maxspd.x) --no, negative speed doesn't increase forever
+  -- no, negative speed doesn't increase forever
+  spd.x = math.min(math.max(-maxspd.x, spd.x), maxspd.x)
   spd.y = math.min(math.max(-maxspd.y, spd.y), maxspd.y)
 
   pos:add(spd*dt)
