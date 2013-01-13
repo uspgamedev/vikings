@@ -9,8 +9,9 @@ local spd   = nil
 local img   = nil
 local frame = { i=1, j=1 }
 local quads = {}
-local jumpspd = vec2:new{ 0, -12 }
-local gravity = vec2:new{ 0,  30 }
+local jumpspd = vec2:new{  0, -12 }
+local gravity = vec2:new{  0,  30 }
+local maxspd  = vec2:new{ 30,  30 }
 
 function load (graphics)
   pos = vec2:new{ 1, 9 }
@@ -36,6 +37,9 @@ local function colliding ()
 end
 
 function move (dt)
+  spd.x = math.min(math.max(-maxspd.x, spd.x), maxspd.x) --no, negative speed doesn't increase forever
+  spd.y = math.min(math.max(-maxspd.y, spd.y), maxspd.y)
+
   pos:add(spd*dt)
   if not colliding() then
     spd:add(gravity * dt)
