@@ -1,20 +1,21 @@
 
 module ('map', package.seeall)
 
-local tiles   = {}
-local tileset = {}
+local width, height = 20, 15
+local tiles         = {}
+local tileset       = {}
 
 function load (graphics)
   local img = love.graphics.newImage 'tile/ice.png'
   tileset.empty = { img = nil, floor = false }
   tileset.ice   = { img = img, floor = true }
-  for i=1,15 do
+  for i=1,height do
     tiles[i] = {}
-    for j=1,20 do
+    for j=1,width do
       tiles[i][j] = {}
     end
   end
-  for j=1,20 do
+  for j=1,width do
     set_tile(10, j, 'ice')
   end
 end
@@ -33,7 +34,7 @@ function set_tile (i, j, typeid)
 end
 
 function draw (graphics)
-  graphics.rectangle('line', 0, 0, #tiles[1]*32, #tiles*32)
+  graphics.rectangle('line', 0, 0, width*32, height*32)
   for y,row in ipairs(tiles) do
     for x,tile in ipairs(row) do
       if tile.img then
