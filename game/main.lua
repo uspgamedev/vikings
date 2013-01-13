@@ -32,6 +32,8 @@ function love.keypressed (button)
   local dv = speedhack[button]
   if dv then
     player.accelerate(dv)
+  elseif button == "escape" then
+    love.event.push("quit")
   end
 end
 
