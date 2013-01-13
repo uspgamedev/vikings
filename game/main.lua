@@ -23,12 +23,10 @@ function love.update (dt)
 end
 
 local speedhack = {
-  up    = vec2:new{  0, -10 },
   left  = vec2:new{ -6,  0 },
   right = vec2:new{  6,  0 }
 }
 -- these allows for double maximum speed...
-speedhack.w = speedhack.up
 speedhack.a = speedhack.left 
 speedhack.d = speedhack.right
 
@@ -36,6 +34,8 @@ function love.keypressed (button)
   local dv = speedhack[button]
   if dv then
     player.accelerate(dv)
+  elseif button == "up" or button == "w" then
+    player.jump()
   elseif button == "escape" then
     love.event.push("quit")
   end

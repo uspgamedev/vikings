@@ -9,7 +9,8 @@ local spd   = nil
 local img   = nil
 local frame = { i=1, j=1 }
 local quads = {}
-local gravity = vec2:new{ 0, 8 }
+local jumpspd = vec2:new{ 0, -8 }
+local gravity = vec2:new{ 0,  8 }
 
 function load (graphics)
   pos = vec2:new{ 1, 9 }
@@ -47,6 +48,10 @@ function move (dt)
   elseif spd.x < 0 then
     frame.i = 2
   end
+end
+
+function jump ()
+  spd:add(jumpspd)
 end
 
 function accelerate (dv)
