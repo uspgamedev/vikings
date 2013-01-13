@@ -9,6 +9,8 @@ local spd       = nil
 local img       = nil
 local frame     = { i=1, j=1 }
 local maxframe  = { i=13, j=9 }
+local frametime = 0
+local animfps   = 25
 local quads     = {}
 local quadsize  = 64
 local jumpspd   = vec2:new{  0, -12 }
@@ -38,6 +40,7 @@ local function colliding ()
   return tile and tile.floor or false
 end
 
+
 function move (dt)
   spd.x = math.min(math.max(-maxspd.x, spd.x), maxspd.x) --no, negative speed doesn't increase forever
   spd.y = math.min(math.max(-maxspd.y, spd.y), maxspd.y)
@@ -49,10 +52,20 @@ function move (dt)
     pos.y = pos.y - spd.y*dt
     spd.y = 0
   end
+  local moving = true
   if spd.x > 0 then
     frame.i = 4
   elseif spd.x < 0 then
     frame.i = 2
+  else
+    frame.j = 1
+    moving = false
+  end
+  if not moving then return end
+  frametime = frametime + dt
+  while frametime >= 1/animfps do
+    frame.j = (frame.j + 1 > maxframe.j) and 1 or (frame.j + 1)
+    frametime = frametime - 1/animfps
   end
 end
 
@@ -71,6 +84,6 @@ function draw (graphics)
     quads[frame.i][frame.j],
     tilesize*(pos.x-1), tilesize*(pos.y-1),
     0, 1, 1,
-    quadsize/2, quadsize-2
+    quadsize/2, quadsize-4
   )
 end
