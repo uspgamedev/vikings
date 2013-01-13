@@ -64,7 +64,7 @@ function move (dt)
   if not moving then return end
   frametime = frametime + dt
   while frametime >= 1/animfps do
-    frame.j = (frame.j + 1 > maxframe.j) and 1 or (frame.j + 1)
+    frame.j = frame.j%(#quads[frame.i]) + 1
     frametime = frametime - 1/animfps
   end
 end
