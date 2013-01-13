@@ -21,6 +21,10 @@ function load (graphics)
   end
 end
 
+function get_tilesize ()
+  return tilesize
+end
+
 function get_tile (i, j)
   return tiles[i] and tiles[i][j]
 end

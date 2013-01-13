@@ -64,10 +64,11 @@ function accelerate (dv)
 end
 
 function draw (graphics)
+  local tilesize = map.get_tilesize()
   graphics.drawq(
     img,
     quads[frame.i][frame.j],
-    32*(pos.x-1), 32*(pos.y-1),
+    tilesize*(pos.x-1), tilesize*(pos.y-1),
     0, 1, 1,
     quadsize/2, quadsize-2
   )
