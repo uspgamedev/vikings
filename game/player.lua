@@ -40,8 +40,7 @@ local function colliding ()
   return tile and tile.floor or false
 end
 
-
-function update (dt)
+local function update_physics (dt)
   -- no, negative speed doesn't increase forever
   spd.x = math.min(math.max(-maxspd.x, spd.x), maxspd.x)
   spd.y = math.min(math.max(-maxspd.y, spd.y), maxspd.y)
@@ -52,6 +51,9 @@ function update (dt)
     pos.y = pos.y - spd.y*dt
     spd.y = 0
   end
+end
+
+local function update_animation (dt)
   local moving = true
   if spd.x > 0 then
     frame.i = 4
@@ -67,6 +69,11 @@ function update (dt)
     frame.j = frame.j%(#quads[frame.i]) + 1
     frametime = frametime - 1/animfps
   end
+end
+
+function update (dt)
+  update_physics(dt)
+  update_animation(dt)
 end
 
 function jump ()
