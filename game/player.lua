@@ -4,14 +4,15 @@ module ('player', package.seeall)
 require 'vec2'
 require 'map'
 
-local pos   = nil
-local spd   = nil
-local img   = nil
-local frame = { i=1, j=1 }
-local quads = {}
-local jumpspd = vec2:new{  0, -12 }
-local gravity = vec2:new{  0,  30 }
-local maxspd  = vec2:new{ 30,  30 }
+local pos       = nil
+local spd       = nil
+local img       = nil
+local frame     = { i=1, j=1 }
+local quadsize  = 64
+local quads     = {}
+local jumpspd   = vec2:new{  0, -12 }
+local gravity   = vec2:new{  0,  30 }
+local maxspd    = vec2:new{ 30,  30 }
 
 function load (graphics)
   pos = vec2:new{ 1, 9 }
@@ -22,9 +23,9 @@ function load (graphics)
     quads[i] = {}
     for j=1,9 do
       quads[i][j] = graphics.newQuad(
-        64*(j-1),
-        64*(i-1),
-        64, 64, img:getWidth(), img:getHeight()
+        quadsize*(j-1),
+        quadsize*(i-1),
+        quadsize, quadsize, img:getWidth(), img:getHeight()
       )
     end
   end
@@ -68,6 +69,6 @@ function draw (graphics)
     quads[frame.i][frame.j],
     32*(pos.x-1), 32*(pos.y-1),
     0, 1, 1,
-    32, 62
+    quadsize/2, quadsize-2
   )
 end
