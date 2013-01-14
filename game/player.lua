@@ -36,9 +36,12 @@ function load (graphics)
   end
 end
 
-local function colliding ()
-  local i,j = math.floor(pos.y), math.floor(pos.x)
-  local tile = map.get_tile(i, j)
+local function pos_to_tile (point)
+  return map.get_tile(math.floor(point.y), math.floor(point.x))
+end
+
+local function colliding (point)
+  local tile = pos_to_tile(point)
   return tile and tile.floor or false
 end
 
@@ -47,7 +50,7 @@ local function update_physics (dt)
   spd.x = math.min(math.max(-maxspd.x, spd.x), maxspd.x)
   spd.y = math.min(math.max(-maxspd.y, spd.y), maxspd.y)
   pos:add(spd*dt)
-  if not colliding() then
+  if not colliding(pos) then
     spd:add(gravity * dt)
   else
     pos.y = pos.y - spd.y*dt
