@@ -49,14 +49,29 @@ local function update_physics (dt)
   -- no, negative speed doesn't increase forever
   spd.x = math.min(math.max(-maxspd.x, spd.x), maxspd.x)
   spd.y = math.min(math.max(-maxspd.y, spd.y), maxspd.y)
-  pos:add(spd*dt)
-  if not colliding(pos) then
-    spd:add(gravity * dt)
-  else
-    pos.y = pos.y - spd.y*dt
-    spd.y = 0
-    jumpsleft = 2
+  local oldtile = pos_to_tile(pos)
+  if colliding(pos) then
+    error "Ooops, youre inside a wall"
   end
+  local newtile
+  pos:add(spd*dt)
+  newtile = pos_to_tile(pos)
+  if colliding(pos) then
+    local dx, dy =  pos_to_tile(pos-vec2:new{spd.x*dt,0}),
+                    pos_to_tile(pos-vec2:new{0,spd.y*dt})
+    if (dy.floor and not dx.floor) or (not dx.floor and not dy.floor) then
+      pos.x = pos.x - spd.x*dt
+    elseif dx.floor and not dy.floor then
+      pos.y = pos.y - spd.y*dt
+      spd.y = 0
+      jumpsleft = 2
+    else
+      pos:add(-spd*dt)
+      spd.y = 0
+      jumpsleft = 2
+    end
+  end
+  spd:add(gravity * dt)
 end
 
 local function update_animation (dt)
