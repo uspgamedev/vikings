@@ -13,7 +13,7 @@ function load (graphics)
   for i=1,height do
     tiles[i] = {}
     for j=1,width do
-      tiles[i][j] = {}
+      tiles[i][j] = { i=i, j=j }
     end
   end
   for j=1,width do
