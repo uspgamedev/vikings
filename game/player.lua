@@ -4,6 +4,7 @@ module ('player', package.seeall)
 require 'vec2'
 require 'map'
 
+local jumpsleft = nil
 local pos       = nil
 local spd       = nil
 local img       = nil
@@ -20,6 +21,7 @@ local maxspd    = vec2:new{ 30,  30 }
 function load (graphics)
   pos = vec2:new{ 1, 9 }
   spd = vec2:new{ 0, 0 }
+  jumpsleft = 2
   img = graphics.newImage "sprite/male_spritesheet.png"
   frame.i = 4
   for i=1,maxframe.i do
@@ -50,6 +52,7 @@ local function update_physics (dt)
   else
     pos.y = pos.y - spd.y*dt
     spd.y = 0
+    jumpsleft = 2
   end
 end
 
@@ -77,7 +80,10 @@ function update (dt)
 end
 
 function jump ()
-  spd:add(jumpspd)
+  if jumpsleft > 0 then
+    jumpsleft = jumpsleft - 1
+    spd:add(jumpspd)
+  end
 end
 
 function accelerate (dv)
