@@ -14,7 +14,7 @@ local frametime = 0
 local animfps   = 25
 local quads     = {}
 local quadsize  = 64
-local jumpspd   = vec2:new{  0, -12 }
+local jumpspd   = -12
 local gravity   = vec2:new{  0,  30 }
 local maxspd    = vec2:new{ 30,  30 }
 
@@ -82,7 +82,7 @@ end
 function jump ()
   if jumpsleft > 0 then
     jumpsleft = jumpsleft - 1
-    spd:add(jumpspd)
+    spd.y = jumpspd
   end
 end
 
