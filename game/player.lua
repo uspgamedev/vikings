@@ -15,13 +15,20 @@ local animfps   = 25
 local quads     = {}
 local quadsize  = 64
 local hotspot   = vec2:new{ 32, 60 }
-local collpts   = { vec2:new{32,60}, vec2:new{32,15} }
 local jumpspd   = -12
 local gravity   = vec2:new{  0,  30 }
 local maxspd    = vec2:new{ 30,  30 }
+local collpts   = {
+  vec2:new{20,60},
+  vec2:new{20,15+45/2},
+  vec2:new{20,15},
+  vec2:new{44,60},
+  vec2:new{44,15+45/2},
+  vec2:new{44,15}
+}
 
 function load (graphics)
-  pos = vec2:new{ 1, 9 }
+  pos = vec2:new{ 2, 9 }
   spd = vec2:new{ 0, 0 }
   jumpsleft = 2
   img = graphics.newImage "sprite/male_spritesheet.png"
@@ -42,31 +49,49 @@ local function pos_to_tile (point)
   return map.get_tile(math.floor(point.y), math.floor(point.x))
 end
 
-local function colliding (point)
-  local tile = pos_to_tile(point)
-  return tile and tile.floor or false
+local function colliding (position, points)
+  for _,p in ipairs(points) do
+    local tile = pos_to_tile(position-(hotspot-p)*(1/32))
+    if not tile or tile.floor then
+      return true
+    end
+  end
+  return false
 end
 
 local function update_physics (dt)
   -- no, negative speed doesn't increase forever
   spd.x = math.min(math.max(-maxspd.x, spd.x), maxspd.x)
   spd.y = math.min(math.max(-maxspd.y, spd.y), maxspd.y)
-  if colliding(pos) then
+  if colliding(pos, collpts) then
     error "Ooops, youre inside a wall"
   end
   pos:add(spd*dt)
-  if colliding(pos) then
-    local horizontal  = pos_to_tile(pos-vec2:new{spd.x*dt,0})
-    local vertical    = pos_to_tile(pos-vec2:new{0,spd.y*dt})
-    if not (horizontal.floor and not vertical.floor) then
+  if colliding(pos, collpts) then
+    local horizontal  = -vec2:new{spd.x*dt,0}
+    local vertical    = -vec2:new{0,spd.y*dt}
+    local hor_check   = colliding(pos+horizontal, collpts)
+    local ver_check   = colliding(pos+vertical, collpts)
+    if not (hor_check and not ver_check) then
       pos.x = pos.x - spd.x*dt
     end
-    if (horizontal.floor and not vertical.floor) or
-       (horizontal.floor and vertical.floor) then
+    if (hor_check and not ver_check) or
+       (hor_check and ver_check) then
       pos.y = pos.y - spd.y*dt
       spd.y = 0
       jumpsleft = 2
     end
+    --local horizontal  = pos_to_tile(pos-vec2:new{spd.x*dt,0})
+    --local vertical    = pos_to_tile(pos-vec2:new{0,spd.y*dt})
+    --if not (horizontal.floor and not vertical.floor) then
+    --  pos.x = pos.x - spd.x*dt
+    --end
+    --if (horizontal.floor and not vertical.floor) or
+    --   (horizontal.floor and vertical.floor) then
+    --  pos.y = pos.y - spd.y*dt
+    --  spd.y = 0
+    --  jumpsleft = 2
+    --end
   end
   spd:add(gravity * dt)
 end
