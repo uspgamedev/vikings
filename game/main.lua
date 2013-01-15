@@ -1,18 +1,53 @@
 
 require 'vec2'
 require 'map'
-require 'player'
+require 'avatar'
+require 'sprite'
 
 local w,h
 local camera_pos
 local tasks = {}
+local player, npc
+local butler
 
 function love.load ()
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
   camera_pos = vec2:new{ w/2, h/2 }
   map.load(love.graphics)
-  player.load(love.graphics)
-  tasks.updateplayer = player.update
+
+  butler = sprite:new {
+    img       = love.graphics.newImage "sprite/male_spritesheet.png",
+    maxframe  = { i=13, j=9 },
+    quadsize  = 64,
+    hotspot   = vec2:new{ 32, 60 },
+    collpts   = {
+      vec2:new{20,60},
+      vec2:new{20,15+45/2},
+      vec2:new{20,15},
+      vec2:new{44,60},
+      vec2:new{44,15+45/2},
+      vec2:new{44,15}
+    }
+  }
+
+  player = avatar:new {
+    pos    = vec2:new{ 2, 9 },
+    spd    = vec2:new{ 0, 0 },
+    sprite = butler,
+    frame  = { i=4, j=1 },
+  }
+
+  npc = avatar:new {
+    pos    = vec2:new{ 12, 9 },
+    spd    = vec2:new{ 0, 0 },
+    sprite = butler,
+    frame  = { i=2, j=1 },
+  }
+
+  tasks.updateavatars = function (dt)
+    player:update(dt)
+    npc:update(dt)
+  end
 end
 
 
@@ -33,9 +68,9 @@ speedhack.d = speedhack.right
 function love.keypressed (button)
   local dv = speedhack[button]
   if dv then
-    player.accelerate(dv)
+    player:accelerate(dv)
   elseif button == "up" or button == "w" then
-    player.jump()
+    player:jump()
   elseif button == "escape" then
     love.event.push("quit")
   end
@@ -44,7 +79,7 @@ end
 function love.keyreleased (button)
   local dv = speedhack[button]
   if dv then
-    player.accelerate(-dv)
+    player:accelerate(-dv)
   end
 end
 
@@ -79,6 +114,7 @@ end
 
 function love.draw ()
   map.draw(love.graphics)
-  player.draw(love.graphics)
+  player:draw(love.graphics)
+  npc:draw(love.graphics)
 end
 
