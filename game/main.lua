@@ -66,9 +66,8 @@ function love.update (dt)
   for k,v in pairs(tasks) do
     v(dt)
   end
-  if counter > 0 then
-    counter = counter - dt
-  else
+  counter = counter - dt
+  if counter <= 0 then
     text = nil
   end
 end
