@@ -45,8 +45,10 @@ function love.load ()
     frame  = { i=2, j=1 }
   }
   function npc:interact()
-    text = "Stay a while and listen."
-    counter = 2
+    if (avatars.player.pos - avatars.npc.pos):length() < 1.5 then
+      text = "Stay a while and listen."
+      counter = 2
+    end
   end
 
   avatars.player = player

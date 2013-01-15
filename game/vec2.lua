@@ -70,3 +70,7 @@ function vec2:sub (v)
   self[1] = self[1] - v[1]
   self[2] = self[2] - v[2]
 end
+
+function vec2:length()
+  return math.sqrt(self[1]^2 + self[2]^2)
+end
