@@ -2,6 +2,7 @@
 require 'vec2'
 require 'map'
 require 'player'
+require 'npc'
 
 local w,h
 local camera_pos
@@ -12,7 +13,9 @@ function love.load ()
   camera_pos = vec2:new{ w/2, h/2 }
   map.load(love.graphics)
   player.load(love.graphics)
+  npc.load(love.graphics)
   tasks.updateplayer = player.update
+  tasks.updatenpc = npc.update
 end
 
 
@@ -80,5 +83,6 @@ end
 function love.draw ()
   map.draw(love.graphics)
   player.draw(love.graphics)
+  npc.draw(love.graphics)
 end
 
