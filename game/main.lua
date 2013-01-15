@@ -7,8 +7,7 @@ require 'sprite'
 local w,h
 local camera_pos
 local tasks = {}
-local player, npc
-local butler
+local avatars = {}
 local text = nil
 local counter = 0
 
@@ -17,7 +16,7 @@ function love.load ()
   camera_pos = vec2:new{ w/2, h/2 }
   map.load(love.graphics)
 
-  butler = sprite:new {
+  local butler = sprite:new {
     img       = love.graphics.newImage "sprite/male_spritesheet.png",
     maxframe  = { i=13, j=9 },
     quadsize  = 64,
@@ -32,14 +31,14 @@ function love.load ()
     }
   }
 
-  player = avatar:new {
+  local player = avatar:new {
     pos    = vec2:new{ 2, 9 },
     spd    = vec2:new{ 0, 0 },
     sprite = butler,
     frame  = { i=4, j=1 },
   }
 
-  npc = avatar:new {
+  local npc = avatar:new {
     pos    = vec2:new{ 12, 9 },
     spd    = vec2:new{ 0, 0 },
     sprite = butler,
@@ -50,9 +49,13 @@ function love.load ()
     counter = 2
   end
 
+  avatars.player = player
+  avatars.npc = npc
+
   tasks.updateavatars = function (dt)
-    player:update(dt)
-    npc:update(dt)
+    for _,av in pairs(avatars) do
+      av:update(dt)
+    end
   end
 end
 
@@ -76,12 +79,12 @@ local speedhack = {
 function love.keypressed (button)
   local dv = speedhack[button]
   if dv then
-    player:accelerate(dv)
+    avatars.player:accelerate(dv)
   elseif button == "z" then
-    player:jump()
+    avatars.player:jump()
   elseif button == "up" then
-    if npc.interact then
-      npc:interact()
+    if avatars.npc.interact then
+      avatars.npc:interact()
     end
   elseif button == "escape" then
     love.event.push("quit")
@@ -91,7 +94,7 @@ end
 function love.keyreleased (button)
   local dv = speedhack[button]
   if dv then
-    player:accelerate(-dv)
+    avatars.player:accelerate(-dv)
   end
 end
 
@@ -126,13 +129,14 @@ end
 
 function love.draw ()
   map.draw(love.graphics)
-  player:draw(love.graphics)
-  npc:draw(love.graphics)
+  for _,av in pairs(avatars) do
+    av:draw(love.graphics)
+  end
   if text then
     love.graphics.setColor(255, 255, 255, math.min(counter, 1) * 255)
     love.graphics.print(text, 
-      map.get_tilesize() * (npc.pos.x - 1),
-      map.get_tilesize() * (npc.pos.y - 3)
+      map.get_tilesize() * (avatars.npc.pos.x - 1),
+      map.get_tilesize() * (avatars.npc.pos.y - 3)
     )
     love.graphics.setColor(255, 255, 255, 255)
   end
