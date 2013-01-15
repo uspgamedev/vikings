@@ -51,7 +51,7 @@ end
 
 local function colliding (position, points)
   for _,p in ipairs(points) do
-    local tile = pos_to_tile(position-(hotspot-p)*(1/32))
+    local tile = pos_to_tile(position-(hotspot-p)/32)
     if not tile or tile.floor then
       return true
     end

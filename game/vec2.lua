@@ -46,6 +46,11 @@ function vec2.__mul (lhs, rhs)
     return lhs.x*rhs.x + lhs.y*rhs.y
   end
 end
+
+function vec2.__div (lhs, rhs)
+  assert(type(rhs) == 'number', "Vec2 division with something not a number.")
+  return vec2:new{ lhs.x/rhs, lhs.y/rhs }
+end
  
 function vec2:get ()
   return unpack(self)
