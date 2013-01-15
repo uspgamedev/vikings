@@ -78,8 +78,10 @@ local function update_physics (dt)
     if (hor_check and not ver_check) or
        (hor_check and ver_check) then
       pos.y = pos.y - spd.y*dt
+      if spd.y > 0 then
+        jumpsleft = 2
+      end
       spd.y = 0
-      jumpsleft = 2
     end
   end
   spd:add(gravity * dt)
