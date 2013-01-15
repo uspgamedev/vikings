@@ -9,6 +9,8 @@ local camera_pos
 local tasks = {}
 local player, npc
 local butler
+local text = nil
+local counter = 0
 
 function love.load ()
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
@@ -41,8 +43,12 @@ function love.load ()
     pos    = vec2:new{ 12, 9 },
     spd    = vec2:new{ 0, 0 },
     sprite = butler,
-    frame  = { i=2, j=1 },
+    frame  = { i=2, j=1 }
   }
+  function npc:interact()
+    text = "Stay a while and listen."
+    counter = 2
+  end
 
   tasks.updateavatars = function (dt)
     player:update(dt)
@@ -55,22 +61,28 @@ function love.update (dt)
   for k,v in pairs(tasks) do
     v(dt)
   end
+  if counter > 0 then
+    counter = counter - dt
+  else
+    text = nil
+  end
 end
 
 local speedhack = {
   left  = vec2:new{ -5,  0 },
   right = vec2:new{  5,  0 }
 }
--- these allows for double maximum speed...
-speedhack.a = speedhack.left 
-speedhack.d = speedhack.right
 
 function love.keypressed (button)
   local dv = speedhack[button]
   if dv then
     player:accelerate(dv)
-  elseif button == "up" or button == "w" then
+  elseif button == "z" then
     player:jump()
+  elseif button == "up" then
+    if npc.interact then
+      npc:interact()
+    end
   elseif button == "escape" then
     love.event.push("quit")
   end
@@ -116,5 +128,13 @@ function love.draw ()
   map.draw(love.graphics)
   player:draw(love.graphics)
   npc:draw(love.graphics)
+  if text then
+    love.graphics.setColor(255, 255, 255, math.min(counter, 1) * 255)
+    love.graphics.print(text, 
+      map.get_tilesize() * (npc.pos.x - 1),
+      map.get_tilesize() * (npc.pos.y - 3)
+    )
+    love.graphics.setColor(255, 255, 255, 255)
+  end
 end
 
