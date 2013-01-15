@@ -6,16 +6,17 @@ require 'map'
 avatar = lux.object.new {
   pos       = nil,
   spd       = nil,
-  jumpsleft = 0,
-  frametime = 0
-
   sprite    = nil,
+  frame     = nil,
 }
 
 avatar.__init = {
   pos       = vec2:new{ 0, 0 },
   spd       = vec2:new{ 0, 0 },
   frame     = { i=1, j=1 },
+
+  jumpsleft = 0,
+  frametime = 0
 }
 
 local gravity   = vec2:new{  0,  30 }
@@ -76,28 +77,28 @@ function avatar:update_animation (dt)
   end
   if not moving then return end
   self.frametime = self.frametime + dt
-  while self.frametime >= 1/animfps do
+  while self.frametime >= 1/self.sprite.animfps do
     self.frame.j = self.frame.j % (#self.sprite.quads[self.frame.i]) + 1
     self.frametime = self.frametime - 1/self.sprite.animfps
   end
 end
 
-function self:update (dt)
+function avatar:update (dt)
   self:update_physics(dt)
   self:update_animation(dt)
 end
 
-function self:jump ()
+function avatar:jump ()
   if self.jumpsleft > 0 then
     self.jumpsleft = self.jumpsleft - 1
     self.spd.y = jumpspd
   end
 end
 
-function self:accelerate (dv)
+function avatar:accelerate (dv)
   self.spd:add(dv)
 end
 
-function self:draw (graphics)
+function avatar:draw (graphics)
   self.sprite:draw(graphics, self.frame, self.pos)
 end
