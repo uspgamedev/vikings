@@ -81,17 +81,6 @@ local function update_physics (dt)
       spd.y = 0
       jumpsleft = 2
     end
-    --local horizontal  = pos_to_tile(pos-vec2:new{spd.x*dt,0})
-    --local vertical    = pos_to_tile(pos-vec2:new{0,spd.y*dt})
-    --if not (horizontal.floor and not vertical.floor) then
-    --  pos.x = pos.x - spd.x*dt
-    --end
-    --if (horizontal.floor and not vertical.floor) or
-    --   (horizontal.floor and vertical.floor) then
-    --  pos.y = pos.y - spd.y*dt
-    --  spd.y = 0
-    --  jumpsleft = 2
-    --end
   end
   spd:add(gravity * dt)
 end
