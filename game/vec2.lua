@@ -8,14 +8,14 @@ vec2[1] = 0
 vec2[2] = 0
   
 function vec2:__index (k)
-  if k == "x" then return self[1] end
-  if k == "y" then return self[2] end
+  if k == 'x' then return self[1] end
+  if k == 'y' then return self[2] end
   return getmetatable(self)[k]
 end
   
 function vec2:__newindex (k, v)
-  if k == "x" then rawset(self, 1, v)
-  elseif k == "y" then rawset(self, 2, v)
+  if k == 'x' then rawset(self, 1, v)
+  elseif k == 'y' then rawset(self, 2, v)
   else rawset(self, k, v) end
 end
   
@@ -38,13 +38,18 @@ function vec2.__unm (v)
 end
  
 function vec2.__mul (lhs, rhs)
-  if type(lhs) == "number" then
+  if type(lhs) == 'number' then
     return vec2:new { lhs*rhs.x, lhs*rhs.y }
-  elseif type(rhs) == "number" then
+  elseif type(rhs) == 'number' then
     return vec2:new { rhs*lhs.x, rhs*lhs.y }
   else -- assume both are vec2
     return lhs.x*rhs.x + lhs.y*rhs.y
   end
+end
+
+function vec2.__div (lhs, rhs)
+  assert(type(rhs) == 'number', "vec2 -- Invalid division operand.")
+  return vec2:new{ lhs.x/rhs, lhs.y/rhs }
 end
  
 function vec2:get ()
