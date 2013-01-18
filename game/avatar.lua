@@ -79,6 +79,7 @@ function avatar:update_animation (dt)
   self.frametime = self.frametime + dt
   while self.frametime >= 1/self.sprite.animfps do
     self.frame.j = self.frame.j % (#self.sprite.quads[self.frame.i]) + 1
+    if self.frame.j == 1 then self.frame.j = 2 end
     self.frametime = self.frametime - 1/self.sprite.animfps
   end
 end

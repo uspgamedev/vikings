@@ -17,7 +17,7 @@ function love.load ()
   map.load(love.graphics)
 
   local butler = sprite:new {
-    img       = love.graphics.newImage "sprite/male_spritesheet.png",
+    img       = love.graphics.newImage "sprite/viking_male_spritesheet.png",
     maxframe  = { i=13, j=9 },
     quadsize  = 64,
     hotspot   = vec2:new{ 32, 60 },
