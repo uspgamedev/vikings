@@ -14,6 +14,7 @@ avatar.__init = {
   pos       = vec2:new{ 0, 0 },
   spd       = vec2:new{ 0, 0 },
   frame     = { i=1, j=1 },
+  equipment = {},
 
   jumpsleft = 0,
   frametime = 0
@@ -22,6 +23,8 @@ avatar.__init = {
 local gravity   = vec2:new{  0,  30 }
 local maxspd    = vec2:new{ 30,  30 }
 local jumpspd   = -12
+local min_equipment_slot = 1
+local max_equipment_slot = 1
 
 local function pos_to_tile (point)
   return map.get_tile(math.floor(point.y), math.floor(point.x))
@@ -96,10 +99,18 @@ function avatar:jump ()
   end
 end
 
+function avatar:equip(slot, item)
+  if slot >= min_equipment_slot and slot <= max_equipment_slot then
+    self.equipment[slot] = item
+  end
+end
+
 function avatar:accelerate (dv)
   self.spd:add(dv)
 end
 
 function avatar:draw (graphics)
+  if self.equipment[1] then graphics.setColor(255,   0,   0) end
   self.sprite:draw(graphics, self.frame, self.pos)
+  if self.equipment[1] then graphics.setColor(255, 255, 255) end
 end
