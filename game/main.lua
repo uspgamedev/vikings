@@ -83,6 +83,12 @@ function love.keypressed (button)
     avatars.player:accelerate(dv)
   elseif button == "z" then
     avatars.player:jump()
+  elseif button == "a" then
+    if avatars.player.equipment[1] then
+      avatars.player:equip(1, nil)
+    else
+      avatars.player:equip(1, {})
+    end
   elseif button == "up" then
     if avatars.npc.interact then
       avatars.npc:interact()
