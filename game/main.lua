@@ -37,6 +37,13 @@ function love.load ()
     sprite = butler,
     frame  = { i=4, j=1 },
   }
+  function player:try_interact()
+    for _,av in pairs(avatars) do
+      if av.interact and av ~= self and (avatars.player.pos - av.pos):length() < 1.5 then
+        av:interact(self)
+      end
+    end
+  end
 
   local npc = avatar:new {
     pos    = vec2:new{ 12, 9 },
@@ -44,15 +51,13 @@ function love.load ()
     sprite = butler,
     frame  = { i=2, j=1 }
   }
-  function npc:interact()
-    if (avatars.player.pos - avatars.npc.pos):length() < 1.5 then
-      text = "Stay a while and listen."
-      counter = 2
-    end
+  function npc:interact(player)
+    text = "Stay a while and listen."
+    counter = 2
   end
 
   avatars.player = player
-  avatars.npc = npc
+  table.insert(avatars, npc)
 
   tasks.updateavatars = function (dt)
     for _,av in pairs(avatars) do
@@ -90,8 +95,8 @@ function love.keypressed (button)
       avatars.player:equip(1, {})
     end
   elseif button == "up" then
-    if avatars.npc.interact then
-      avatars.npc:interact()
+    if avatars.player.try_interact then
+      avatars.player:try_interact()
     end
   elseif button == "escape" then
     love.event.push("quit")
