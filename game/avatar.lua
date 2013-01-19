@@ -15,6 +15,8 @@ avatar.__init = {
   spd       = vec2:new{ 0, 0 },
   frame     = { i=1, j=1 },
   equipment = {},
+  tasks     = {},
+  drawtasks = {},
 
   jumpsleft = 0,
   frametime = 0
@@ -90,6 +92,9 @@ end
 function avatar:update (dt)
   self:update_physics(dt)
   self:update_animation(dt)
+  for _, task in pairs(self.tasks) do
+    task(self, dt)
+  end
 end
 
 function avatar:jump ()
@@ -113,4 +118,7 @@ function avatar:draw (graphics)
   if self.equipment[1] then graphics.setColor(255,   0,   0) end
   self.sprite:draw(graphics, self.frame, self.pos)
   if self.equipment[1] then graphics.setColor(255, 255, 255) end
+  for _, task in pairs(self.drawtasks) do
+    task(self, graphics)
+  end
 end
