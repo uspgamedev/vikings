@@ -8,8 +8,6 @@ local w,h
 local camera_pos
 local tasks = {}
 local avatars = {}
-local text = nil
-local counter = 0
 
 function love.load ()
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
@@ -49,11 +47,28 @@ function love.load ()
     pos    = vec2:new{ 12, 9 },
     spd    = vec2:new{ 0, 0 },
     sprite = butler,
-    frame  = { i=2, j=1 }
+    frame  = { i=2, j=1 },
+    counter = 0
   }
+  npc.drawtasks.buble = function (self, graphics)
+    if self.text then
+      graphics.setColor(255, 255, 255, math.min(self.counter, 1) * 255)
+      graphics.print(self.text, 
+        map.get_tilesize() * (self.pos.x - 1),
+        map.get_tilesize() * (self.pos.y - 3)
+      )
+      graphics.setColor(255, 255, 255, 255)
+    end
+  end
+  npc.tasks.buble = function (self, dt)
+    self.counter = self.counter - dt
+    if self.counter <= 0 then
+      self.text = nil
+    end
+  end
   function npc:interact(player)
-    text = "Stay a while and listen."
-    counter = 2
+    self.text = "Stay a while and listen."
+    self.counter = 2
   end
 
   avatars.player = player
@@ -70,10 +85,6 @@ end
 function love.update (dt)
   for k,v in pairs(tasks) do
     v(dt)
-  end
-  counter = counter - dt
-  if counter <= 0 then
-    text = nil
   end
 end
 
@@ -143,14 +154,6 @@ function love.draw ()
   map.draw(love.graphics)
   for _,av in pairs(avatars) do
     av:draw(love.graphics)
-  end
-  if text then
-    love.graphics.setColor(255, 255, 255, math.min(counter, 1) * 255)
-    love.graphics.print(text, 
-      map.get_tilesize() * (avatars.npc.pos.x - 1),
-      map.get_tilesize() * (avatars.npc.pos.y - 3)
-    )
-    love.graphics.setColor(255, 255, 255, 255)
   end
 end
 
