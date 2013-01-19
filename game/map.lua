@@ -19,6 +19,7 @@ function load (graphics)
   for j=1,width do
     set_tile(10, j, 'ice')
   end
+  set_tile(9, 14, 'ice')
 end
 
 function get_tilesize ()

@@ -44,7 +44,7 @@ function love.load ()
   end
 
   local npc = avatar:new {
-    pos    = vec2:new{ 12, 9 },
+    pos    = vec2:new{ 12.5, 9 },
     spd    = vec2:new{ 0, 0 },
     sprite = butler,
     frame  = { i=2, j=1 },
@@ -71,8 +71,27 @@ function love.load ()
     self.counter = 2
   end
 
+  local npcb = avatar:new {
+    pos    = vec2:new{ 14.5, 8 },
+    spd    = vec2:new{ 0, 0 },
+    sprite = butler,
+    frame  = { i=2, j=1 },
+    counter = 0
+  }
+  npcb.drawtasks.buble = npc.drawtasks.buble
+  npcb.tasks.buble = npc.tasks.buble  
+  function npcb:interact(player)
+    if player.equipment[1] then
+      self.text = "Nice color."
+    else
+      self.text = "You don't have equipment?"
+    end
+    self.counter = 2
+  end
+
   avatars.player = player
   table.insert(avatars, npc)
+  table.insert(avatars, npcb)
 
   tasks.updateavatars = function (dt)
     for _,av in pairs(avatars) do
