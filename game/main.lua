@@ -141,9 +141,6 @@ function love.keyreleased (button)
   if dv then
     avatars.player:accelerate(-dv)
   end
-  if button == "x" then
-    avatars.player:stopattack()
-  end
 end
 
 local function mousetotile ()
