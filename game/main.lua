@@ -37,7 +37,8 @@ function love.load ()
   }
   function player:try_interact()
     for _,av in pairs(avatars) do
-      if av.interact and av ~= self and (avatars.player.pos - av.pos):length() < 1.5 then
+      if av.interact and av ~= self
+         and (avatars.player.pos - av.pos):length() < 1.5 then
         av:interact(self)
       end
     end
