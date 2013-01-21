@@ -77,10 +77,21 @@ function avatar:update_animation (dt)
   elseif self.spd.x < 0 then
     self.frame.i = 2
   else
-    self.frame.j = 1
+    if self.attacking then 
+      if self.frame.i <= 4 then
+        self.frame.i = self.frame.i + 4
+      end
+    else
+      if self.frame.i > 4 then
+        self.frame.i = self.frame.i - 4
+      end
+      self.frame.j = 1
+    end
     moving = false
   end
-  if not moving then return end
+  if not moving and not self.attacking then
+    return
+  end
   self.frametime = self.frametime + dt
   while self.frametime >= 1/self.sprite.animfps do
     self.frame.j = self.frame.j % (#self.sprite.quads[self.frame.i]) + 1
@@ -102,6 +113,14 @@ function avatar:jump ()
     self.jumpsleft = self.jumpsleft - 1
     self.spd.y = jumpspd
   end
+end
+
+function avatar:attack ()
+  self.attacking = true
+end
+
+function avatar:stopattack ()
+  self.attacking = false
 end
 
 function avatar:equip(slot, item)
