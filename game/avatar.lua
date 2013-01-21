@@ -8,6 +8,9 @@ avatar = lux.object.new {
   spd       = nil,
   sprite    = nil,
   frame     = nil,
+
+  direction = 'right',
+  attacking = false
 }
 
 avatar.__init = {
@@ -27,6 +30,9 @@ local maxspd    = vec2:new{ 30,  30 }
 local jumpspd   = -12
 local min_equipment_slot = 1
 local max_equipment_slot = 1
+local dir_map   = {
+  left = 2, right = 4
+}
 
 local function pos_to_tile (point)
   return map.get_tile(math.floor(point.y), math.floor(point.x))
@@ -71,21 +77,42 @@ function avatar:update_physics (dt)
 end
 
 function avatar:update_animation (dt)
-  local moving = true
-  if self.spd.x > 0 then
-    self.frame.i = 4
-  elseif self.spd.x < 0 then
-    self.frame.i = 2
-  else
+  self.frame.i = dir_map[self.direction] + (self.attacking and 4 or 0)
+  local moving = self.spd.x ~= 0
+  if not moving and not self.attacking then
     self.frame.j = 1
-    moving = false
+    return
   end
-  if not moving then return end
+  if self.attacking then
+    self:animate_attack(dt)
+  else
+    self:animate_movement(dt)
+  end
+end
+
+function avatar:animate_movement (dt)
   self.frametime = self.frametime + dt
   while self.frametime >= 1/self.sprite.animfps do
     self.frame.j = self.frame.j % (#self.sprite.quads[self.frame.i]) + 1
     if self.frame.j == 1 then self.frame.j = 2 end
     self.frametime = self.frametime - 1/self.sprite.animfps
+  end
+end
+
+function avatar:animate_attack (dt)
+  self.frametime = self.frametime + dt
+  while self.frametime >= 1/self.sprite.animfps do
+    if self.frame.j > 6 then
+      self.attacking = false
+      self.frame.j = 1
+    else
+      self.frame.j = self.frame.j + 1
+      self.frametime = self.frametime - 1/self.sprite.animfps
+    end
+  end
+  if self.frame.j > 6 then
+    self.attacking = false
+    self.frame.j = 1
   end
 end
 
@@ -104,6 +131,14 @@ function avatar:jump ()
   end
 end
 
+function avatar:attack ()
+  if not self.attacking then
+    self.attacking = true
+    self.frametime = 0
+    self.frame.j = 1
+  end
+end
+
 function avatar:equip(slot, item)
   if slot >= min_equipment_slot and slot <= max_equipment_slot then
     self.equipment[slot] = item
@@ -112,6 +147,11 @@ end
 
 function avatar:accelerate (dv)
   self.spd:add(dv)
+  if self.spd.x > 0 then
+    self.direction = 'right'
+  elseif self.spd.x < 0 then
+    self.direction = 'left'
+  end
 end
 
 function avatar:draw (graphics)
