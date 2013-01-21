@@ -105,9 +105,14 @@ function avatar:animate_attack (dt)
     if self.frame.j > 6 then
       self.attacking = false
       self.frame.j = 1
+    else
+      self.frame.j = self.frame.j + 1
+      self.frametime = self.frametime - 1/self.sprite.animfps
     end
-    self.frame.j = self.frame.j + 1
-    self.frametime = self.frametime - 1/self.sprite.animfps
+  end
+  if self.frame.j > 6 then
+    self.attacking = false
+    self.frame.j = 1
   end
 end
 
@@ -127,7 +132,11 @@ function avatar:jump ()
 end
 
 function avatar:attack ()
-  self.attacking = true
+  if not self.attacking then
+    self.attacking = true
+    self.frametime = 0
+    self.frame.j = 1
+  end
 end
 
 function avatar:equip(slot, item)
