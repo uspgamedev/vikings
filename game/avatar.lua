@@ -102,15 +102,15 @@ end
 function avatar:animate_attack (dt)
   self.frametime = self.frametime + dt
   while self.frametime >= 1/self.sprite.animfps do
-    if self.frame.j > 6 then
+    if self.frame.j < 1 then
       self.attacking = false
       self.frame.j = 1
     else
-      self.frame.j = self.frame.j + 1
+      self.frame.j = self.frame.j - 1
       self.frametime = self.frametime - 1/self.sprite.animfps
     end
   end
-  if self.frame.j > 6 then
+  if self.frame.j < 1 then
     self.attacking = false
     self.frame.j = 1
   end
@@ -135,7 +135,7 @@ function avatar:attack ()
   if not self.attacking then
     self.attacking = true
     self.frametime = 0
-    self.frame.j = 1
+    self.frame.j = 6
   end
 end
 
