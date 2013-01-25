@@ -9,7 +9,7 @@ hitbox = lux.object.new {
 
 hitbox.__init = {
   pos   = vec2:new {0,0},
-  size  = vec2:new {32,32}
+  size  = vec2:new {1,1}
 }
 
 local classes = {}
@@ -39,6 +39,7 @@ function hitbox:colliding (another)
     return false
   elseif self:right() < another:left() then
     return false
+  end
   return true
 end
 
@@ -50,8 +51,10 @@ end
 function hitbox:unregister (class)
   if class then
     classes[class][self] = nil
-  else for _,possibleclass in pairs(classes) do
-    classes[possibleclass][self] = nil
+  else
+    for _,possibleclass in pairs(classes) do
+      classes[possibleclass][self] = nil
+    end
   end
 end
 

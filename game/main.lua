@@ -44,6 +44,19 @@ function love.load ()
     end
   end
 
+  function player.drawtasks:hitbox (graphics)
+    if not self.hitbox then return end
+    local tilesize = map.get_tilesize()
+    graphics.setColor(200, 0, 0, 100)
+    graphics.rectangle(
+      'fill',
+      tilesize*(self.hitbox.pos.x-1),
+      tilesize*(self.hitbox.pos.y-1),
+      (tilesize*self.hitbox.size):get()
+    )
+    graphics.setColor(255, 255, 255, 255)
+  end
+
   local npc = avatar:new {
     pos    = vec2:new{ 12.5, 9 },
     spd    = vec2:new{ 0, 0 },

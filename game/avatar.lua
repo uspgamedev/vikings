@@ -2,6 +2,7 @@
 require 'lux.object'
 require 'vec2'
 require 'map'
+require 'hitbox'
 
 avatar = lux.object.new {
   pos       = nil,
@@ -136,6 +137,9 @@ function avatar:attack ()
     self.attacking = true
     self.frametime = 0
     self.frame.j = 6
+    self.hitbox = hitbox:new {
+      pos = self.pos+vec2:new{(self.direction=='right' and 0.75 or -1.75),-1}
+    }
   end
 end
 
