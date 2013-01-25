@@ -104,16 +104,14 @@ function avatar:animate_attack (dt)
   self.frametime = self.frametime + dt
   while self.frametime >= 1/self.sprite.animfps do
     if self.frame.j < 1 then
-      self.attacking = false
-      self.frame.j = 1
+      self:stopattack()
     else
       self.frame.j = self.frame.j - 1
       self.frametime = self.frametime - 1/self.sprite.animfps
     end
   end
   if self.frame.j < 1 then
-    self.attacking = false
-    self.frame.j = 1
+    self:stopattack()
   end
 end
 
@@ -140,6 +138,13 @@ function avatar:attack ()
     self.hitbox = hitbox:new {
       pos = self.pos+vec2:new{(self.direction=='right' and 0.75 or -1.75),-1}
     }
+  end
+end
+
+function avatar:stopattack ()
+  if self.attacking then
+    self.attacking = false
+    self.frame.j = 1
   end
 end
 
