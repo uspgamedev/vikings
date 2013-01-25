@@ -115,9 +115,16 @@ function avatar:animate_attack (dt)
   end
 end
 
+function avatar:get_hitboxpos ()
+  return self.pos+vec2:new{(self.direction=='right' and 0.75 or -1.75),-1}
+end
+
 function avatar:update (dt)
   self:update_physics(dt)
   self:update_animation(dt)
+  if self.hitbox then
+    self.hitbox.pos = self:get_hitboxpos()
+  end
   for _, task in pairs(self.tasks) do
     task(self, dt)
   end
@@ -136,7 +143,7 @@ function avatar:attack ()
     self.frametime = 0
     self.frame.j = 6
     self.hitbox = hitbox:new {
-      pos = self.pos+vec2:new{(self.direction=='right' and 0.75 or -1.75),-1}
+      pos = self:get_hitboxpos()
     }
   end
 end
@@ -145,6 +152,7 @@ function avatar:stopattack ()
   if self.attacking then
     self.attacking = false
     self.frame.j = 1
+    self.hitbox = nil
   end
 end
 
