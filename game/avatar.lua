@@ -9,6 +9,8 @@ avatar = lux.object.new {
   spd       = nil,
   sprite    = nil,
   frame     = nil,
+  hitbox    = nil,
+  colsize   = nil, -- vec2
 
   direction = 'right',
   attacking = false
@@ -21,6 +23,8 @@ avatar.__init = {
   equipment = {},
   tasks     = {},
   drawtasks = {},
+  colsize   = vec2:new{ 1, 1 },
+  hitbox    = nil, -- wat
 
   jumpsleft = 0,
   frametime = 0
@@ -91,6 +95,17 @@ function avatar:update_animation (dt)
   end
 end
 
+function avatar:update_hitbox (dt)
+  if not self.hitbox then
+    self.hitbox = hitbox:new {
+      pos  = self.pos:clone(),
+      size = self.colsize:clone()
+    }
+    self.hitbox:register "avatar"
+  end
+  self.hitbox.pos = self.pos:clone()
+end
+
 function avatar:animate_movement (dt)
   self.frametime = self.frametime + dt
   while self.frametime >= 1/self.sprite.animfps do
@@ -122,6 +137,7 @@ end
 function avatar:update (dt)
   self:update_physics(dt)
   self:update_animation(dt)
+  self:update_hitbox(dt)
   if self.atkhitbox then
     self.atkhitbox.pos = self:get_hitboxpos()
   end
