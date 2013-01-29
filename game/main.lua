@@ -44,6 +44,22 @@ function love.load ()
     end
   end
 
+  function tasks.checkdamage (dt)
+    if not player.hitbox then return end
+    local collisions = player.hitbox:get_collisions()
+    if not collisions then return end
+    for _,another in ipairs(collisions) do
+      another:unregister()
+    end
+  end
+
+  hitbox
+    :new {
+      pos = vec2:new{ 17, 8 },
+      size = vec2:new{ 2, 2 }
+    }
+    :register 'damageable'
+
   local npc = avatar:new {
     pos    = vec2:new{ 12.5, 9 },
     spd    = vec2:new{ 0, 0 },
@@ -177,5 +193,6 @@ function love.draw ()
   for _,av in pairs(avatars) do
     av:draw(love.graphics)
   end
+  hitbox.draw_all(love.graphics)
 end
 
