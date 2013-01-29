@@ -57,6 +57,15 @@ function love.load ()
     graphics.setColor(255, 255, 255, 255)
   end
 
+  function tasks.checkdamage (dt)
+    if not player.hitbox then return end
+    local collisions = hitbox:get_collisions()
+    if not collisions then return end
+    for _,another in ipairs(collisions) do
+      print 'hit'
+    end
+  end
+
   local npc = avatar:new {
     pos    = vec2:new{ 12.5, 9 },
     spd    = vec2:new{ 0, 0 },

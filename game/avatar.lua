@@ -143,8 +143,10 @@ function avatar:attack ()
     self.frametime = 0
     self.frame.j = 6
     self.hitbox = hitbox:new {
-      pos = self:get_hitboxpos()
+      pos         = self:get_hitboxpos(),
+      targetclass = 'damageable'
     }
+    self.hitbox:register 'playeratk'
   end
 end
 
