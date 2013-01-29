@@ -31,8 +31,8 @@ function love.load ()
   end
 
   function tasks.checkdamage (dt)
-    if not player.hitbox then return end
-    local collisions = player.hitbox:get_collisions()
+    if not player.atkhitbox then return end
+    local collisions = player.atkhitbox:get_collisions()
     if not collisions then return end
     for _,another in ipairs(collisions) do
       another:unregister()
