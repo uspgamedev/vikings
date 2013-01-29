@@ -44,27 +44,19 @@ function love.load ()
     end
   end
 
-  function player.drawtasks:hitbox (graphics)
-    if not self.hitbox then return end
-    local tilesize = map.get_tilesize()
-    graphics.setColor(200, 0, 0, 100)
-    graphics.rectangle(
-      'fill',
-      tilesize*(self.hitbox.pos.x-1),
-      tilesize*(self.hitbox.pos.y-1),
-      (tilesize*self.hitbox.size):get()
-    )
-    graphics.setColor(255, 255, 255, 255)
-  end
-
   function tasks.checkdamage (dt)
     if not player.hitbox then return end
-    local collisions = hitbox:get_collisions()
+    local collisions = player.hitbox:get_collisions()
     if not collisions then return end
     for _,another in ipairs(collisions) do
-      print 'hit'
+      another:unregister()
     end
   end
+
+  hitbox:new {
+    pos = vec2:new{ 16.5, 7 },
+    size = vec2:new{ 2, 2 }
+  } :register 'damageable'
 
   local npc = avatar:new {
     pos    = vec2:new{ 12.5, 9 },
@@ -199,5 +191,6 @@ function love.draw ()
   for _,av in pairs(avatars) do
     av:draw(love.graphics)
   end
+  hitbox.draw_all(love.graphics)
 end
 

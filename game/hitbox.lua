@@ -1,5 +1,6 @@
 
 require 'lux.object'
+require 'map'
 
 hitbox = lux.object.new {
   pos         = nil,  -- vec2
@@ -15,19 +16,19 @@ hitbox.__init = {
 local classes = {}
 
 function hitbox:top ()
-  return pos.y
+  return self.pos.y
 end
 
 function hitbox:bottom ()
-  return pos.y + size.y
+  return self.pos.y + self.size.y
 end
 
 function hitbox:left ()
-  return pos.x
+  return self.pos.x
 end
 
 function hitbox:right ()
-  return pos.x + size.x
+  return self.pos.x + self.size.x
 end
 
 function hitbox:colliding (another)
@@ -53,7 +54,7 @@ function hitbox:unregister (class)
     classes[class][self] = nil
   else
     for _,possibleclass in pairs(classes) do
-      classes[possibleclass][self] = nil
+      possibleclass[self] = nil
     end
   end
 end
@@ -68,4 +69,26 @@ function hitbox:get_collisions ()
     end
   end
   return collisions
+end
+
+local function draw (graphics, box)
+  local tilesize = map.get_tilesize()
+  graphics.setColor(200, 0, 0, 100)
+  graphics.rectangle(
+    'fill',
+    tilesize*(box.pos.x-1),
+    tilesize*(box.pos.y-1),
+    (tilesize*box.size):get()
+  )
+  graphics.setColor(255, 255, 255, 255)
+end
+
+function hitbox.draw_all (graphics)
+  for _,class in pairs(classes) do
+    for box,check in pairs(class) do
+      if check then
+        draw(graphics, box)
+      end
+    end
+  end
 end

@@ -154,6 +154,7 @@ function avatar:stopattack ()
   if self.attacking then
     self.attacking = false
     self.frame.j = 1
+    self.hitbox:unregister()
     self.hitbox = nil
   end
 end
