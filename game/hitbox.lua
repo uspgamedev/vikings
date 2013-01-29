@@ -83,6 +83,19 @@ local function draw (graphics, box)
   graphics.setColor(255, 255, 255, 255)
 end
 
+function hitbox.check_collisions ()
+  for _,class in pairs(classes) do
+    for box,check in pairs(class) do
+      if check then
+        local collisions = box:get_collisions()
+        if collisions and box.on_collision then
+          box:on_collision(collisions)
+        end
+      end
+    end
+  end
+end
+
 function hitbox.draw_all (graphics)
   for _,class in pairs(classes) do
     for box,check in pairs(class) do

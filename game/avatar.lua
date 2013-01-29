@@ -163,6 +163,11 @@ function avatar:attack ()
       targetclass = 'damageable'
     }
     self.atkhitbox:register 'playeratk'
+    function self.atkhitbox:on_collision (collisions)
+      for _,another in ipairs(collisions) do
+        another:unregister()
+      end
+    end
   end
 end
 
