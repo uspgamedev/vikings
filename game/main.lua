@@ -2,7 +2,7 @@
 require 'vec2'
 require 'map'
 require 'avatar'
-require 'sprite'
+require 'builder'
 
 local w,h
 local camera_pos
@@ -14,25 +14,11 @@ function love.load ()
   camera_pos = vec2:new{ w/2, h/2 }
   map.load(love.graphics)
 
-  local butler = sprite:new {
-    img       = love.graphics.newImage "sprite/viking_male_spritesheet.png",
-    maxframe  = { i=13, j=9 },
-    quadsize  = 64,
-    hotspot   = vec2:new{ 32, 60 },
-    collpts   = {
-      vec2:new{20,60},
-      vec2:new{20,15+45/2},
-      vec2:new{20,15},
-      vec2:new{44,60},
-      vec2:new{44,15+45/2},
-      vec2:new{44,15}
-    }
-  }
 
   local player = avatar:new {
     pos    = vec2:new{ 2, 9 },
     spd    = vec2:new{ 0, 0 },
-    sprite = butler,
+    sprite = builder.build_sprite(),
     frame  = { i=4, j=1 },
   }
   function player:try_interact()
@@ -59,56 +45,9 @@ function love.load ()
       size = vec2:new{ 2, 2 }
     }
     :register 'damageable'
-
-  local npc = avatar:new {
-    pos    = vec2:new{ 12.5, 9 },
-    spd    = vec2:new{ 0, 0 },
-    sprite = butler,
-    frame  = { i=2, j=1 },
-    counter = 0
-  }
-  npc.drawtasks.buble = function (self, graphics)
-    if self.text then
-      graphics.setColor(255, 255, 255, math.min(self.counter, 1) * 255)
-      graphics.print(self.text, 
-        map.get_tilesize() * (self.pos.x - 1),
-        map.get_tilesize() * (self.pos.y - 3)
-      )
-      graphics.setColor(255, 255, 255, 255)
-    end
-  end
-  npc.tasks.buble = function (self, dt)
-    self.counter = self.counter - dt
-    if self.counter <= 0 then
-      self.text = nil
-    end
-  end
-  function npc:interact(player)
-    self.text = "Stay a while and listen."
-    self.counter = 2
-  end
-
-  local npcb = avatar:new {
-    pos    = vec2:new{ 14.5, 8 },
-    spd    = vec2:new{ 0, 0 },
-    sprite = butler,
-    frame  = { i=2, j=1 },
-    counter = 0
-  }
-  npcb.drawtasks.buble = npc.drawtasks.buble
-  npcb.tasks.buble = npc.tasks.buble  
-  function npcb:interact(player)
-    if player.equipment[1] then
-      self.text = "Nice color."
-    else
-      self.text = "You don't have equipment?"
-    end
-    self.counter = 2
-  end
-
   avatars.player = player
-  table.insert(avatars, npc)
-  table.insert(avatars, npcb)
+  table.insert(avatars, builder.build_npc())
+  table.insert(avatars, builder.build_vendor())
 
   tasks.updateavatars = function (dt)
     for _,av in pairs(avatars) do
