@@ -53,10 +53,12 @@ function love.load ()
     end
   end
 
-  hitbox:new {
-    pos = vec2:new{ 16.5, 7 },
-    size = vec2:new{ 2, 2 }
-  } :register 'damageable'
+  hitbox
+    :new {
+      pos = vec2:new{ 17, 8 },
+      size = vec2:new{ 2, 2 }
+    }
+    :register 'damageable'
 
   local npc = avatar:new {
     pos    = vec2:new{ 12.5, 9 },
