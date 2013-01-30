@@ -59,8 +59,8 @@ function hitbox:unregister (class)
   end
 end
 
-function hitbox:get_collisions ()
-  targetclass = classes[self.targetclass]
+function hitbox:get_collisions (target)
+  targetclass = classes[target or self.targetclass]
   if not targetclass then return end
   local collisions = {}
   for another,check in pairs(targetclass) do
