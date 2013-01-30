@@ -99,7 +99,8 @@ function avatar:update_hitbox (dt)
   if not self.hitbox then
     self.hitbox = hitbox:new {
       pos  = self.pos:clone(),
-      size = self.colsize:clone()
+      size = self.colsize:clone(),
+      owner = self
     }
     self.hitbox:register "avatar"
   end
