@@ -59,8 +59,8 @@ function hitbox:unregister (class)
   end
 end
 
-function hitbox:get_collisions ()
-  targetclass = classes[self.targetclass]
+function hitbox:get_collisions (target)
+  targetclass = classes[target or self.targetclass]
   if not targetclass then return end
   local collisions = {}
   for another,check in pairs(targetclass) do
@@ -81,6 +81,19 @@ local function draw (graphics, box)
     (tilesize*box.size):get()
   )
   graphics.setColor(255, 255, 255, 255)
+end
+
+function hitbox.check_collisions ()
+  for _,class in pairs(classes) do
+    for box,check in pairs(class) do
+      if check then
+        local collisions = box:get_collisions()
+        if collisions and box.on_collision then
+          box:on_collision(collisions)
+        end
+      end
+    end
+  end
 end
 
 function hitbox.draw_all (graphics)

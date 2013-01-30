@@ -22,22 +22,16 @@ function love.load ()
     frame  = { i=4, j=1 },
   }
   function player:try_interact()
-    for _,av in pairs(avatars) do
-      if av.interact and av ~= self
-         and (avatars.player.pos - av.pos):length() < 1.5 then
-        av:interact(self)
+    collisions = player.hitbox:get_collisions("avatar")
+    for _,target in pairs(collisions) do
+      if target.owner and target.owner ~= self
+         and (self.pos - target.owner.pos):length() < 1.5 then
+        target.owner:interact(self)
       end
     end
   end
 
-  function tasks.checkdamage (dt)
-    if not player.hitbox then return end
-    local collisions = player.hitbox:get_collisions()
-    if not collisions then return end
-    for _,another in ipairs(collisions) do
-      another:unregister()
-    end
-  end
+  tasks.check_collisions = hitbox.check_collisions
 
   hitbox
     :new {
