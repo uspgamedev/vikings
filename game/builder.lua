@@ -47,12 +47,11 @@ function build_npc ()
     pos    = vec2:new{ 12.5, 9 },
     spd    = vec2:new{ 0, 0 },
     sprite = build_sprite(),
-    frame  = { i=2, j=1 },
     counter = 0
   }
   npc.drawtasks.buble = draw_buble
   npc.tasks.buble = update_buble
-  function npc:interact(player)
+  function npc:interact (player)
     self.text = "Stay a while and listen."
     self.counter = 2
   end
@@ -64,12 +63,11 @@ function build_vendor ()
     pos    = vec2:new{ 14.5, 8 },
     spd    = vec2:new{ 0, 0 },
     sprite = build_sprite(),
-    frame  = { i=2, j=1 },
     counter = 0
   }
   npc.drawtasks.buble = draw_buble
   npc.tasks.buble = update_buble
-  function npc:interact(player)
+  function npc:interact (player)
     if player.equipment[1] then
       self.text = "Nice color."
     else
@@ -78,4 +76,15 @@ function build_vendor ()
     self.counter = 2
   end
   return npc
+end
+
+function build_enemy ()
+  local enemy = avatar:new {
+    pos       = vec2:new{ 18.5, 8 },
+    spd       = vec2:new{ 0, 0 },
+    sprite    = build_sprite(),
+    direction = 'left'
+  }
+  enemy.hitbox.class = 'damageable'
+  return enemy
 end

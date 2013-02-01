@@ -45,6 +45,7 @@ function hitbox:colliding (another)
 end
 
 function hitbox:register (class)
+  class = class or self.class
   classes[class] = classes[class] or {}
   classes[class][self] = true
 end

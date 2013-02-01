@@ -3,6 +3,7 @@ require 'vec2'
 require 'map'
 require 'avatar'
 require 'builder'
+require 'message'
 
 local w,h
 local camera_pos
@@ -42,12 +43,29 @@ function love.load ()
   avatars.player = player
   table.insert(avatars, builder.build_npc())
   table.insert(avatars, builder.build_vendor())
+  table.insert(avatars, builder.build_enemy())
 
   tasks.updateavatars = function (dt)
     for _,av in pairs(avatars) do
       av:update(dt)
     end
   end
+
+  message.add_receiver(
+    'game',
+    function (cmd, ...)
+      if cmd == 'kill' then
+        for _,avatar in ipairs{...} do
+          for i,check in ipairs(avatars) do
+            if avatar == check then
+              avatar:die()
+              table.remove(avatars, i)
+            end
+          end
+        end
+      end
+    end
+  )
 end
 
 

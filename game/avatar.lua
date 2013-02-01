@@ -3,6 +3,7 @@ require 'lux.object'
 require 'vec2'
 require 'map'
 require 'hitbox'
+require 'message'
 
 avatar = lux.object.new {
   pos       = nil,
@@ -23,13 +24,18 @@ avatar.__init = {
   tasks     = {},
   drawtasks = {},
   hitbox    = hitbox:new {
-    size = vec2:new { 1, 1 }
+    size  = vec2:new { 1, 1 },
+    class = 'avatar'
   },
   atkhitbox = hitbox:new {
     targetclass = 'damageable',
     on_collision = function (self, collisions)
       for _,another in ipairs(collisions) do
-        another:unregister()
+        if another.owner then
+          message.send 'game' {'kill', another.owner}
+        else
+          another:unregister()
+        end
       end
     end
   },
@@ -46,6 +52,11 @@ local max_equipment_slot = 1
 local dir_map   = {
   left = 2, right = 4
 }
+
+function avatar:die ()
+  self.hitbox:unregister()
+  self.atkhitbox:unregister()
+end
 
 local function pos_to_tile (point)
   return map.get_tile(math.floor(point.y), math.floor(point.x))
@@ -105,8 +116,8 @@ end
 
 function avatar:update_hitbox (dt)
   self.hitbox.owner = self
-  self.hitbox.pos   = self.pos:clone()
-  self.hitbox:register 'avatar'
+  self.hitbox.pos   = self.pos - self.hitbox.size/2
+  self.hitbox:register()
 end
 
 function avatar:animate_movement (dt)
