@@ -3,6 +3,7 @@ require 'lux.object'
 require 'vec2'
 require 'map'
 require 'hitbox'
+require 'message'
 
 avatar = lux.object.new {
   pos       = nil,
@@ -31,7 +32,7 @@ avatar.__init = {
     on_collision = function (self, collisions)
       for _,another in ipairs(collisions) do
         if another.owner then
-          print "damageable avatar hit"
+          message.send 'game' {'kill', another.owner}
         else
           another:unregister()
         end
