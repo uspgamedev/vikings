@@ -58,6 +58,7 @@ function love.load ()
         for _,avatar in ipairs{...} do
           for i,check in ipairs(avatars) do
             if avatar == check then
+              avatar:die()
               table.remove(avatars, i)
             end
           end

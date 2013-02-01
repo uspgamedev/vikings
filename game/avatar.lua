@@ -53,6 +53,11 @@ local dir_map   = {
   left = 2, right = 4
 }
 
+function avatar:die ()
+  self.hitbox:unregister()
+  self.atkhitbox:unregister()
+end
+
 local function pos_to_tile (point)
   return map.get_tile(math.floor(point.y), math.floor(point.x))
 end
