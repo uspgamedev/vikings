@@ -23,7 +23,8 @@ avatar.__init = {
   tasks     = {},
   drawtasks = {},
   hitbox    = hitbox:new {
-    size = vec2:new { 1, 1 }
+    size  = vec2:new { 1, 1 },
+    class = 'avatar'
   },
   atkhitbox = hitbox:new {
     targetclass = 'damageable',
@@ -106,7 +107,7 @@ end
 function avatar:update_hitbox (dt)
   self.hitbox.owner = self
   self.hitbox.pos   = self.pos:clone()
-  self.hitbox:register 'avatar'
+  self.hitbox:register()
 end
 
 function avatar:animate_movement (dt)
