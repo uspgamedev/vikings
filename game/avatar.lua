@@ -10,7 +10,6 @@ avatar = lux.object.new {
   sprite    = nil,
   frame     = nil,
   hitbox    = nil,
-  colsize   = nil, -- vec2
 
   direction = 'right',
   attacking = false
@@ -23,8 +22,17 @@ avatar.__init = {
   equipment = {},
   tasks     = {},
   drawtasks = {},
-  colsize   = vec2:new{ 1, 1 },
-  hitbox    = nil, -- wat
+  hitbox    = hitbox:new {
+    size = vec2:new { 1, 1 }
+  },
+  atkhitbox = hitbox:new {
+    targetclass = 'damageable',
+    on_collision = function (self, collisions)
+      for _,another in ipairs(collisions) do
+        another:unregister()
+      end
+    end
+  },
 
   jumpsleft = 0,
   frametime = 0
@@ -96,15 +104,9 @@ function avatar:update_animation (dt)
 end
 
 function avatar:update_hitbox (dt)
-  if not self.hitbox then
-    self.hitbox = hitbox:new {
-      pos  = self.pos:clone(),
-      size = self.colsize:clone(),
-      owner = self
-    }
-    self.hitbox:register "avatar"
-  end
-  self.hitbox.pos = self.pos:clone()
+  self.hitbox.owner = self
+  self.hitbox.pos   = self.pos:clone()
+  self.hitbox:register 'avatar'
 end
 
 function avatar:animate_movement (dt)
@@ -131,7 +133,7 @@ function avatar:animate_attack (dt)
   end
 end
 
-function avatar:get_hitboxpos ()
+function avatar:get_atkhitboxpos ()
   return self.pos+vec2:new{(self.direction=='right' and 0.75 or -1.75),-1}
 end
 
@@ -140,7 +142,7 @@ function avatar:update (dt)
   self:update_animation(dt)
   self:update_hitbox(dt)
   if self.atkhitbox then
-    self.atkhitbox.pos = self:get_hitboxpos()
+    self.atkhitbox.pos = self:get_atkhitboxpos()
   end
   for _, task in pairs(self.tasks) do
     task(self, dt)
@@ -159,16 +161,8 @@ function avatar:attack ()
     self.attacking = true
     self.frametime = 0
     self.frame.j = 6
-    self.atkhitbox = hitbox:new {
-      pos         = self:get_hitboxpos(),
-      targetclass = 'damageable'
-    }
+    self.atkhitbox.pos = self:get_atkhitboxpos(),
     self.atkhitbox:register 'playeratk'
-    function self.atkhitbox:on_collision (collisions)
-      for _,another in ipairs(collisions) do
-        another:unregister()
-      end
-    end
   end
 end
 
@@ -177,7 +171,6 @@ function avatar:stopattack ()
     self.attacking = false
     self.frame.j = 1
     self.atkhitbox:unregister()
-    self.atkhitbox = nil
   end
 end
 
