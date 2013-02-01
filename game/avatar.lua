@@ -10,7 +10,6 @@ avatar = lux.object.new {
   sprite    = nil,
   frame     = nil,
   hitbox    = nil,
-  colsize   = nil, -- vec2
 
   direction = 'right',
   attacking = false
@@ -23,10 +22,10 @@ avatar.__init = {
   equipment = {},
   tasks     = {},
   drawtasks = {},
-  colsize   = vec2:new{ 1, 1 },
-  hitbox    = nil, -- wat
+  hitbox    = hitbox:new {
+    size = vec2:new { 1, 1 }
+  },
   atkhitbox = hitbox:new {
-    pos         = vec2:new{},
     targetclass = 'damageable',
     on_collision = function (self, collisions)
       for _,another in ipairs(collisions) do
@@ -105,15 +104,9 @@ function avatar:update_animation (dt)
 end
 
 function avatar:update_hitbox (dt)
-  if not self.hitbox then
-    self.hitbox = hitbox:new {
-      pos  = self.pos:clone(),
-      size = self.colsize:clone(),
-      owner = self
-    }
-    self.hitbox:register "avatar"
-  end
-  self.hitbox.pos = self.pos:clone()
+  self.hitbox.owner = self
+  self.hitbox.pos   = self.pos:clone()
+  self.hitbox:register 'avatar'
 end
 
 function avatar:animate_movement (dt)
