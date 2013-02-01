@@ -47,7 +47,6 @@ function build_npc ()
     pos    = vec2:new{ 12.5, 9 },
     spd    = vec2:new{ 0, 0 },
     sprite = build_sprite(),
-    frame  = { i=2, j=1 },
     counter = 0
   }
   npc.drawtasks.buble = draw_buble
@@ -64,7 +63,6 @@ function build_vendor ()
     pos    = vec2:new{ 14.5, 8 },
     spd    = vec2:new{ 0, 0 },
     sprite = build_sprite(),
-    frame  = { i=2, j=1 },
     counter = 0
   }
   npc.drawtasks.buble = draw_buble
@@ -78,4 +76,14 @@ function build_vendor ()
     self.counter = 2
   end
   return npc
+end
+
+function build_enemy ()
+  local enemy = avatar:new {
+    pos       = vec2:new{ 18.5, 8 },
+    spd       = vec2:new{ 0, 0 },
+    sprite    = build_sprite(),
+    direction = 'left'
+  }
+  return enemy
 end
