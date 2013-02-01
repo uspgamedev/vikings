@@ -3,6 +3,7 @@ require 'vec2'
 require 'map'
 require 'avatar'
 require 'builder'
+require 'message'
 
 local w,h
 local camera_pos
@@ -49,6 +50,21 @@ function love.load ()
       av:update(dt)
     end
   end
+
+  message.add_receiver(
+    'game',
+    function (cmd, ...)
+      if cmd == 'kill' then
+        for _,avatar in ipairs{...} do
+          for i,check in ipairs(avatars) do
+            if avatar == check then
+              table.remove(avatars, i)
+            end
+          end
+        end
+      end
+    end
+  )
 end
 
 
