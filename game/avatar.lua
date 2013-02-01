@@ -131,7 +131,7 @@ function avatar:animate_attack (dt)
   end
 end
 
-function avatar:get_hitboxpos ()
+function avatar:get_atkhitboxpos ()
   return self.pos+vec2:new{(self.direction=='right' and 0.75 or -1.75),-1}
 end
 
@@ -140,7 +140,7 @@ function avatar:update (dt)
   self:update_animation(dt)
   self:update_hitbox(dt)
   if self.atkhitbox then
-    self.atkhitbox.pos = self:get_hitboxpos()
+    self.atkhitbox.pos = self:get_atkhitboxpos()
   end
   for _, task in pairs(self.tasks) do
     task(self, dt)
@@ -160,7 +160,7 @@ function avatar:attack ()
     self.frametime = 0
     self.frame.j = 6
     self.atkhitbox = hitbox:new {
-      pos         = self:get_hitboxpos(),
+      pos         = self:get_atkhitboxpos(),
       targetclass = 'damageable'
     }
     self.atkhitbox:register 'playeratk'
