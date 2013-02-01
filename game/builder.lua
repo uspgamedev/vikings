@@ -85,5 +85,6 @@ function build_enemy ()
     sprite    = build_sprite(),
     direction = 'left'
   }
+  enemy.hitbox.class = 'damageable'
   return enemy
 end

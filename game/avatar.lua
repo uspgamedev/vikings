@@ -30,7 +30,11 @@ avatar.__init = {
     targetclass = 'damageable',
     on_collision = function (self, collisions)
       for _,another in ipairs(collisions) do
-        another:unregister()
+        if another.owner then
+          print "damageable avatar hit"
+        else
+          another:unregister()
+        end
       end
     end
   },
@@ -106,7 +110,7 @@ end
 
 function avatar:update_hitbox (dt)
   self.hitbox.owner = self
-  self.hitbox.pos   = self.pos:clone()
+  self.hitbox.pos   = self.pos - self.hitbox.size/2
   self.hitbox:register()
 end
 
