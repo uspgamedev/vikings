@@ -25,6 +25,15 @@ avatar.__init = {
   drawtasks = {},
   colsize   = vec2:new{ 1, 1 },
   hitbox    = nil, -- wat
+  atkhitbox = hitbox:new {
+    pos         = vec2:new{},
+    targetclass = 'damageable',
+    on_collision = function (self, collisions)
+      for _,another in ipairs(collisions) do
+        another:unregister()
+      end
+    end
+  },
 
   jumpsleft = 0,
   frametime = 0
@@ -159,16 +168,8 @@ function avatar:attack ()
     self.attacking = true
     self.frametime = 0
     self.frame.j = 6
-    self.atkhitbox = hitbox:new {
-      pos         = self:get_atkhitboxpos(),
-      targetclass = 'damageable'
-    }
+    self.atkhitbox.pos = self:get_atkhitboxpos(),
     self.atkhitbox:register 'playeratk'
-    function self.atkhitbox:on_collision (collisions)
-      for _,another in ipairs(collisions) do
-        another:unregister()
-      end
-    end
   end
 end
 
@@ -177,7 +178,6 @@ function avatar:stopattack ()
     self.attacking = false
     self.frame.j = 1
     self.atkhitbox:unregister()
-    self.atkhitbox = nil
   end
 end
 
