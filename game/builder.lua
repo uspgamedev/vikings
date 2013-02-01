@@ -51,7 +51,7 @@ function build_npc ()
   }
   npc.drawtasks.buble = draw_buble
   npc.tasks.buble = update_buble
-  function npc:interact(player)
+  function npc:interact (player)
     self.text = "Stay a while and listen."
     self.counter = 2
   end
@@ -67,7 +67,7 @@ function build_vendor ()
   }
   npc.drawtasks.buble = draw_buble
   npc.tasks.buble = update_buble
-  function npc:interact(player)
+  function npc:interact (player)
     if player.equipment[1] then
       self.text = "Nice color."
     else
