@@ -10,7 +10,7 @@ local function draw_buble (self, graphics)
     graphics.setColor(255, 255, 255, math.min(self.counter, 1) * 255)
     graphics.print(self.text, 
       map.get_tilesize() * (self.pos.x - 1),
-      map.get_tilesize() * (self.pos.y - 3)
+      map.get_tilesize() * (self.pos.y - 2.5)
     )
     graphics.setColor(255, 255, 255, 255)
   end
@@ -29,7 +29,7 @@ function build_sprite ()
     img       = love.graphics.newImage "sprite/viking_male_spritesheet.png",
     maxframe  = { i=13, j=9 },
     quadsize  = 64,
-    hotspot   = vec2:new{ 32, 60 },
+    hotspot   = vec2:new{ 32, 40 },
     collpts   = {
       vec2:new{20,60},
       vec2:new{20,15+45/2},

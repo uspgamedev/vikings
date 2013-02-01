@@ -145,7 +145,7 @@ function avatar:animate_attack (dt)
 end
 
 function avatar:get_atkhitboxpos ()
-  return self.pos+vec2:new{(self.direction=='right' and 0.75 or -1.75),-1}
+  return self.pos+vec2:new{(self.direction=='right' and 0.75 or -1.75), -.5}
 end
 
 function avatar:update (dt)
