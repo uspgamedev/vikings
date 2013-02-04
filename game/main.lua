@@ -140,6 +140,8 @@ function love.mousereleased (x, y, button)
 end
 
 function love.draw ()
+  screencenter = vec2:new{ love.graphics.getWidth(), love.graphics.getHeight() } * 0.5
+  love.graphics.translate((screencenter - avatars.player.pos * map.get_tilesize()):get())
   map.draw(love.graphics)
   for _,av in pairs(avatars) do
     av:draw(love.graphics)
