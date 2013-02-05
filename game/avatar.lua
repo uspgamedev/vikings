@@ -131,14 +131,14 @@ end
 function avatar:animate_attack (dt)
   self.frametime = self.frametime + dt
   while self.frametime >= 1/self.sprite.animfps do
-    if self.frame.j < 1 then
+    if self.frame.j > 6 then
       self:stopattack()
     else
-      self.frame.j = self.frame.j - 1
+      self.frame.j = self.frame.j + 1
       self.frametime = self.frametime - 1/self.sprite.animfps
     end
   end
-  if self.frame.j < 1 then
+  if self.frame.j > 6 then
     self:stopattack()
   end
 end
@@ -170,7 +170,7 @@ function avatar:attack ()
   if not self.attacking then
     self.attacking = true
     self.frametime = 0
-    self.frame.j = 6
+    self.frame.j = 1
     self.atkhitbox.pos = self:get_atkhitboxpos(),
     self.atkhitbox:register 'playeratk'
   end
