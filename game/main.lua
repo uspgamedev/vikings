@@ -4,6 +4,7 @@ require 'map'
 require 'avatar'
 require 'builder'
 require 'message'
+require 'mapgenerator'
 
 local w,h
 local screencenter
@@ -17,7 +18,7 @@ function love.load ()
   screencenter = vec2:new{w,h} * 0.5
   camera_pos = vec2:new{ w/2, h/2 }
 
-  current_map = map:new{}
+  current_map = mapgenerator.random_map()
 
   local player = avatar:new {
     pos    = vec2:new{ 2, 9 },

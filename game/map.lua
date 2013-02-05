@@ -2,11 +2,10 @@
 require 'lux.object'
 
 map = lux.object.new {
-  width   = 25,
-  height  = 18,
+  width   = 0,
+  height  = 0,
 
-  tiles   = nil,
-  tileset = nil
+  tileset = nil 
 }
 
 function map.get_tilesize ()
@@ -14,25 +13,19 @@ function map.get_tilesize ()
 end
 
 function map:__init ()
-  local img = love.graphics.newImage 'tile/ice.png'
-
-  self.tileset = {
-    empty = { img = nil, floor = false },
-    ice   = { img = img, floor = true }
-  }
-
   self.tiles = {}
-
-  for i=1,self.height do
-    self.tiles[i] = {}
-    for j=1,self.width do
-      self.tiles[i][j] = { i=i, j=j }
+  for j=1,self.height do
+    self.tiles[j] = {}
+    for i=1,self.width do
+      local tile = self.tilegenerator(j, i)
+      local type = self.tileset[tile.type] or self.tileset.empty
+      tile.i = i
+      tile.j = j
+      tile.img    = tile.img   or type.img
+      tile.floor  = tile.floor or type.floor
+      self.tiles[j][i] = tile
     end
   end
-  for j=1,self.width do
-    self:set_tile(10, j, 'ice')
-  end
-  self:set_tile(9, 14, 'ice')
 end
 
 function map:get_tile (i, j)
