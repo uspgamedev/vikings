@@ -57,6 +57,7 @@ function build_axesprite ()
       vec2:new{32-4,32-4}
     }
   }
+  axe.img:setFilter("linear", "linear")
   return axe
 end
 
