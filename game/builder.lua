@@ -5,6 +5,7 @@ require 'vec2'
 require 'avatar'
 require 'collectable'
 require 'sprite'
+require 'message'
 
 local function draw_buble (self, graphics)
   if self.text then
@@ -115,5 +116,12 @@ function build_item ()
     sprite    = build_axesprite(),
   }
   item.hitbox.class = 'weapon'
+  item.hitbox.targetclass = 'avatar'
+  function item.hitbox:on_collision (collisions)
+    if not collisions[1] or collisions[1].owner then return end
+    collisions[1].owner:equip(1, {})
+    message.send [[game]] {'kill', self.owner}
+  end
+  item.hitbox:register()
   return item
 end
