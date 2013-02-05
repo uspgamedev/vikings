@@ -6,12 +6,14 @@ require 'builder'
 require 'message'
 
 local w,h
+local screencenter
 local camera_pos
 local tasks = {}
 local avatars = {}
 
 function love.load ()
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
+  screencenter = vec2:new{w,h} * 0.5
   camera_pos = vec2:new{ w/2, h/2 }
   map.load(love.graphics)
 
@@ -114,7 +116,8 @@ end
 local function mousetotile ()
   local x,y       = love.mouse.getPosition()
   local tilesize  = map.get_tilesize()
-  return math.floor(y/tilesize)+1, math.floor(x/tilesize)+1
+  return math.floor((y - screencenter.y)/tilesize + avatars.player.pos.y) + 1, 
+         math.floor((x - screencenter.x)/tilesize + avatars.player.pos.x) + 1
 end
 
 local function tilesetter (typeid)
@@ -141,7 +144,6 @@ function love.mousereleased (x, y, button)
 end
 
 function love.draw ()
-  screencenter = vec2:new{ love.graphics.getWidth(), love.graphics.getHeight() } * 0.5
   love.graphics.translate((screencenter - avatars.player.pos * map.get_tilesize()):get())
   map.draw(love.graphics)
   for _,av in pairs(avatars) do
