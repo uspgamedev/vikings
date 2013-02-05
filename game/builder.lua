@@ -47,7 +47,7 @@ end
 local axe
 function build_axesprite ()
   axe = axe or sprite:new {
-    img       = love.graphics.newImage "sprite/battle-axe.png",
+    img       = love.graphics.newImage "sprite/battle-axe-v02.png",
     maxframe  = { i=1, j=1 },
     quadsize  = 32,
     hotspot   = vec2:new{ 16, 16 },
