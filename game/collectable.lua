@@ -12,7 +12,7 @@ collectable = lux.object.new {
   hitbox    = nil,
 }
 
-avatar.__init = {
+collectable.__init = {
   pos       = vec2:new{ 0, 0 },
   spd       = vec2:new{ 0, 0 },
   frame     = { i=1, j=1 },
