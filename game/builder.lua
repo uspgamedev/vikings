@@ -3,6 +3,7 @@ module ('builder', package.seeall)
 
 require 'vec2'
 require 'avatar'
+require 'collectable'
 require 'sprite'
 
 local function draw_buble (self, graphics)
@@ -40,6 +41,23 @@ function build_sprite ()
     }
   }
   return butler
+end
+
+local axe
+function build_axesprite ()
+  axe = axe or sprite:new {
+    img       = love.graphics.newImage "sprite/battle-axe.png",
+    maxframe  = { i=1, j=1 },
+    quadsize  = 32,
+    hotspot   = vec2:new{ 16, 16 },
+    collpts   = {
+      vec2:new{4,4},
+      vec2:new{4,32-4},
+      vec2:new{32-4,4},
+      vec2:new{32-4,32-4}
+    }
+  }
+  return axe
 end
 
 function build_npc ()
@@ -87,4 +105,14 @@ function build_enemy ()
   }
   enemy.hitbox.class = 'damageable'
   return enemy
+end
+
+function build_item ()
+  local item = collectable:new {
+    pos       = vec2:new{ 21.5, 8 },
+    spd       = vec2:new{ 0, 0 },
+    sprite    = build_axesprite(),
+  }
+  item.hitbox.class = 'weapon'
+  return item
 end
