@@ -3,14 +3,16 @@ module ('builder', package.seeall)
 
 require 'vec2'
 require 'avatar'
+require 'collectable'
 require 'sprite'
+require 'message'
 
 local function draw_buble (self, graphics)
   if self.text then
     graphics.setColor(255, 255, 255, math.min(self.counter, 1) * 255)
     graphics.print(self.text, 
       map.get_tilesize() * (self.pos.x - 1),
-      map.get_tilesize() * (self.pos.y - 3)
+      map.get_tilesize() * (self.pos.y - 2.5)
     )
     graphics.setColor(255, 255, 255, 255)
   end
@@ -29,7 +31,7 @@ function build_sprite ()
     img       = love.graphics.newImage "sprite/viking_male_spritesheet.png",
     maxframe  = { i=13, j=9 },
     quadsize  = 64,
-    hotspot   = vec2:new{ 32, 60 },
+    hotspot   = vec2:new{ 32, 40 },
     collpts   = {
       vec2:new{20,60},
       vec2:new{20,15+45/2},
@@ -40,6 +42,24 @@ function build_sprite ()
     }
   }
   return butler
+end
+
+local axe
+function build_axesprite ()
+  axe = axe or sprite:new {
+    img       = love.graphics.newImage "sprite/battle-axe.png",
+    maxframe  = { i=1, j=1 },
+    quadsize  = 32,
+    hotspot   = vec2:new{ 16, 16 },
+    collpts   = {
+      vec2:new{4,4},
+      vec2:new{4,32-4},
+      vec2:new{32-4,4},
+      vec2:new{32-4,32-4}
+    }
+  }
+  axe.img:setFilter("linear", "linear")
+  return axe
 end
 
 function build_npc ()
@@ -87,4 +107,21 @@ function build_enemy ()
   }
   enemy.hitbox.class = 'damageable'
   return enemy
+end
+
+function build_item ()
+  local item = collectable:new {
+    pos       = vec2:new{ 21.5, 8 },
+    spd       = vec2:new{ 0, 0 },
+    sprite    = build_axesprite(),
+  }
+  item.hitbox.class = 'weapon'
+  item.hitbox.targetclass = 'avatar'
+  function item.hitbox:on_collision (collisions)
+    if not collisions[1] or not collisions[1].owner then return end
+    collisions[1].owner:equip(1, {})
+    message.send [[game]] {'kill', self.owner}
+  end
+  item.hitbox:register()
+  return item
 end

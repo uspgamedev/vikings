@@ -44,6 +44,7 @@ function love.load ()
   table.insert(avatars, builder.build_npc())
   table.insert(avatars, builder.build_vendor())
   table.insert(avatars, builder.build_enemy())
+  table.insert(avatars, builder.build_item())
 
   tasks.updateavatars = function (dt)
     for _,av in pairs(avatars) do
