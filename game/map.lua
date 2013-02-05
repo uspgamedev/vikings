@@ -1,47 +1,57 @@
 
-module ('map', package.seeall)
+require 'lux.object'
 
-local width, height = 25, 18
-local tilesize      = 32
-local tiles         = {}
-local tileset       = {}
+map = lux.object.new {
+  width   = 25,
+  height  = 18,
 
-function load (graphics)
+  tiles   = nil,
+  tileset = nil
+}
+
+function map.get_tilesize ()
+  return 32
+end
+
+function map:__init ()
   local img = love.graphics.newImage 'tile/ice.png'
-  tileset.empty = { img = nil, floor = false }
-  tileset.ice   = { img = img, floor = true }
-  for i=1,height do
-    tiles[i] = {}
-    for j=1,width do
-      tiles[i][j] = { i=i, j=j }
+
+  self.tileset = {
+    empty = { img = nil, floor = false },
+    ice   = { img = img, floor = true }
+  }
+
+  self.tiles = {}
+
+  for i=1,self.height do
+    self.tiles[i] = {}
+    for j=1,self.width do
+      self.tiles[i][j] = { i=i, j=j }
     end
   end
-  for j=1,width do
-    set_tile(10, j, 'ice')
+  for j=1,self.width do
+    self:set_tile(10, j, 'ice')
   end
-  set_tile(9, 14, 'ice')
+  self:set_tile(9, 14, 'ice')
 end
 
-function get_tilesize ()
-  return tilesize
+function map:get_tile (i, j)
+  return self.tiles[i] and self.tiles[i][j]
 end
 
-function get_tile (i, j)
-  return tiles[i] and tiles[i][j]
-end
-
-function set_tile (i, j, typeid)
-  local tile = get_tile(i,j)
-  local type = tileset[typeid] or tileset.empty
+function map:set_tile (i, j, typeid)
+  local tile = self:get_tile(i,j)
+  local type = self.tileset[typeid] or self.tileset.empty
   if tile then
     tile.img    = type.img
     tile.floor  = type.floor
   end
 end
 
-function draw (graphics)
-  graphics.rectangle('line', 0, 0, width*tilesize, height*tilesize)
-  for y,row in ipairs(tiles) do
+function map:draw (graphics)
+  local tilesize = map.get_tilesize()
+  graphics.rectangle('line', 0, 0, self.width*tilesize, self.height*tilesize)
+  for y,row in ipairs(self.tiles) do
     for x,tile in ipairs(row) do
       if tile.img then
         graphics.draw(tile.img, tilesize*(x-1), tilesize*(y-1))
