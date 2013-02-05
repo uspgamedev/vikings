@@ -118,7 +118,7 @@ function build_item ()
   item.hitbox.class = 'weapon'
   item.hitbox.targetclass = 'avatar'
   function item.hitbox:on_collision (collisions)
-    if not collisions[1] or collisions[1].owner then return end
+    if not collisions[1] or not collisions[1].owner then return end
     collisions[1].owner:equip(1, {})
     message.send [[game]] {'kill', self.owner}
   end
