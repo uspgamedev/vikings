@@ -4,19 +4,21 @@ require 'map'
 require 'avatar'
 require 'builder'
 require 'message'
+require 'mapgenerator'
 
 local w,h
 local screencenter
 local camera_pos
 local tasks = {}
 local avatars = {}
+local current_map
 
 function love.load ()
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
   screencenter = vec2:new{w,h} * 0.5
   camera_pos = vec2:new{ w/2, h/2 }
-  map.load(love.graphics)
 
+  current_map = mapgenerator.random_map()
 
   local player = avatar:new {
     pos    = vec2:new{ 2, 9 },
@@ -50,7 +52,7 @@ function love.load ()
 
   tasks.updateavatars = function (dt)
     for _,av in pairs(avatars) do
-      av:update(dt)
+      av:update(dt, current_map)
     end
   end
 
@@ -145,7 +147,7 @@ end
 
 function love.draw ()
   love.graphics.translate((screencenter - avatars.player.pos * map.get_tilesize()):get())
-  map.draw(love.graphics)
+  current_map:draw(love.graphics)
   for _,av in pairs(avatars) do
     av:draw(love.graphics)
   end

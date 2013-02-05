@@ -1,7 +1,6 @@
 
 require 'lux.object'
 require 'vec2'
-require 'map'
 require 'hitbox'
 require 'message'
 
@@ -58,13 +57,13 @@ function avatar:die ()
   self.atkhitbox:unregister()
 end
 
-local function pos_to_tile (point)
-  return map.get_tile(math.floor(point.y), math.floor(point.x))
+local function pos_to_tile (map, point)
+  return map:get_tile(math.floor(point.y), math.floor(point.x))
 end
 
-function avatar:colliding (position)
+function avatar:colliding(map, position)
   for _,p in ipairs(self.sprite.collpts) do
-    local tile = pos_to_tile(position-(self.sprite.hotspot-p)/32)
+    local tile = pos_to_tile(map, position-(self.sprite.hotspot-p)/32)
     if not tile or tile.floor then
       return true
     end
@@ -72,19 +71,19 @@ function avatar:colliding (position)
   return false
 end
 
-function avatar:update_physics (dt)
+function avatar:update_physics (dt, map)
   -- no, negative speed doesn't increase forever
   self.spd.x = math.min(math.max(-maxspd.x, self.spd.x), maxspd.x)
   self.spd.y = math.min(math.max(-maxspd.y, self.spd.y), maxspd.y)
-  if self:colliding(self.pos) then
+  if self:colliding(map, self.pos) then
     error "Ooops, youre inside a wall"
   end
   self.pos:add(self.spd*dt)
-  if self:colliding(self.pos) then
+  if self:colliding(map, self.pos) then
     local horizontal  = -vec2:new{self.spd.x*dt,0}
     local vertical    = -vec2:new{0,self.spd.y*dt}
-    local hor_check   = self:colliding(self.pos+horizontal)
-    local ver_check   = self:colliding(self.pos+vertical)
+    local hor_check   = self:colliding(map, self.pos+horizontal)
+    local ver_check   = self:colliding(map, self.pos+vertical)
     if not (hor_check and not ver_check) then
       self.pos.x = self.pos.x - self.spd.x*dt
     end
@@ -148,8 +147,8 @@ function avatar:get_atkhitboxpos ()
   return self.pos+vec2:new{(self.direction=='right' and 0.75 or -1.75), -.5}
 end
 
-function avatar:update (dt)
-  self:update_physics(dt)
+function avatar:update (dt, map)
+  self:update_physics(dt, map)
   self:update_animation(dt)
   self:update_hitbox(dt)
   if self.atkhitbox then

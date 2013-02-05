@@ -1,7 +1,6 @@
 
 require 'lux.object'
 require 'vec2'
-require 'map'
 require 'hitbox'
 
 collectable = lux.object.new {
@@ -33,13 +32,13 @@ function collectable:die ()
   self.hitbox:unregister()
 end
 
-local function pos_to_tile (point)
-  return map.get_tile(math.floor(point.y), math.floor(point.x))
+local function pos_to_tile (map, point)
+  return map:get_tile(math.floor(point.y), math.floor(point.x))
 end
 
-function collectable:colliding (position)
+function collectable:colliding (map, position)
   for _,p in ipairs(self.sprite.collpts) do
-    local tile = pos_to_tile(position-(self.sprite.hotspot-p)/32)
+    local tile = pos_to_tile(map, position-(self.sprite.hotspot-p)/32)
     if not tile or tile.floor then
       return true
     end
@@ -47,19 +46,19 @@ function collectable:colliding (position)
   return false
 end
 
-function collectable:update_physics (dt)
+function collectable:update_physics (dt, map)
   -- no, negative speed doesn't increase forever
   self.spd.x = math.min(math.max(-maxspd.x, self.spd.x), maxspd.x)
   self.spd.y = math.min(math.max(-maxspd.y, self.spd.y), maxspd.y)
-  if self:colliding(self.pos) then
+  if self:colliding(map, self.pos) then
     error "Ooops, youre inside a wall"
   end
   self.pos:add(self.spd*dt)
-  if self:colliding(self.pos) then
+  if self:colliding(map, self.pos) then
     local horizontal  = -vec2:new{self.spd.x*dt,0}
     local vertical    = -vec2:new{0,self.spd.y*dt}
-    local hor_check   = self:colliding(self.pos+horizontal)
-    local ver_check   = self:colliding(self.pos+vertical)
+    local hor_check   = self:colliding(map, self.pos+horizontal)
+    local ver_check   = self:colliding(map, self.pos+vertical)
     if not (hor_check and not ver_check) then
       self.pos.x = self.pos.x - self.spd.x*dt
     end
@@ -85,8 +84,8 @@ function collectable:update_hitbox (dt)
   self.hitbox:register()
 end
 
-function collectable:update (dt)
-  self:update_physics(dt)
+function collectable:update (dt, map)
+  self:update_physics(dt, map)
   self:update_animation(dt)
   self:update_hitbox(dt)
   for _, task in pairs(self.tasks) do
