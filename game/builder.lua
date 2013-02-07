@@ -31,6 +31,7 @@ function build_sprite ()
     img       = love.graphics.newImage "sprite/viking_male_spritesheet.png",
     maxframe  = { i=13, j=9 },
     quadsize  = 64,
+    animfps   = 15,
     hotspot   = vec2:new{ 32, 40 },
     collpts   = {
       vec2:new{20,60},
