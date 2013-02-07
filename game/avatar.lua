@@ -142,7 +142,7 @@ function avatar:animate_attack (dt)
   if self.frame.j > 6 then
     self:stopattack()
   end
-  if self.attacking and self.frame.j >= 6 then
+  if self.attacking and self.frame.j >= 5 then
     self.atkhitbox:register 'playeratk'
   end
 end
@@ -156,7 +156,7 @@ function avatar:get_atkpos ()
   return
     self.pos +
     vec2:new{
-      (self.direction=='right' and 1 or -1),
+      (self.direction=='right' and 1 or -1)*0.8,
       -4/tilesize
     }
 end
