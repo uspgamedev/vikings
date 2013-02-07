@@ -4,15 +4,18 @@ require 'vec2'
 require 'map'
 
 sprite = lux.object.new {
-  img       = nil,
-  maxframe  = nil,
-  animfps   = 25,
-  quadsize  = nil, -- must be a number
-  hotspot   = nil,
-  collpts   = nil
+  img           = nil,
+  maxframe      = nil,
+  animfps       = 25,
+  quadsize      = nil, -- must be a number
+  hotspot       = nil,
+  collpts       = nil,
+  default_frame = 1,
+  dirmap        = nil
 }
 
 function sprite:__init()
+  self.dirmap = self.dirmap or {}
   self.quads = {}
   for i=1, self.maxframe.i do
     self.quads[i] = {}
@@ -24,6 +27,10 @@ function sprite:__init()
       )
     end
   end
+end
+
+function sprite:frame_from_direction(dir)
+  return self.dirmap[dir] or self.default_frame
 end
 
 function sprite:draw (graphics, frame, pos, mirror)

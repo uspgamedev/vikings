@@ -19,7 +19,7 @@ local function draw_buble (self, graphics)
 end
 
 local function update_buble (self, dt)
-  self.counter = self.counter - dt
+  self.counter = (self.counter or 0) - dt
   if self.counter <= 0 then
     self.text = nil
   end
@@ -40,6 +40,10 @@ function build_sprite ()
       vec2:new{44,60},
       vec2:new{44,15+45/2},
       vec2:new{44,15}
+    },
+    dirmap = {
+      left = 2,
+      right = 4
     }
   }
   return butler
