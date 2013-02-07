@@ -142,6 +142,9 @@ function avatar:animate_attack (dt)
   if self.frame.j > 6 then
     self:stopattack()
   end
+  if self.attacking and self.frame.j >= 6 then
+    self.atkhitbox:register 'playeratk'
+  end
 end
 
 function avatar:get_atkhitboxpos ()
@@ -182,8 +185,8 @@ function avatar:attack ()
     self.attacking = true
     self.frametime = 0
     self.frame.j = 1
-    self.atkhitbox.pos = self:get_atkhitboxpos(),
-    self.atkhitbox:register 'playeratk'
+    self.atkhitbox.pos = self:get_atkhitboxpos()
+    --self.atkhitbox:register 'playeratk'
   end
 end
 
