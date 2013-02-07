@@ -40,6 +40,10 @@ function build_sprite ()
       vec2:new{44,60},
       vec2:new{44,15+45/2},
       vec2:new{44,15}
+    },
+    dirmap = {
+      left = 2,
+      right = 4
     }
   }
   return butler

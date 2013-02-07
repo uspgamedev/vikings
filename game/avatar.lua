@@ -1,5 +1,4 @@
 
-require 'lux.object'
 require 'thing'
 require 'vec2'
 require 'hitbox'
@@ -33,9 +32,6 @@ end
 local jumpspd   = -12
 local min_equipment_slot = 1
 local max_equipment_slot = 1
-local dir_map   = {
-  left = 2, right = 4
-}
 
 function avatar:die ()
   self.hitbox:unregister()
@@ -43,7 +39,7 @@ function avatar:die ()
 end
 
 function avatar:update_animation (dt)
-  self.frame.i = dir_map[self.direction] + (self.attacking and 4 or 0)
+  self.frame.i = self.sprite:frame_from_direction(self.direction) + (self.attacking and 4 or 0)
   local moving = self.spd.x ~= 0
   if not moving and not self.attacking then
     self.frame.j = 1

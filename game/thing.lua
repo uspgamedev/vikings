@@ -29,9 +29,6 @@ thing.__init = {
 
 local gravity   = vec2:new{  0,  30 }
 local maxspd    = vec2:new{ 30,  30 }
-local dir_map   = {
-  left = 2, right = 4
-}
 
 function thing:die ()
   self.hitbox:unregister()
@@ -80,7 +77,7 @@ function thing:update_physics (dt, map)
 end
 
 function thing:update_animation (dt)
-  self.frame.i = dir_map[self.direction]
+  self.frame.i = self.sprite:frame_from_direction(self.direction)
   local moving = self.spd.x ~= 0
   if not moving then
     self.frame.j = 1
