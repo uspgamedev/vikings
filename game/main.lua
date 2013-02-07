@@ -125,7 +125,7 @@ end
 local function tilesetter (typeid)
   return function ()
     local i, j = mousetotile()
-    map.set_tile(i, j, typeid)
+    current_map:set_tile(i, j, typeid)
   end
 end
 
