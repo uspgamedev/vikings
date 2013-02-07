@@ -19,7 +19,7 @@ local function draw_buble (self, graphics)
 end
 
 local function update_buble (self, dt)
-  self.counter = self.counter - dt
+  self.counter = (self.counter or 0) - dt
   if self.counter <= 0 then
     self.text = nil
   end
