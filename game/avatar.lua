@@ -156,7 +156,7 @@ function avatar:get_atkpos ()
   return
     self.pos +
     vec2:new{
-      (self.direction=='right' and 1 or -1),
+      (self.direction=='right' and 1 or -1)*0.8,
       -4/tilesize
     }
 end
