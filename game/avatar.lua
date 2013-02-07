@@ -142,7 +142,7 @@ function avatar:animate_attack (dt)
   if self.frame.j > 6 then
     self:stopattack()
   end
-  if self.attacking and self.frame.j >= 6 then
+  if self.attacking and self.frame.j >= 5 then
     self.atkhitbox:register 'playeratk'
   end
 end
