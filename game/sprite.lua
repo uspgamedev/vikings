@@ -26,8 +26,11 @@ function sprite:__init()
   end
 end
 
-function sprite:draw (graphics, frame, pos)
+function sprite:draw (graphics, frame, pos, mirror)
   local tilesize = map.get_tilesize()
+  if mirror == 'h' then
+    self.quads[frame.i][frame.j]:flip(true, false)
+  end
   graphics.drawq(
     self.img,
     self.quads[frame.i][frame.j],
@@ -35,4 +38,7 @@ function sprite:draw (graphics, frame, pos)
     0, 1, 1,
     self.hotspot:get()
   )
+  if mirror == 'h' then
+    self.quads[frame.i][frame.j]:flip(true, false)
+  end
 end
