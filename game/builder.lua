@@ -44,6 +44,18 @@ function build_sprite ()
   return butler
 end
 
+local slash
+function build_slash ()
+  slash = slash or sprite:new {
+    img       = love.graphics.newImage "sprite/slash.png",
+    maxframe  = { i=3, j=1 },
+    quadsize  = 64,
+    hotspot   = vec2:new{ 32, 32 },
+    collpts   = {}
+  }
+  return slash
+end
+
 local axe
 function build_axesprite ()
   axe = axe or sprite:new {

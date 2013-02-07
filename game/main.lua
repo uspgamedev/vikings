@@ -21,10 +21,11 @@ function love.load ()
   current_map = mapgenerator.random_map()
 
   local player = avatar:new {
-    pos    = vec2:new{ 2, 9 },
-    spd    = vec2:new{ 0, 0 },
-    sprite = builder.build_sprite(),
-    frame  = { i=4, j=1 },
+    pos       = vec2:new{ 2, 9 },
+    spd       = vec2:new{ 0, 0 },
+    sprite    = builder.build_sprite(),
+    slashspr  = builder.build_slash(),
+    frame     = { i=4, j=1 },
   }
   function player:try_interact()
     collisions = player.hitbox:get_collisions("avatar")

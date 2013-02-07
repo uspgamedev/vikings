@@ -8,6 +8,7 @@ avatar = lux.object.new {
   pos       = nil,
   spd       = nil,
   sprite    = nil,
+  slashspr  = nil,
   frame     = nil,
   hitbox    = nil,
 
@@ -141,10 +142,23 @@ function avatar:animate_attack (dt)
   if self.frame.j > 6 then
     self:stopattack()
   end
+  if self.attacking and self.frame.j >= 6 then
+    self.atkhitbox:register 'playeratk'
+  end
 end
 
 function avatar:get_atkhitboxpos ()
   return self.pos+vec2:new{(self.direction=='right' and 0.75 or -1.75), -.5}
+end
+
+function avatar:get_atkpos ()
+  local tilesize = map.get_tilesize()
+  return
+    self.pos +
+    vec2:new{
+      (self.direction=='right' and 1 or -1),
+      -4/tilesize
+    }
 end
 
 function avatar:update (dt, map)
@@ -171,8 +185,8 @@ function avatar:attack ()
     self.attacking = true
     self.frametime = 0
     self.frame.j = 1
-    self.atkhitbox.pos = self:get_atkhitboxpos(),
-    self.atkhitbox:register 'playeratk'
+    self.atkhitbox.pos = self:get_atkhitboxpos()
+    --self.atkhitbox:register 'playeratk'
   end
 end
 
@@ -203,6 +217,14 @@ function avatar:draw (graphics)
   if self.equipment[1] then graphics.setColor(255,   0,   0) end
   self.sprite:draw(graphics, self.frame, self.pos)
   if self.equipment[1] then graphics.setColor(255, 255, 255) end
+  if self.slashspr and self.attacking and self.frame.j >= 4 then
+    self.slashspr:draw(
+      graphics,
+      {i=self.frame.j-3, j=1},
+      self:get_atkpos(),
+      self.direction=='right' and 'h' or nil
+    )
+  end
   for _, task in pairs(self.drawtasks) do
     task(self, graphics)
   end
