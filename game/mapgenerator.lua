@@ -31,11 +31,7 @@ function default_map()
   }
 end
 
-local empty_block = { 
-{' ', ' ', ' ', ' '},
-{' ', ' ', ' ', ' '},
-{' ', ' ', ' ', ' '},
-{' ', ' ', ' ', ' '}, }
+local empty_block = { '    ', '    ', '    ', '    ', }
 
 local function generate_blocks_grid(num_blocks_x, num_blocks_y, blocks)
   local blocks_grid = {
@@ -46,7 +42,19 @@ local function generate_blocks_grid(num_blocks_x, num_blocks_y, blocks)
   for j=1,num_blocks_y do
     blocks_grid[j] = {}
     for i=1,num_blocks_x do
-      blocks_grid[j][i] = (j <= num_blocks_y/2 and empty_block) or blocks[math.random(#blocks)]
+      if j <= num_blocks_y/2 then
+        blocks_grid[j][i] = empty_block
+      else
+        rarity = math.random() * blocks.total_rarity
+        for _, block in ipairs(blocks) do
+          if rarity < block.rarity then
+            blocks_grid[j][i] = block
+            break
+          else
+            rarity = rarity - block.rarity
+          end
+        end
+      end
     end
   end
   return blocks_grid
@@ -60,7 +68,7 @@ local function generate_map_from_grid(grid)
     tilegenerator = function (aj, ai)
       local block_i, block_j = math.floor((ai-1) / grid.blocks.width) + 1, math.floor((aj-1) / grid.blocks.height) + 1
       local i, j = (ai-1) % grid.blocks.width + 1, (aj-1) % grid.blocks.height + 1
-      return { type = grid[block_j][block_i][j][i] }
+      return { type = grid[block_j][block_i][j]:sub(i,i) }
     end
   }
 end
@@ -70,23 +78,15 @@ function random_map()
     width  = 4,
     height = 4,
     tileset = get_tileset(),
-    { {' ', ' ', ' ', ' '},
-      {' ', ' ', 'I', ' '},
-      {' ', ' ', ' ', ' '},
-      {' ', ' ', ' ', ' '}, },
-    { {' ', ' ', ' ', ' '},
-      {' ', 'I', ' ', ' '},
-      {' ', ' ', ' ', ' '},
-      {' ', ' ', ' ', ' '}, },
-    { {' ', ' ', ' ', ' '},
-      {' ', ' ', ' ', ' '},
-      {'I', 'I', 'I', 'I'},
-      {'I', 'I', 'I', 'I'}, },
-    { {' ', ' ', ' ', ' '},
-      {' ', 'I', 'I', 'I'},
-      {' ', 'I', 'I', 'I'},
-      {' ', ' ', ' ', ' '}, },
+    total_rarity = 0,
+    { '    ', '  I ', '    ', '    ', rarity = 1 },
+    { '    ', ' I  ', '    ', '    ', rarity = 1 },
+    { '    ', '    ', 'IIII', 'IIII', rarity = 2 },
+    { '    ', ' III', ' III', '    ', rarity = 2 },
   }
+  for _, block in ipairs(blocks) do
+    blocks.total_rarity = blocks.total_rarity + block.rarity
+  end
 
   local blocks_grid = generate_blocks_grid(12, 8, blocks)
   return generate_map_from_grid(blocks_grid)
