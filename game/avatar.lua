@@ -7,7 +7,7 @@ require 'sound'
 
 avatar = thing:new {
   slashspr  = nil,
-  life      = 20,
+  life      = 200,
   dmg_delay = 0,
 
   attacking = false
@@ -69,7 +69,7 @@ function avatar:animate_attack (dt)
     self:stopattack()
   end
   if self.attacking and self.frame.j >= 5 then
-    self.atkhitbox:register 'playeratk'
+    --self.atkhitbox:register 'playeratk'
   end
 end
 
@@ -104,11 +104,12 @@ end
 
 function avatar:attack ()
   if not self.attacking and self.equipment[1] then
+    sound.effect 'slash'
     self.attacking = true
     self.frametime = 0
     self.frame.j = 1
     self.atkhitbox.pos = self:get_atkhitboxpos()
-    --self.atkhitbox:register 'playeratk'
+    self.atkhitbox:register 'playeratk'
   end
 end
 
