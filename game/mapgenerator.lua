@@ -60,8 +60,8 @@ local function generate_blocks_grid(num_blocks_x, num_blocks_y, blocks)
   return blocks_grid
 end
 
-local function generate_map_from_grid(grid)
-  return map:new {
+local function generate_cave_from_grid(grid)
+  local thecave = map:new {
     tileset = grid.blocks.tileset,
     width   = grid.num_x * grid.blocks.width,
     height  = grid.num_y * grid.blocks.height,
@@ -71,6 +71,7 @@ local function generate_map_from_grid(grid)
       return { type = grid[block_j][block_i][j]:sub(i,i) }
     end
   }
+  return thecave
 end
 
 function random_map()
@@ -89,5 +90,5 @@ function random_map()
   end
 
   local blocks_grid = generate_blocks_grid(12, 8, blocks)
-  return generate_map_from_grid(blocks_grid)
+  return generate_cave_from_grid(blocks_grid)
 end
