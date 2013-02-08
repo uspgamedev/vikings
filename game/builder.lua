@@ -6,6 +6,7 @@ require 'avatar'
 require 'collectable'
 require 'sprite'
 require 'message'
+require 'sound'
 
 local function draw_buble (self, graphics)
   if self.text then
@@ -137,6 +138,7 @@ function build_item ()
   function item.hitbox:on_collision (collisions)
     if not collisions[1] or not collisions[1].owner then return end
     collisions[1].owner:equip(1, {})
+    sound.effect 'pick'
     message.send [[game]] {'kill', self.owner}
   end
   item.hitbox:register()

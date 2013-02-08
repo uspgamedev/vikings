@@ -99,6 +99,7 @@ function avatar:jump ()
   if self.jumpsleft > 0 then
     self.jumpsleft = self.jumpsleft - 1
     self.spd.y = jumpspd
+    sound.effect 'jump'
   end
 end
 

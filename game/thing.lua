@@ -68,6 +68,9 @@ function thing:update_physics (dt, map)
        (hor_check and ver_check) then
       self.pos.y = self.pos.y - self.spd.y*dt
       if self.spd.y > 0 then
+        if self.jumpsleft and self.jumpsleft < 2 then
+          sound.effect 'land'
+        end
         self.jumpsleft = 2
       end
       self.spd.y = 0
