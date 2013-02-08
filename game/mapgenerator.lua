@@ -61,15 +61,41 @@ local function generate_blocks_grid(num_blocks_x, num_blocks_y, blocks)
 end
 
 local function generate_cave_from_grid(grid)
+  local width, height = grid.num_x * grid.blocks.width, grid.num_y * grid.blocks.height
+  local fullmap = {}
+  for j=1,height do
+    fullmap[j] = ""
+    for bi=1,grid.num_x do
+      local block_j = math.floor((j-1) / grid.blocks.height) + 1
+      local ij = (j-1) % grid.blocks.height + 1
+      fullmap[j] = fullmap[j] .. grid[block_j][bi][ij]
+    end
+  end
+  table.foreach(fullmap, print)
+  local oldmap
+  for iterations=1,4 do
+    oldmap = fullmap
+    fullmap = {}
+    for j=1,height do
+      fullmap[j] = ""
+      for i=1,width do
+        fullmap[j] = fullmap[j] .. oldmap[j]:sub(i,i)
+      end
+    end
+  end
+
   local thecave = map:new {
     tileset = grid.blocks.tileset,
     width   = grid.num_x * grid.blocks.width,
     height  = grid.num_y * grid.blocks.height,
-    tilegenerator = function (aj, ai)
+    tilegenerator = function (aj,ai) 
+      return { type = fullmap[aj]:sub(ai,ai) }
+    end
+    --[[function (aj, ai)
       local block_i, block_j = math.floor((ai-1) / grid.blocks.width) + 1, math.floor((aj-1) / grid.blocks.height) + 1
       local i, j = (ai-1) % grid.blocks.width + 1, (aj-1) % grid.blocks.height + 1
       return { type = grid[block_j][block_i][j]:sub(i,i) }
-    end
+    end]]
   }
   return thecave
 end
