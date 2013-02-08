@@ -9,7 +9,7 @@ thing = lux.object.new {
   sprite    = nil,
   frame     = nil,
   hitbox    = nil,
-  air       = false,
+  air       = 0,
 
   direction = 'right',
 }
@@ -28,8 +28,9 @@ thing.__init = {
   frametime = 0
 }
 
-local gravity   = vec2:new{  0,  30 }
-local maxspd    = vec2:new{ 30,  30 }
+local gravity     = vec2:new{  0,  30 }
+local maxspd      = vec2:new{ 30,  30 }
+local MIN_AIRTIME = 0.1
 
 function thing:die ()
   self.hitbox:unregister()
@@ -68,14 +69,20 @@ function thing:update_physics (dt, map)
     if (hor_check and not ver_check) or
        (hor_check and ver_check) then
       self.pos.y = self.pos.y - self.spd.y*dt
-      if self.spd.y > 0 and self.air then
-        sound.effect 'land'
-        self.jumpsleft = 2
+      if self.spd.y > 0 and self.air > 0 then
+        if self.air > MIN_AIRTIME then
+          sound.effect 'land'
+        end
+        self.airjumpsleft = 1
       end
       self.spd.y = 0
     end
   end
-  self.air = self.spd.y > 0
+  if self.spd.y ~= 0 then
+    self.air = self.air + dt
+  else
+    self.air = 0
+  end
   self.spd:add(gravity * dt)
 end
 

@@ -29,7 +29,7 @@ function avatar:__init()
     end
   }
 
-  self.jumpsleft = 0
+  self.airjumpsleft = 0
 end
 
 local jumpspd   = -12
@@ -96,8 +96,10 @@ function avatar:update (dt, map)
 end
 
 function avatar:jump ()
-  if self.jumpsleft > 0 then
-    self.jumpsleft = self.jumpsleft - 1
+  if self.airjumpsleft > 0 or self.air == 0 then
+    if self.air > 0 then
+      self.airjumpsleft = self.airjumpsleft - 1
+    end
     self.spd.y = jumpspd
     sound.effect 'jump'
   end
