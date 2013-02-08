@@ -16,3 +16,10 @@ Source: Swish, Bamboo Stick Weapon Shwoshes -
 By: Iwan Gabovitch
 License: CC0
 
+game/sound/itempick2.wav
+game/sound/jump.wav
+game/sound/land.wav
+Source: 3 Item Sounds - http://opengameart.org/content/3-item-sounds
+By: Michel Baradari
+License: CC3.0-BY
+
