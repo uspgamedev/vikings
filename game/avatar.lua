@@ -103,7 +103,7 @@ function avatar:jump ()
 end
 
 function avatar:attack ()
-  if not self.attacking then
+  if not self.attacking and self.equipment[1] then
     self.attacking = true
     self.frametime = 0
     self.frame.j = 1

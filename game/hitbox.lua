@@ -74,7 +74,7 @@ end
 
 local function draw (graphics, box)
   local tilesize = map.get_tilesize()
-  graphics.setColor(200, 0, 0, 100)
+  graphics.setColor(0, 0, 200, 100)
   graphics.rectangle(
     'fill',
     tilesize*(box.pos.x-1),
