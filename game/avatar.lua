@@ -3,9 +3,12 @@ require 'thing'
 require 'vec2'
 require 'hitbox'
 require 'message'
+require 'sound'
 
 avatar = thing:new {
   slashspr  = nil,
+  life      = 20,
+  dmg_delay = 0,
 
   attacking = false
 }
@@ -18,7 +21,7 @@ function avatar:__init()
     on_collision = function (self, collisions)
       for _,another in ipairs(collisions) do
         if another.owner then
-          message.send 'game' {'kill', another.owner}
+          another.owner:take_damage(5)
         else
           another:unregister()
         end
@@ -88,6 +91,7 @@ function avatar:update (dt, map)
   if self.atkhitbox then
     self.atkhitbox.pos = self:get_atkhitboxpos()
   end
+  self.dmg_delay = math.max(self.dmg_delay - dt, 0)
   avatar:__super().update(self, dt, map)
 end
 
@@ -119,6 +123,16 @@ end
 function avatar:equip(slot, item)
   if slot >= min_equipment_slot and slot <= max_equipment_slot then
     self.equipment[slot] = item
+  end
+end
+
+function avatar:take_damage (amount)
+  if self.dmg_delay > 0 then return end
+  self.life = math.max(self.life - amount, 0)
+  self.dmg_delay = 0.5
+  sound.effect 'hit'
+  if self.life <= 0 then
+    message.send 'game' {'kill', self}
   end
 end
 
