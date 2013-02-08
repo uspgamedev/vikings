@@ -31,7 +31,7 @@ function default_map()
   }
 end
 
-local empty_block = { '    ', '    ', '    ', '    ', }
+local empty_block = { '    ', '    ', '    ', '    ', rarity = 0.5 }
 
 local function generate_blocks_grid(num_blocks_x, num_blocks_y, blocks)
   local blocks_grid = {
@@ -80,6 +80,7 @@ function random_map()
     height = 4,
     tileset = get_tileset(),
     total_rarity = 0,
+    empty_block,
     { '    ', '  I ', '    ', '    ', rarity = 1 },
     { '    ', ' I  ', '    ', '    ', rarity = 1 },
     { '    ', '    ', 'IIII', 'IIII', rarity = 2 },

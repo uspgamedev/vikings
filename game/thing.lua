@@ -53,7 +53,8 @@ function thing:update_physics (dt, map)
   self.spd.x = math.min(math.max(-maxspd.x, self.spd.x), maxspd.x)
   self.spd.y = math.min(math.max(-maxspd.y, self.spd.y), maxspd.y)
   if self:colliding(map, self.pos) then
-    error "Ooops, youre inside a wall"
+    --error "Ooops, youre inside a wall"
+    return
   end
   self.pos:add(self.spd*dt)
   if self:colliding(map, self.pos) then
