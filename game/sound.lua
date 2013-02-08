@@ -4,7 +4,8 @@ module ('sound', package.seeall)
 local sounds = {}
 
 function sound.load (audio)
-  sounds.hit = audio.newSource('sound/hit10.mp3.ogg', 'static')
+  sounds.hit    = audio.newSource('sound/hit10.mp3.ogg', 'static')
+  sounds.slash  = audio.newSource('sound/swosh-01.ogg', 'static')
 end
 
 function sound.effect (id)
