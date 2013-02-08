@@ -6,6 +6,7 @@ require 'message'
 
 avatar = thing:new {
   slashspr  = nil,
+  life      = 100,
 
   attacking = false
 }
@@ -18,7 +19,7 @@ function avatar:__init()
     on_collision = function (self, collisions)
       for _,another in ipairs(collisions) do
         if another.owner then
-          message.send 'game' {'kill', another.owner}
+          another.owner:take_damage(5)
         else
           another:unregister()
         end
@@ -119,6 +120,13 @@ end
 function avatar:equip(slot, item)
   if slot >= min_equipment_slot and slot <= max_equipment_slot then
     self.equipment[slot] = item
+  end
+end
+
+function avatar:take_damage (amount, dir)
+  self.life = math.max(self.life - amount, 0)
+  if self.life <= 0 then
+    message.send 'game' {'kill', self}
   end
 end
 
