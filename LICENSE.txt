@@ -5,3 +5,14 @@ By: pennomi, laetissima and makrohn. Also LPC base sprite artists, since this is
     a derivative work of those as well.
 License: CC3.0-BY-SA
 
+game/sound/hit10.mp3.ogg
+Source: 37 Hits/Punches - http://opengameart.org/content/37-hitpunches
+By: Independent.nu.
+License: CC0
+
+game/sound/swosh-01.ogg
+Source: Swish, Bamboo Stick Weapon Shwoshes -
+        http://opengameart.org/content/swish-bamboo-stick-weapon-swhoshes
+By: Iwan Gabovitch
+License: CC0
+
