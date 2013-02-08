@@ -6,7 +6,8 @@ require 'message'
 
 avatar = thing:new {
   slashspr  = nil,
-  life      = 100,
+  life      = 20,
+  dmg_delay = 0,
 
   attacking = false
 }
@@ -89,6 +90,7 @@ function avatar:update (dt, map)
   if self.atkhitbox then
     self.atkhitbox.pos = self:get_atkhitboxpos()
   end
+  self.dmg_delay = math.max(self.dmg_delay - dt, 0)
   avatar:__super().update(self, dt, map)
 end
 
@@ -124,7 +126,9 @@ function avatar:equip(slot, item)
 end
 
 function avatar:take_damage (amount)
+  if self.dmg_delay > 0 then return end
   self.life = math.max(self.life - amount, 0)
+  self.dmg_delay = 0.5
   if self.life <= 0 then
     message.send 'game' {'kill', self}
   end
