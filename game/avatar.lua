@@ -123,7 +123,7 @@ function avatar:equip(slot, item)
   end
 end
 
-function avatar:take_damage (amount, dir)
+function avatar:take_damage (amount)
   self.life = math.max(self.life - amount, 0)
   if self.life <= 0 then
     message.send 'game' {'kill', self}
