@@ -5,6 +5,7 @@ require 'avatar'
 require 'builder'
 require 'message'
 require 'mapgenerator'
+require 'sound'
 
 local w,h
 local screencenter
@@ -14,6 +15,7 @@ local avatars = {}
 local current_map
 
 function love.load ()
+  sound.load(love.audio)
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
   screencenter = vec2:new{w,h} * 0.5
   camera_pos = vec2:new{ w/2, h/2 }

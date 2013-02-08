@@ -3,6 +3,7 @@ require 'thing'
 require 'vec2'
 require 'hitbox'
 require 'message'
+require 'sound'
 
 avatar = thing:new {
   slashspr  = nil,
@@ -129,6 +130,7 @@ function avatar:take_damage (amount)
   if self.dmg_delay > 0 then return end
   self.life = math.max(self.life - amount, 0)
   self.dmg_delay = 0.5
+  sound.effect 'hit'
   if self.life <= 0 then
     message.send 'game' {'kill', self}
   end
