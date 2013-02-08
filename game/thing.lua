@@ -9,6 +9,7 @@ thing = lux.object.new {
   sprite    = nil,
   frame     = nil,
   hitbox    = nil,
+  air       = false,
 
   direction = 'right',
 }
@@ -67,15 +68,14 @@ function thing:update_physics (dt, map)
     if (hor_check and not ver_check) or
        (hor_check and ver_check) then
       self.pos.y = self.pos.y - self.spd.y*dt
-      if self.spd.y > 0 then
-        if self.jumpsleft and self.jumpsleft < 2 then
-          sound.effect 'land'
-        end
+      if self.spd.y > 0 and self.air then
+        sound.effect 'land'
         self.jumpsleft = 2
       end
       self.spd.y = 0
     end
   end
+  self.air = self.spd.y > 0
   self.spd:add(gravity * dt)
 end
 
