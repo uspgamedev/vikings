@@ -71,15 +71,23 @@ function random_map()
     height = 4,
     tileset = get_tileset(),
     { {'empty', 'empty', 'empty', 'empty'},
-      {'empty',   'ice',   'ice', 'empty'},
-      {'empty',   'ice',   'ice', 'empty'},
+      {'empty', 'empty',   'ice', 'empty'},
+      {'empty', 'empty', 'empty', 'empty'},
       {'empty', 'empty', 'empty', 'empty'}, },
     { {'empty', 'empty', 'empty', 'empty'},
-      {'empty',   'ice',   'ice', 'empty'},
-      {'empty',   'ice',   'ice', 'empty'},
+      {'empty',   'ice', 'empty', 'empty'},
+      {'empty', 'empty', 'empty', 'empty'},
+      {'empty', 'empty', 'empty', 'empty'}, },
+    { {'empty', 'empty', 'empty', 'empty'},
+      {'empty', 'empty', 'empty', 'empty'},
+      {  'ice',   'ice',   'ice',   'ice'},
       {  'ice',   'ice',   'ice',   'ice'}, },
+    { {'empty', 'empty', 'empty', 'empty'},
+      {'empty',   'ice',   'ice',   'ice'},
+      {'empty',   'ice',   'ice',   'ice'},
+      {'empty', 'empty', 'empty', 'empty'}, },
   }
 
-  local blocks_grid = generate_blocks_grid(7, 4, blocks)
+  local blocks_grid = generate_blocks_grid(12, 8, blocks)
   return generate_map_from_grid(blocks_grid)
 end
