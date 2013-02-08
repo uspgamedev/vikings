@@ -85,15 +85,10 @@ function avatar:get_atkpos ()
 end
 
 function avatar:update (dt, map)
-  self:update_physics(dt, map)
-  self:update_animation(dt)
-  self:update_hitbox(dt)
   if self.atkhitbox then
     self.atkhitbox.pos = self:get_atkhitboxpos()
   end
-  for _, task in pairs(self.tasks) do
-    task(self, dt)
-  end
+  avatar:__super().update(self, dt, map)
 end
 
 function avatar:jump ()
