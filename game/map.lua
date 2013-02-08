@@ -18,7 +18,7 @@ function map:__init ()
     self.tiles[j] = {}
     for i=1,self.width do
       local tile = self.tilegenerator(j, i)
-      local type = self.tileset[tile.type] or self.tileset.empty
+      local type = self.tileset[tile.type] or self.tileset[' ']
       tile.i = i
       tile.j = j
       tile.img    = tile.img   or type.img

@@ -128,9 +128,9 @@ end
 
 function love.mousepressed (x, y, button)
   if button == 'l' then
-    tasks.addtile = tilesetter 'ice'
+    tasks.addtile = tilesetter 'I'
   elseif button == 'r' and not tasks.addtile then
-    tasks.removetile = tilesetter 'empty'
+    tasks.removetile = tilesetter ' '
   end
 end
 

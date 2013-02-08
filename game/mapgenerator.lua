@@ -6,8 +6,8 @@ require "map"
 local tileset
 function get_tileset()
   tileset = tileset or {
-    empty = { img = nil, floor = false },
-    ice   = { 
+    [" "] = { img = nil, floor = false },
+    ["I"] = { 
       img = love.graphics.newImage 'tile/ice.png',
       floor = true
     }
@@ -23,19 +23,19 @@ function default_map()
     tileset = get_tileset(),
     tilegenerator = function (j, i)
       if (j == 10) or (i == 14 and j == 9) then
-        return { type = 'ice' }
+        return { type = 'I' }
       else
-        return { type = 'empty' }
+        return { type = ' ' }
       end
     end
   }
 end
 
 local empty_block = { 
-{'empty', 'empty', 'empty', 'empty'},
-{'empty', 'empty', 'empty', 'empty'},
-{'empty', 'empty', 'empty', 'empty'},
-{'empty', 'empty', 'empty', 'empty'}, }
+{' ', ' ', ' ', ' '},
+{' ', ' ', ' ', ' '},
+{' ', ' ', ' ', ' '},
+{' ', ' ', ' ', ' '}, }
 
 local function generate_blocks_grid(num_blocks_x, num_blocks_y, blocks)
   local blocks_grid = {
@@ -70,22 +70,22 @@ function random_map()
     width  = 4,
     height = 4,
     tileset = get_tileset(),
-    { {'empty', 'empty', 'empty', 'empty'},
-      {'empty', 'empty',   'ice', 'empty'},
-      {'empty', 'empty', 'empty', 'empty'},
-      {'empty', 'empty', 'empty', 'empty'}, },
-    { {'empty', 'empty', 'empty', 'empty'},
-      {'empty',   'ice', 'empty', 'empty'},
-      {'empty', 'empty', 'empty', 'empty'},
-      {'empty', 'empty', 'empty', 'empty'}, },
-    { {'empty', 'empty', 'empty', 'empty'},
-      {'empty', 'empty', 'empty', 'empty'},
-      {  'ice',   'ice',   'ice',   'ice'},
-      {  'ice',   'ice',   'ice',   'ice'}, },
-    { {'empty', 'empty', 'empty', 'empty'},
-      {'empty',   'ice',   'ice',   'ice'},
-      {'empty',   'ice',   'ice',   'ice'},
-      {'empty', 'empty', 'empty', 'empty'}, },
+    { {' ', ' ', ' ', ' '},
+      {' ', ' ', 'I', ' '},
+      {' ', ' ', ' ', ' '},
+      {' ', ' ', ' ', ' '}, },
+    { {' ', ' ', ' ', ' '},
+      {' ', 'I', ' ', ' '},
+      {' ', ' ', ' ', ' '},
+      {' ', ' ', ' ', ' '}, },
+    { {' ', ' ', ' ', ' '},
+      {' ', ' ', ' ', ' '},
+      {'I', 'I', 'I', 'I'},
+      {'I', 'I', 'I', 'I'}, },
+    { {' ', ' ', ' ', ' '},
+      {' ', 'I', 'I', 'I'},
+      {' ', 'I', 'I', 'I'},
+      {' ', ' ', ' ', ' '}, },
   }
 
   local blocks_grid = generate_blocks_grid(12, 8, blocks)
