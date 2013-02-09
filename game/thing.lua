@@ -30,9 +30,12 @@ thing.__init = {
   frametime = 0
 }
 
-local gravity     = vec2:new{  0,  30 }
-local maxspd      = vec2:new{  5,  30 }
-local MIN_AIRTIME = 0.1
+local gravity           = vec2:new{  0,  30 }
+local maxspd            = vec2:new{ 30,  30 }
+local MIN_AIRTIME       = 0.1
+local SPD_THRESHOLD     = 1.5
+local DYNAMIC_FRICTION  = 1.0
+local STATIC_FRICTION   = 3.0
 
 function thing:die ()
   self.hitbox:unregister()
@@ -61,7 +64,9 @@ function thing:update_physics (dt, map)
     --error "Ooops, youre inside a wall"
     return
   end
+  -- Apply speed.
   self.pos:add(self.spd*dt)
+  -- Check and handle collision.
   if self:colliding(map, self.pos) then
     local horizontal  = -vec2:new{self.spd.x*dt,0}
     local vertical    = -vec2:new{0,self.spd.y*dt}
@@ -82,13 +87,26 @@ function thing:update_physics (dt, map)
       self.spd.y = 0
     end
   end
+  -- Apply acceleration.
   self.spd:add(self.accel*dt)
-  self.accel:set(-self.spd.x, 0)
+  -- Regulate acceleration.
+  if not self.accelerated then
+    self.accel:set(-STATIC_FRICTION*self.spd.x, 0)
+    -- Stop moving if too slow.
+    if math.abs(self.spd.x) < SPD_THRESHOLD  then
+      self.spd.x = 0
+    end
+  else
+    self.accel:set(-DYNAMIC_FRICTION*self.spd.x, 0)
+    self.accelerated = false
+  end
+  -- Check airborne status.
   if self.spd.y ~= 0 then
     self.air = self.air + dt
   else
     self.air = 0
   end
+  -- (Re)apply gravity.
   self.spd:add(gravity * dt)
 end
 
@@ -119,6 +137,7 @@ end
 
 function thing:accelerate (dv)
   self.accel:add(dv)
+  self.accelerated = true
   if self.accel.x > 0 then
     self.direction = 'right'
   elseif self.accel.x < 0 then
