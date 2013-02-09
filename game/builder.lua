@@ -120,6 +120,10 @@ function build_enemy (pos)
     sprite    = build_sprite(),
     direction = 'left'
   }
+  enemy:equip(1, {})
+  function enemy.tasks.attack (self)
+    self:attack()
+  end
   enemy.hitbox.class = 'damageable'
   return enemy
 end
