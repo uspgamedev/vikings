@@ -15,7 +15,11 @@ local tasks = {}
 local avatars = {}
 local current_map
 
-function love.load ()
+function string.ends(String,End)
+   return End=='' or string.sub(String,-string.len(End))==End
+end
+
+function love.load (args)
   sound.load(love.audio)
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
   background = love.graphics.newImage "background/Ardentryst-Background_SnowCave_Backing.png"
@@ -23,7 +27,11 @@ function love.load ()
   camera_pos = vec2:new{ w/2, h/2 }
 
   sound.set_bgm "music/JordanTrudgett-Snodom-ccby3.ogg"
-  current_map = mapgenerator.random_map()
+  local map_file
+  for _, arg in ipairs(args) do
+    map_file = string.ends(arg, ".vikingmap") and arg or map_file
+  end
+  current_map = map_file and mapgenerator.from_file(map_file) or mapgenerator.random_map()
 
   local player = avatar:new {
     pos       = vec2:new{ 8, 9 },
@@ -106,7 +114,7 @@ function love.keypressed (button)
       avatars.player:try_interact()
     end
   elseif button == "p" then
-    if current_map then current_map:save_to_file(os.date "%Y-%m-%d %H-%M-%S.vikingmap") end
+    if current_map then current_map:save_to_file(os.date "%Y-%m-%d_%H-%M-%S.vikingmap") end
   elseif button == "escape" then
     love.event.push("quit")
   end

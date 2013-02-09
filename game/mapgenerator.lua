@@ -33,6 +33,35 @@ end
 
 local empty_block = { '    ', '    ', '    ', '    ', rarity = 0.5 }
 
+local function load_grid_from_file(tileset, path)
+  if not love.filesystem.exists(path) then return end
+  local data, size = love.filesystem.read(path)
+
+  local function splt_lines(str)
+    local t = {}
+    local function helper(line) table.insert(t, line) return "" end
+    helper((str:gsub("(.-)\r?\n", helper)))
+    return t
+  end
+  local lines = splt_lines(data)
+  if #lines == 0 then return end
+
+  local grid = {
+    tileset = tileset,
+    width = #lines[1],
+    height = #lines - 1
+  }
+  for j, line in ipairs(lines) do
+    if j > grid.height then break end
+    if #line ~= grid.width then error("Line " .. j .. " has incorret size. " .. #line .. " != " .. grid.width) end
+    grid[j] = {}
+    for i=1,grid.width do
+      grid[j][i] = line:sub(i,i)
+    end
+  end
+  return grid
+end
+
 local function random_grid_from_blocks(num_blocks_x, num_blocks_y, blocks)
   local blocks_grid = {
     blocks = blocks,
@@ -172,4 +201,11 @@ function random_map()
   local cavegrid = generate_cave_from_grid(blocks_grid)
 
   return generate_map_with_grid(cavegrid)
+end
+
+function from_file(path)
+  local grid = load_grid_from_file(get_tileset(), path)
+  if grid then
+    return generate_map_with_grid(grid)
+  end
 end
