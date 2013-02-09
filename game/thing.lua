@@ -56,6 +56,10 @@ function thing:colliding(map, position)
   return false
 end
 
+local function sign_to_dir (sign)
+  return sign >= 0 and 'right' or 'left'
+end
+
 function thing:update_physics (dt, map)
   -- no, negative speed doesn't increase forever
   self.spd.x = math.min(math.max(-maxspd.x, self.spd.x), maxspd.x)
@@ -90,7 +94,7 @@ function thing:update_physics (dt, map)
   -- Apply acceleration.
   self.spd:add(self.accel*dt)
   -- Regulate acceleration.
-  if not self.accelerated or self.spd.x*self.accel.x < 0 then
+  if not self.accelerated or sign_to_dir(self.spd.x) ~= self.direction then
     self.accel:set(-STATIC_FRICTION*self.spd.x, 0)
     -- Stop moving if too slow.
     if math.abs(self.spd.x) < SPD_THRESHOLD  then
@@ -138,11 +142,7 @@ end
 function thing:accelerate (dv)
   self.accel:add(dv)
   self.accelerated = true
-  if self.accel.x > 0 then
-    self.direction = 'right'
-  elseif self.accel.x < 0 then
-    self.direction = 'left'
-  end
+  self.direction = sign_to_dir(dv.x)
 end
 
 function thing:shove (dv)
