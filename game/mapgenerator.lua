@@ -42,17 +42,13 @@ local function generate_blocks_grid(num_blocks_x, num_blocks_y, blocks)
   for j=1,num_blocks_y do
     blocks_grid[j] = {}
     for i=1,num_blocks_x do
-      if j <= num_blocks_y/2 then
-        blocks_grid[j][i] = empty_block
-      else
-        rarity = math.random() * blocks.total_rarity
-        for _, block in ipairs(blocks) do
-          if rarity < block.rarity then
-            blocks_grid[j][i] = block
-            break
-          else
-            rarity = rarity - block.rarity
-          end
+      rarity = math.random() * blocks.total_rarity
+      for _, block in ipairs(blocks) do
+        if rarity < block.rarity then
+          blocks_grid[j][i] = block
+          break
+        else
+          rarity = rarity - block.rarity
         end
       end
     end
@@ -62,26 +58,42 @@ end
 
 local function generate_cave_from_grid(grid)
   local width, height = grid.num_x * grid.blocks.width, grid.num_y * grid.blocks.height
+  
   local fullmap = {}
-  for j=1,height do
-    fullmap[j] = ""
-    for bi=1,grid.num_x do
-      local block_j = math.floor((j-1) / grid.blocks.height) + 1
-      local ij = (j-1) % grid.blocks.height + 1
-      fullmap[j] = fullmap[j] .. grid[block_j][bi][ij]
+  for block_j = 1,grid.num_y do
+    for internal_j = 1,grid.blocks.height do
+      fullmap[(block_j-1) * grid.blocks.height + internal_j] = {}
+      for block_i = 1,grid.num_x do
+        for internal_i = 1,grid.blocks.width do
+          fullmap[(block_j-1) * grid.blocks.height + internal_j]
+                 [(block_i-1) * grid.blocks.width  + internal_i] =
+                    grid[block_j][block_i][internal_j]:sub(internal_i, internal_i)
+        end
+      end
     end
   end
-  table.foreach(fullmap, print)
+
   local oldmap
   for iterations=1,4 do
     oldmap = fullmap
     fullmap = {}
     for j=1,height do
-      fullmap[j] = ""
+      fullmap[j] = {}
       for i=1,width do
-        fullmap[j] = fullmap[j] .. oldmap[j]:sub(i,i)
+        count_walls = 0
+        for int_j = math.max(j-1, 1), math.min(j+1, height) do
+          for int_i = math.max(i-2, 1), math.min(i+2, width) do
+            count_walls = count_walls + (oldmap[int_j][int_i] == 'I' and 1 or 0)
+          end
+        end
+
+        fullmap[j][i] = (count_walls >= 7 and 'I') or ' '
       end
     end
+  end
+
+  for i,v in ipairs(fullmap) do
+    print(i, table.concat(v))
   end
 
   local thecave = map:new {
@@ -89,7 +101,7 @@ local function generate_cave_from_grid(grid)
     width   = grid.num_x * grid.blocks.width,
     height  = grid.num_y * grid.blocks.height,
     tilegenerator = function (aj,ai) 
-      return { type = fullmap[aj]:sub(ai,ai) }
+      return { type = fullmap[aj][ai] }
     end
     --[[function (aj, ai)
       local block_i, block_j = math.floor((ai-1) / grid.blocks.width) + 1, math.floor((aj-1) / grid.blocks.height) + 1
@@ -106,7 +118,6 @@ function random_map()
     height = 4,
     tileset = get_tileset(),
     total_rarity = 0,
-    empty_block,
     { '    ', '  I ', '    ', '    ', rarity = 1 },
     { '    ', ' I  ', '    ', '    ', rarity = 1 },
     { '    ', '    ', 'IIII', 'IIII', rarity = 2 },
