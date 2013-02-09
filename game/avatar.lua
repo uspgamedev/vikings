@@ -36,7 +36,7 @@ function avatar:__init()
   self.airjumpsleft = 0
 end
 
-local jumpspd   = -12
+local JUMPSPDY   = -14
 local min_equipment_slot = 1
 local max_equipment_slot = 1
 
@@ -107,7 +107,7 @@ function avatar:jump ()
     if self.air > 0 then
       self.airjumpsleft = self.airjumpsleft - 1
     end
-    self.spd.y = jumpspd
+    self.spd.y = JUMPSPDY
     sound.effect 'jump'
   end
 end

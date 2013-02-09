@@ -30,8 +30,8 @@ thing.__init = {
   frametime = 0
 }
 
-local gravity           = vec2:new{  0,  30 }
-local maxspd            = vec2:new{ 30,  30 }
+local GRAVITY           = vec2:new{  0,  30 }
+local MAXSPD            = vec2:new{ 38,  30 }
 local MIN_AIRTIME       = 0.1
 local SPD_THRESHOLD     = 1.5
 local DYNAMIC_FRICTION  = 1.0
@@ -62,8 +62,8 @@ end
 
 function thing:update_physics (dt, map)
   -- no, negative speed doesn't increase forever
-  self.spd.x = math.min(math.max(-maxspd.x, self.spd.x), maxspd.x)
-  self.spd.y = math.min(math.max(-maxspd.y, self.spd.y), maxspd.y)
+  self.spd.x = math.min(math.max(-MAXSPD.x, self.spd.x), MAXSPD.x)
+  self.spd.y = math.min(math.max(-MAXSPD.y, self.spd.y), MAXSPD.y)
   if self:colliding(map, self.pos) then
     --error "Ooops, youre inside a wall"
     return
@@ -111,7 +111,7 @@ function thing:update_physics (dt, map)
     self.air = 0
   end
   -- (Re)apply gravity.
-  self.spd:add(gravity * dt)
+  self.spd:add(GRAVITY * dt)
 end
 
 function thing:update_animation (dt)

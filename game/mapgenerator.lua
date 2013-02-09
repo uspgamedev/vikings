@@ -167,7 +167,7 @@ function random_map()
   for _, block in ipairs(blocks) do
     blocks.total_rarity = blocks.total_rarity + block.rarity
   end
-  local blocks_grid = random_grid_from_blocks(18, 8, blocks)
+  local blocks_grid = random_grid_from_blocks(26, 18, blocks)
 
   local cavegrid = generate_cave_from_grid(blocks_grid)
 
