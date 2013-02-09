@@ -11,6 +11,7 @@ local w,h
 local screencenter
 local background
 local camera_pos
+local debug
 local tasks = {}
 local avatars = {}
 local current_map
@@ -33,13 +34,14 @@ local function find_grounded_open_spots(map)
   return spots
 end
 local function get_random_position(spots)
-  local i = math.random(#spots)
+  local i = (debug and 1) or math.random(#spots)
   local result = spots[i]
   table.remove(spots, i)
   return vec2:new{result.i+1, result.j+1}
 end
 
 function love.load (args)
+  debug = true
   sound.load(love.audio)
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
   background = love.graphics.newImage "background/Ardentryst-Background_SnowCave_Backing.png"
