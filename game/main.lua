@@ -20,6 +20,7 @@ function love.load ()
   screencenter = vec2:new{w,h} * 0.5
   camera_pos = vec2:new{ w/2, h/2 }
 
+  sound.set_bgm("music/JordanTrudgett-Snodom-ccby3.ogg")
   current_map = mapgenerator.random_map()
 
   local player = avatar:new {

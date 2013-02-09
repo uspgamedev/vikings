@@ -23,3 +23,8 @@ Source: 3 Item Sounds - http://opengameart.org/content/3-item-sounds
 By: Michel Baradari
 License: CC3.0-BY
 
+game/music/JordanTrudgett-Snodom-ccby3.ogg
+Source: Fantasy Action RPG Soundtrack [14 tracks for Ardentryst by Jordan Trudgett] -
+        http://opengameart.org/content/fantasy-action-rpg-soundtrack-14-tracks-for-ardentryst-by-jordan-trudgett
+By: Jordan Trudgett
+License: CC3.0-BY

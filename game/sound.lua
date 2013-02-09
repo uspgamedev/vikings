@@ -1,6 +1,7 @@
 
 module ('sound', package.seeall)
 
+local music
 local sounds = {}
 
 function sound.load (audio)
@@ -15,4 +16,10 @@ function sound.effect (id)
   local effect = sounds[id]
   effect:stop()
   effect:play()
+end
+
+function sound.set_bgm(path)
+  if music then music:stop() end
+  music = love.audio.newSource(path, 'stream')
+  if music then music:play() end
 end
