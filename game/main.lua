@@ -105,6 +105,8 @@ function love.keypressed (button)
     if avatars.player.try_interact then
       avatars.player:try_interact()
     end
+  elseif button == "p" then
+    if current_map then current_map:save_to_file(os.date "%Y-%m-%d %H-%M-%S.vikingmap") end
   elseif button == "escape" then
     love.event.push("quit")
   end

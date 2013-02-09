@@ -18,7 +18,8 @@ function map:__init ()
     self.tiles[j] = {}
     for i=1,self.width do
       local tile = self.tilegenerator(j, i)
-      local type = self.tileset[tile.type] or self.tileset[' ']
+      tile.type = self.tileset[tile.type] and tile.type or ' '
+      local type = self.tileset[tile.type]
       tile.i = i
       tile.j = j
       tile.img    = tile.img   or type.img
@@ -34,8 +35,9 @@ end
 
 function map:set_tile (i, j, typeid)
   local tile = self:get_tile(i,j)
-  local type = self.tileset[typeid] or self.tileset.empty
   if tile then
+    tile.type = self.tileset[typeid] and typeid or ' '
+    local type = self.tileset[typeid]
     tile.img    = type.img
     tile.floor  = type.floor
   end
@@ -51,4 +53,16 @@ function map:draw (graphics)
       end
     end
   end
+end
+
+function map:save_to_file(path)
+  local file = love.filesystem.newFile(path)
+  if not file:open("w") then return end
+  for _,row in ipairs(self.tiles) do
+    for _,tile in ipairs(row) do
+      file:write(tile.type)
+    end
+    file:write "\n"
+  end
+  file:close()
 end
