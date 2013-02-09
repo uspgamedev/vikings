@@ -9,6 +9,7 @@ require 'sound'
 
 local w,h
 local screencenter
+local background
 local camera_pos
 local tasks = {}
 local avatars = {}
@@ -17,10 +18,11 @@ local current_map
 function love.load ()
   sound.load(love.audio)
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
+  background = love.graphics.newImage "background/Ardentryst-Background_SnowCave_Backing.png"
   screencenter = vec2:new{w,h} * 0.5
   camera_pos = vec2:new{ w/2, h/2 }
 
-  sound.set_bgm("music/JordanTrudgett-Snodom-ccby3.ogg")
+  sound.set_bgm "music/JordanTrudgett-Snodom-ccby3.ogg"
   current_map = mapgenerator.random_map()
 
   local player = avatar:new {
@@ -146,6 +148,10 @@ function love.mousereleased (x, y, button)
 end
 
 function love.draw ()
+  local bg_x = (avatars.player.pos.x / current_map.width)  * (w - background:getWidth() * 2)
+  local bg_y = (avatars.player.pos.y / current_map.height) * (h - background:getHeight() * 2)
+  love.graphics.draw(background, bg_x, bg_y, 0, 2, 2)
+
   love.graphics.translate((screencenter - avatars.player.pos * map.get_tilesize()):get())
   current_map:draw(love.graphics)
   for _,av in pairs(avatars) do

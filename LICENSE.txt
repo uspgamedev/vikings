@@ -28,3 +28,9 @@ Source: Fantasy Action RPG Soundtrack [14 tracks for Ardentryst by Jordan Trudge
         http://opengameart.org/content/fantasy-action-rpg-soundtrack-14-tracks-for-ardentryst-by-jordan-trudgett
 By: Jordan Trudgett
 License: CC3.0-BY
+
+game/background/Ardentryst-Background_SnowCave_Backing.png
+Source: Backdrops for story and level [for Ardentryst by Jordan Trudgett] -
+        http://opengameart.org/content/backdrops-for-story-and-level-for-ardentryst-by-jordan-trudgett
+By: Jordan Trudgett
+License: CC3.0-BY
