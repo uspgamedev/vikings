@@ -158,5 +158,18 @@ function love.draw ()
     av:draw(love.graphics)
   end
   hitbox.draw_all(love.graphics)
+
+  if love.keyboard.isDown("tab") then
+    love.graphics.translate((-(screencenter - avatars.player.pos * map.get_tilesize())):get())
+    love.graphics.translate(20, 20)
+    love.graphics.scale(0.1, 0.1)
+    love.graphics.setColor(0, 0, 0, 127)
+    love.graphics.rectangle('fill', 0, 0, current_map.width*map.get_tilesize(), current_map.height*map.get_tilesize())
+    love.graphics.setColor(255, 255, 255, 127)
+    current_map:draw(love.graphics)
+    love.graphics.setColor(255, 0, 0, 127)
+    love.graphics.circle('fill', avatars.player.pos.x * map.get_tilesize(), (avatars.player.pos.y - 1) * map.get_tilesize(), map.get_tilesize() / 2)
+    love.graphics.setColor(255, 255, 255, 255)
+  end
 end
 
