@@ -98,10 +98,10 @@ local function generate_cave_from_grid(grid)
     local width, height = grid.width, grid.height
     local missing_j = math.max(range_j - j + 1, range_j - height + j, 0)
     local missing_i = math.max(range_i - i + 1, range_i - width  + i, 0)
-    local count_walls = (missing_i + 1) * (missing_j + 1) - 1
+    local count_walls = (range_j*2 + 1) * (range_i*2 + 1)--(missing_i + 1) * (missing_j + 1) - 1
     for int_j = math.max(j-range_j, 1), math.min(j+range_j, height) do
       for int_i = math.max(i-range_i, 1), math.min(i+range_i, width) do
-        count_walls = count_walls + (grid.tileset[map[int_j][int_i]].floor and 1 or 0)
+        count_walls = count_walls + (grid.tileset[map[int_j][int_i]].floor and 0 or -1)
       end
     end
     return count_walls

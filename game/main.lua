@@ -26,7 +26,7 @@ function love.load ()
   current_map = mapgenerator.random_map()
 
   local player = avatar:new {
-    pos       = vec2:new{ 2, 9 },
+    pos       = vec2:new{ 8, 9 },
     spd       = vec2:new{ 0, 0 },
     sprite    = builder.build_sprite(),
     slashspr  = builder.build_slash(),
