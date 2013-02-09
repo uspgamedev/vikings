@@ -91,7 +91,9 @@ local speedhack = {
 function love.keypressed (button)
   local dv = speedhack[button]
   if dv then
-    avatars.player:accelerate(dv)
+    tasks['moveplayer'..dv.x] = function (dt)
+      avatars.player:accelerate(dv)
+    end
   elseif button == "z" then
     avatars.player:jump()
   elseif button == "x" then
@@ -108,7 +110,7 @@ end
 function love.keyreleased (button)
   local dv = speedhack[button]
   if dv then
-    avatars.player:accelerate(-dv)
+    tasks['moveplayer'..dv.x] = nil
   end
 end
 

@@ -6,6 +6,7 @@ require 'hitbox'
 thing = lux.object.new {
   pos       = nil,
   spd       = nil,
+  accel     = nil,
   sprite    = nil,
   frame     = nil,
   hitbox    = nil,
@@ -17,6 +18,7 @@ thing = lux.object.new {
 thing.__init = {
   pos       = vec2:new{ 0, 0 },
   spd       = vec2:new{ 0, 0 },
+  accel     = vec2:new{ 0, 0 },
   frame     = { i=1, j=1 },
   tasks     = {},
   drawtasks = {},
@@ -29,7 +31,7 @@ thing.__init = {
 }
 
 local gravity     = vec2:new{  0,  30 }
-local maxspd      = vec2:new{ 30,  30 }
+local maxspd      = vec2:new{  5,  30 }
 local MIN_AIRTIME = 0.1
 
 function thing:die ()
@@ -41,8 +43,9 @@ local function pos_to_tile (map, point)
 end
 
 function thing:colliding(map, position)
+  local tilesize = map.get_tilesize()
   for _,p in ipairs(self.sprite.collpts) do
-    local tile = pos_to_tile(map, position-(self.sprite.hotspot-p)/32)
+    local tile = pos_to_tile(map, position-(self.sprite.hotspot-p)/tilesize)
     if not tile or tile.floor then
       return true
     end
@@ -79,6 +82,8 @@ function thing:update_physics (dt, map)
       self.spd.y = 0
     end
   end
+  self.spd:add(self.accel*dt)
+  self.accel:set(-self.spd.x, 0)
   if self.spd.y ~= 0 then
     self.air = self.air + dt
   else
@@ -113,10 +118,10 @@ function thing:update (dt, map)
 end
 
 function thing:accelerate (dv)
-  self.spd:add(dv)
-  if self.spd.x > 0 then
+  self.accel:add(dv)
+  if self.accel.x > 0 then
     self.direction = 'right'
-  elseif self.spd.x < 0 then
+  elseif self.accel.x < 0 then
     self.direction = 'left'
   end
 end
