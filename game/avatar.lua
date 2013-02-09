@@ -22,7 +22,10 @@ function avatar:__init()
     on_collision = function (self, collisions)
       for _,another in ipairs(collisions) do
         if another.owner then
-          another.owner:take_damage(5, self.owner.pos-another.owner.pos)
+          another.owner:take_damage(
+            5,
+            (self.owner.pos-another.owner.pos):normalized()
+          )
         else
           another:unregister()
         end
@@ -43,8 +46,11 @@ function avatar:die ()
 end
 
 function avatar:update_animation (dt)
-  self.frame.i = self.sprite:frame_from_direction(self.direction) + (self.attacking and 4 or 0)
-  local moving = self.spd.x ~= 0
+  self.frame.i =
+    self.sprite:frame_from_direction(self.direction)
+    +
+    (self.attacking and 4 or 0)
+  local moving = self.accelerated
   if not moving and not self.attacking then
     self.frame.j = 1
     return
@@ -137,7 +143,7 @@ function avatar:take_damage (amount, dir)
   self.dmg_delay = 0.5
   sound.effect 'hit'
   if dir then
-    self:shove(amount*(vec2:new{0,-2}-dir):normalized())
+    self:shove(amount*(vec2:new{0,-1}-dir):normalized())
   end
   if self.life <= 0 then
     message.send 'game' {'kill', self}

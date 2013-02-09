@@ -127,8 +127,8 @@ function thing:update_hitbox (dt)
 end
 
 function thing:update (dt, map)
-  self:update_physics(dt, map)
   self:update_animation(dt)
+  self:update_physics(dt, map)
   self:update_hitbox(dt)
   for _, task in pairs(self.tasks) do
     task(self, dt)
