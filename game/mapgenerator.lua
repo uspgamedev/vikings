@@ -33,7 +33,7 @@ end
 
 local empty_block = { '    ', '    ', '    ', '    ', rarity = 0.5 }
 
-local function generate_grid_from_blocks(num_blocks_x, num_blocks_y, blocks)
+local function random_grid_from_blocks(num_blocks_x, num_blocks_y, blocks)
   local blocks_grid = {
     blocks = blocks,
     num_x = num_blocks_x,
@@ -75,17 +75,25 @@ local function generate_grid_from_blocks(num_blocks_x, num_blocks_y, blocks)
   return grid
 end
 
+local function random_grid_with_chance(tileset, width, height, chance)
+  chance = chance or 0.45
+  local grid = {
+    tileset = tileset,
+    width = width,
+    height = height
+  }
+  for j=1,height do
+    grid[j] = {}
+    for i=1,width do
+      grid[j][i] = math.random() < chance and 'I' or ' '
+    end
+  end
+  return grid
+end
+
 local function generate_cave_from_grid(grid)
   local width, height = grid.width, grid.height
   
-  local fullmap = grid
-  --[[for j=1,height do
-    fullmap[j] = {}
-    for i=1,width do
-      fullmap[j][i] = math.random() < 0.45 and 'I' or ' '
-    end
-  end]]
-
   local function walls_nearby( grid, map, j, i, range_j, range_i )
     local width, height = grid.width, grid.height
     local missing_j = math.max(range_j - j + 1, range_j - height + j, 0)
@@ -99,7 +107,7 @@ local function generate_cave_from_grid(grid)
     return count_walls
   end
 
-  local oldmap
+  local fullmap, oldmap = grid
   for iterations=1,3 do
     oldmap = fullmap
     fullmap = {}
@@ -128,20 +136,21 @@ local function generate_cave_from_grid(grid)
     print(i, table.concat(v))
   end
 
-  local thecave = map:new {
+  fullmap.width   = grid.width
+  fullmap.height  = grid.height
+  fullmap.tileset = grid.tileset
+  return fullmap
+end
+
+local function generate_map_with_grid(grid)
+  return map:new {
     tileset = grid.tileset,
     width   = grid.width,
     height  = grid.height,
     tilegenerator = function (aj,ai) 
-      return { type = fullmap[aj][ai] }
+      return { type = grid[aj][ai] }
     end
-    --[[function (aj, ai)
-      local block_i, block_j = math.floor((ai-1) / grid.blocks.width) + 1, math.floor((aj-1) / grid.blocks.height) + 1
-      local i, j = (ai-1) % grid.blocks.width + 1, (aj-1) % grid.blocks.height + 1
-      return { type = grid[block_j][block_i][j]:sub(i,i) }
-    end]]
   }
-  return thecave
 end
 
 function random_map()
@@ -158,7 +167,9 @@ function random_map()
   for _, block in ipairs(blocks) do
     blocks.total_rarity = blocks.total_rarity + block.rarity
   end
+  local blocks_grid = random_grid_from_blocks(18, 8, blocks)
 
-  local blocks_grid = generate_grid_from_blocks(18, 8, blocks)
-  return generate_cave_from_grid(blocks_grid)
+  local cavegrid = generate_cave_from_grid(blocks_grid)
+
+  return generate_map_with_grid(cavegrid)
 end
