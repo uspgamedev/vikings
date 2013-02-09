@@ -90,7 +90,7 @@ function thing:update_physics (dt, map)
   -- Apply acceleration.
   self.spd:add(self.accel*dt)
   -- Regulate acceleration.
-  if not self.accelerated then
+  if not self.accelerated or self.spd.x*self.accel.x < 0 then
     self.accel:set(-STATIC_FRICTION*self.spd.x, 0)
     -- Stop moving if too slow.
     if math.abs(self.spd.x) < SPD_THRESHOLD  then
@@ -112,7 +112,7 @@ end
 
 function thing:update_animation (dt)
   self.frame.i = self.sprite:frame_from_direction(self.direction)
-  local moving = self.spd.x ~= 0
+  local moving = self.accelerated
   if not moving then
     self.frame.j = 1
     return
@@ -143,6 +143,10 @@ function thing:accelerate (dv)
   elseif self.accel.x < 0 then
     self.direction = 'left'
   end
+end
+
+function thing:shove (dv)
+  self.spd:add(dv)
 end
 
 function thing:animate_movement (dt)

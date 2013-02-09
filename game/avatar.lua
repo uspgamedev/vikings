@@ -17,11 +17,12 @@ function avatar:__init()
   self.equipment = {}
   self.hitbox.class = "avatar"
   self.atkhitbox = hitbox:new {
+    owner       = self,
     targetclass = 'damageable',
     on_collision = function (self, collisions)
       for _,another in ipairs(collisions) do
         if another.owner then
-          another.owner:take_damage(5)
+          another.owner:take_damage(5, self.owner.pos-another.owner.pos)
         else
           another:unregister()
         end
@@ -130,11 +131,14 @@ function avatar:equip(slot, item)
   end
 end
 
-function avatar:take_damage (amount)
+function avatar:take_damage (amount, dir)
   if self.dmg_delay > 0 then return end
   self.life = math.max(self.life - amount, 0)
   self.dmg_delay = 0.5
   sound.effect 'hit'
+  if dir then
+    self:shove(amount*(vec2:new{0,-2}-dir):normalized())
+  end
   if self.life <= 0 then
     message.send 'game' {'kill', self}
   end
