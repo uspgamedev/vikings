@@ -60,6 +60,12 @@ local function generate_cave_from_grid(grid)
   local width, height = grid.num_x * grid.blocks.width, grid.num_y * grid.blocks.height
   
   local fullmap = {}
+  --[[for j=1,height do
+    fullmap[j] = {}
+    for i=1,width do
+      fullmap[j][i] = math.random() < 0.45 and 'I' or ' '
+    end
+  end]]
   for block_j = 1,grid.num_y do
     for internal_j = 1,grid.blocks.height do
       fullmap[(block_j-1) * grid.blocks.height + internal_j] = {}
@@ -73,21 +79,40 @@ local function generate_cave_from_grid(grid)
     end
   end
 
+  local function walls_nearby( grid, map, j, i, range_j, range_i )
+    local width, height = grid.num_x * grid.blocks.width, grid.num_y * grid.blocks.height
+    local missing_j = math.max(range_j - j + 1, range_j - height + j, 0)
+    local missing_i = math.max(range_i - i + 1, range_i - width  + i, 0)
+    local count_walls = (missing_i + 1) * (missing_j + 1) - 1
+    for int_j = math.max(j-range_j, 1), math.min(j+range_j, height) do
+      for int_i = math.max(i-range_i, 1), math.min(i+range_i, width) do
+        count_walls = count_walls + (grid.blocks.tileset[map[int_j][int_i]].floor and 1 or 0)
+      end
+    end
+    return count_walls
+  end
+
   local oldmap
-  for iterations=1,4 do
+  for iterations=1,3 do
     oldmap = fullmap
     fullmap = {}
     for j=1,height do
       fullmap[j] = {}
       for i=1,width do
-        count_walls = 0
-        for int_j = math.max(j-1, 1), math.min(j+1, height) do
-          for int_i = math.max(i-2, 1), math.min(i+2, width) do
-            count_walls = count_walls + (oldmap[int_j][int_i] == 'I' and 1 or 0)
-          end
-        end
-
-        fullmap[j][i] = (count_walls >= 7 and 'I') or ' '
+        nearby_walls = walls_nearby(grid, oldmap, j, i, 1, 2)
+        far_walls    = walls_nearby(grid, oldmap, j, i, 2, 2)
+        fullmap[j][i] = ((nearby_walls >= 7 or far_walls == 0) and 'I') or ' '
+      end
+    end
+  end
+  for iterations=1,2 do
+    oldmap = fullmap
+    fullmap = {}
+    for j=1,height do
+      fullmap[j] = {}
+      for i=1,width do
+        nearby_walls = walls_nearby(grid, oldmap, j, i, 1, 2)
+        fullmap[j][i] = ((nearby_walls >= 8) and 'I') or ' '
       end
     end
   end
@@ -127,6 +152,6 @@ function random_map()
     blocks.total_rarity = blocks.total_rarity + block.rarity
   end
 
-  local blocks_grid = generate_blocks_grid(12, 8, blocks)
+  local blocks_grid = generate_blocks_grid(18, 8, blocks)
   return generate_cave_from_grid(blocks_grid)
 end
