@@ -19,6 +19,26 @@ function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
 end
 
+local function find_grounded_open_spots(map)
+  local spots = {}
+  for j=1,map.height-2 do
+    for i=1,map.width-1 do
+      if not map.tiles[j  ][i].floor and not map.tiles[j  ][i+1].floor and
+         not map.tiles[j+1][i].floor and not map.tiles[j+1][i+1].floor and
+             map.tiles[j+2][i].floor and     map.tiles[j+2][i+1].floor then
+        table.insert(spots, {j=j,i=i})
+      end
+    end
+  end
+  return spots
+end
+local function get_random_position(spots)
+  local i = math.random(#spots)
+  local result = spots[i]
+  table.remove(spots, i)
+  return vec2:new{result.i+1, result.j+1}
+end
+
 function love.load (args)
   sound.load(love.audio)
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
@@ -32,10 +52,10 @@ function love.load (args)
     map_file = string.ends(arg, ".vikingmap") and arg or map_file
   end
   current_map = map_file and mapgenerator.from_file(map_file) or mapgenerator.random_map()
+  local valid_spots = find_grounded_open_spots(current_map)
 
   local player = avatar:new {
-    pos       = vec2:new{ 8, 9 },
-    spd       = vec2:new{ 0, 0 },
+    pos       = get_random_position(valid_spots),
     sprite    = builder.build_sprite(),
     slashspr  = builder.build_slash(),
     frame     = { i=4, j=1 },
@@ -59,10 +79,10 @@ function love.load (args)
     }
     :register 'damageable'
   avatars.player = player
-  table.insert(avatars, builder.build_npc())
-  table.insert(avatars, builder.build_vendor())
-  table.insert(avatars, builder.build_enemy())
-  table.insert(avatars, builder.build_item())
+  table.insert(avatars, builder.build_npc   (get_random_position(valid_spots)))
+  table.insert(avatars, builder.build_vendor(get_random_position(valid_spots)))
+  table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))
+  table.insert(avatars, builder.build_item  (get_random_position(valid_spots)))
 
   tasks.updateavatars = function (dt)
     for _,av in pairs(avatars) do

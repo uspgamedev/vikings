@@ -80,10 +80,9 @@ function build_axesprite ()
   return axe
 end
 
-function build_npc ()
+function build_npc (pos)
   local npc = avatar:new {
-    pos    = vec2:new{ 12.5, 9 },
-    spd    = vec2:new{ 0, 0 },
+    pos    = pos,
     sprite = build_sprite(),
     counter = 0
   }
@@ -96,10 +95,9 @@ function build_npc ()
   return npc
 end
 
-function build_vendor ()
+function build_vendor (pos)
   local npc = avatar:new {
-    pos    = vec2:new{ 14.5, 8 },
-    spd    = vec2:new{ 0, 0 },
+    pos    = pos,
     sprite = build_sprite(),
     counter = 0
   }
@@ -116,10 +114,9 @@ function build_vendor ()
   return npc
 end
 
-function build_enemy ()
+function build_enemy (pos)
   local enemy = avatar:new {
-    pos       = vec2:new{ 18.5, 8 },
-    spd       = vec2:new{ 0, 0 },
+    pos       = pos,
     sprite    = build_sprite(),
     direction = 'left'
   }
@@ -127,9 +124,9 @@ function build_enemy ()
   return enemy
 end
 
-function build_item ()
+function build_item (pos)
   local item = collectable:new {
-    pos       = vec2:new{ 21.5, 8 },
+    pos       = pos,
     spd       = vec2:new{ 0, 0 },
     sprite    = build_axesprite(),
   }
