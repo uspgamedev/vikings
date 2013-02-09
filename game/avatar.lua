@@ -109,6 +109,8 @@ function avatar:attack ()
     self.attacking = true
     self.frametime = 0
     self.frame.j = 1
+    self.atkhitbox.pos = self:get_atkhitboxpos()
+    self:shove(vec2:new{3, 0}*(self.direction=='right' and 1 or -1))
   end
 end
 
