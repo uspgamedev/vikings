@@ -138,9 +138,9 @@ end
 function thing:accelerate (dv)
   self.accel:add(dv)
   self.accelerated = true
-  if self.accel.x > 0 then
+  if dv.x > 0 then
     self.direction = 'right'
-  elseif self.accel.x < 0 then
+  elseif dv.x < 0 then
     self.direction = 'left'
   end
 end
