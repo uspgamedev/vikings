@@ -22,10 +22,12 @@ function avatar:__init()
     on_collision = function (self, collisions)
       for _,another in ipairs(collisions) do
         if another.owner then
-          another.owner:take_damage(
-            5,
-            (self.owner.pos-another.owner.pos):normalized()
-          )
+          local amount = 5
+          if another.owner:take_damage(amount) then
+            local dir = (self.owner.pos-another.owner.pos):normalized()
+            another.owner:shove(2*amount*(vec2:new{0,-1}-dir):normalized())
+            self.owner:shove(2*amount*(vec2:new{0,-1}+dir):normalized())
+          end
         else
           another:unregister()
         end
@@ -134,17 +136,15 @@ function avatar:equip(slot, item)
   end
 end
 
-function avatar:take_damage (amount, dir)
+function avatar:take_damage (amount)
   if self.dmg_delay > 0 then return end
   self.life = math.max(self.life - amount, 0)
   self.dmg_delay = 0.5
   sound.effect 'hit'
-  if dir then
-    self:shove(amount*(vec2:new{0,-1}-dir):normalized())
-  end
   if self.life <= 0 then
     message.send 'game' {'kill', self}
   end
+  return true
 end
 
 function avatar:draw (graphics)
