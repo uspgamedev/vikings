@@ -21,5 +21,6 @@ end
 function sound.set_bgm(path)
   if music then music:stop() end
   music = love.audio.newSource(path, 'stream')
+  music:setLooping(true)
   if music then music:play() end
 end
