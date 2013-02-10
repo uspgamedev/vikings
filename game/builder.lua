@@ -80,6 +80,29 @@ function build_axesprite ()
   return axe
 end
 
+function build_player (pos)
+  local player = avatar:new {
+    pos       = pos,
+    sprite    = build_sprite(),
+    slashspr  = build_slash(),
+    frame     = { i=4, j=1 },
+  }
+  player.hitboxes.harmful = hitbox:new {
+    size  = vec2:new { 0.8, 0.8 },
+    class = 'damageable'
+  }
+  function player:try_interact()
+    collisions = self.hitboxes.helpful:get_collisions("avatar")
+    for _,target in pairs(collisions) do
+      if target.owner and target.owner ~= self
+         and (self.pos - target.owner.pos):length() < 1.5 then
+        target.owner:interact(self)
+      end
+    end
+  end
+  return player
+end
+
 function build_npc (pos)
   local npc = avatar:new {
     pos    = pos,

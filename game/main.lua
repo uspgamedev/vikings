@@ -7,14 +7,30 @@ require 'message'
 require 'mapgenerator'
 require 'sound'
 
+local debug = true
 local w,h
 local screencenter
 local background
 local camera_pos
-local debug
 local tasks = {}
 local avatars = {}
 local current_map
+local game_message_commands = {
+  kill = function ( ... )
+    for _,avatar in ipairs{...} do
+      for i,check in ipairs(avatars) do
+        if avatar == check then
+          avatar:die()
+          table.remove(avatars, i)
+        end
+      end
+    end
+  end,
+  position = function ( ... )
+    local args = { ... }
+    return avatars[args[1]] and avatars[args[1]].pos
+  end
+}
 
 function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
@@ -41,7 +57,6 @@ local function get_random_position(spots)
 end
 
 function love.load (args)
-  debug = true
   sound.load(love.audio)
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
   background = love.graphics.newImage "background/Ardentryst-Background_SnowCave_Backing.png"
@@ -56,61 +71,18 @@ function love.load (args)
   current_map = map_file and mapgenerator.from_file(map_file) or mapgenerator.random_map()
   local valid_spots = find_grounded_open_spots(current_map)
 
-  local player = avatar:new {
-    pos       = get_random_position(valid_spots),
-    sprite    = builder.build_sprite(),
-    slashspr  = builder.build_slash(),
-    frame     = { i=4, j=1 },
-  }
-  player.hitboxes.harmful = hitbox:new {
-    size  = vec2:new { 0.8, 0.8 },
-    class = 'damageable'
-  }
-  function player:try_interact()
-    collisions = player.hitboxes.helpful:get_collisions("avatar")
-    for _,target in pairs(collisions) do
-      if target.owner and target.owner ~= self
-         and (self.pos - target.owner.pos):length() < 1.5 then
-        target.owner:interact(self)
-      end
-    end
-  end
-
-  tasks.check_collisions = hitbox.check_collisions
-
-  hitbox
-    :new {
-      pos = vec2:new{ 17, 8 },
-      size = vec2:new{ 2, 2 }
-    }
-    :register 'damageable'
-  avatars.player = player
+  avatars.player = builder.build_player(get_random_position(valid_spots))
   table.insert(avatars, builder.build_npc   (get_random_position(valid_spots)))
   table.insert(avatars, builder.build_vendor(get_random_position(valid_spots)))
   table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))
   table.insert(avatars, builder.build_item  (get_random_position(valid_spots)))
 
+  tasks.check_collisions = hitbox.check_collisions
   tasks.updateavatars = function (dt)
-    for _,av in pairs(avatars) do
-      av:update(dt, current_map)
-    end
+    for _,av in pairs(avatars) do av:update(dt, current_map) end
   end
 
-  message.add_receiver(
-    'game',
-    function (cmd, ...)
-      if cmd == 'kill' then
-        for _,avatar in ipairs{...} do
-          for i,check in ipairs(avatars) do
-            if avatar == check then
-              avatar:die()
-              table.remove(avatars, i)
-            end
-          end
-        end
-      end
-    end
-  )
+  message.add_receiver('game', function (cmd, ...) game_message_commands[cmd](...) end)
 end
 
 
