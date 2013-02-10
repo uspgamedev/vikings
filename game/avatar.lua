@@ -98,13 +98,14 @@ function avatar:accelerate (dv)
   end
 end
 
-function avatar:attack ()
+function avatar:attack (charge_time)
   if not self.attacking and self.equipment[1] then
+    charge_time = math.min(charge_time or 0, 1)
     sound.effect 'slash'
     self.attacking = true
     self.frametime = 0
     self.frame.j = 1
-    self:shove(vec2:new{3, 0}*(self.direction=='right' and 1 or -1))
+    self:shove(vec2:new{3+charge_time*13, 0}*(self.direction=='right' and 1 or -1))
   end
 end
 

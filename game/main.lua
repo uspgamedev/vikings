@@ -97,6 +97,8 @@ local speedhack = {
   right = vec2:new{  5,  0 }
 }
 
+local charge_start = 0
+
 function love.keypressed (button)
   local dv = speedhack[button]
   if dv then
@@ -106,7 +108,7 @@ function love.keypressed (button)
   elseif button == "z" then
     avatars.player:jump()
   elseif button == "x" then
-    avatars.player:attack()
+    charge_start = love.timer.getTime()
   elseif button == "up" then
     if avatars.player.try_interact then
       avatars.player:try_interact()
@@ -122,6 +124,9 @@ function love.keyreleased (button)
   local dv = speedhack[button]
   if dv then
     tasks['moveplayer'..dv.x] = nil
+  elseif button == "x" and charge_start > 0 then
+    avatars.player:attack(love.timer.getTime() - charge_start)
+    charge_start = 0
   end
 end
 
