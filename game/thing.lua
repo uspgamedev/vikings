@@ -90,11 +90,11 @@ function thing:update_physics (dt, map)
     if (hor_check and not ver_check) or
        (hor_check and ver_check) then
       self.pos.y = self.pos.y - self.spd.y*dt
-      if self.spd.y > 0 and self.air > 0 then
+      if self.spd.y > 0 then
         if self.air > MIN_AIRTIME then
           sound.effect 'land'
         end
-        self.airjumpsleft = 1
+        self.air = 0
       end
       self.spd.y = 0
     end
@@ -115,8 +115,6 @@ function thing:update_physics (dt, map)
   -- Check airborne status.
   if self.spd.y ~= 0 then
     self.air = self.air + dt
-  else
-    self.air = 0
   end
   -- (Re)apply gravity.
   self:apply_gravity(dt)

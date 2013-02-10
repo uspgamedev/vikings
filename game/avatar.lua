@@ -89,6 +89,9 @@ end
 
 function avatar:update (dt, map)
   avatar:__super().update(self, dt, map)
+  if self.air == 0 then
+    self.airjumpsleft = 1
+  end
   self.slash:update(dt, map)
   self.dmg_delay = math.max(self.dmg_delay - dt, 0)
   if self.charging >= 0 then
