@@ -23,29 +23,6 @@ function avatar:__init()
     sprite = self.slashspr
   }
   self.slashspr = nil
-  --[[
-  self.atkhitbox = hitbox:new {
-    owner       = self,
-    targetclass = 'damageable',
-    on_collision = function (self, collisions)
-      for _,another in ipairs(collisions) do
-        if another.owner then
-          local amount = 5
-          if another.owner:take_damage(amount) then
-            local dir = (self.owner.pos-another.owner.pos):normalized()
-            another.owner:shove(2*amount*(vec2:new{0,-1}-dir):normalized())
-            self.owner:shove(2*amount*(vec2:new{0,-1}+dir):normalized())
-          end
-        else
-          another:unregister()
-        end
-      end
-    end,
-    update = function (self, avatar, dt)
-      self.pos = avatar.pos+vec2:new{(avatar.direction=='right' and 0.75 or -1.75), -.5}
-    end
-  }
-  --]]
 
   self.airjumpsleft = 0
 end
