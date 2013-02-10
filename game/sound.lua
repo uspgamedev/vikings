@@ -6,6 +6,7 @@ local sounds = {}
 
 function sound.load (audio)
   sounds.hit    = audio.newSource('sound/hit10.mp3.ogg', 'static')
+  sounds.bounce = audio.newSource('sound/clang2.wav', 'static')
   sounds.slash  = audio.newSource('sound/swosh-01.ogg', 'static')
   sounds.pick   = audio.newSource('sound/itempick2.wav', 'static')
   sounds.jump   = audio.newSource('sound/jump.wav', 'static')
@@ -14,6 +15,7 @@ end
 
 function sound.effect (id)
   local effect = sounds[id]
+  if not effect then return end
   effect:stop()
   effect:play()
 end

@@ -1,5 +1,7 @@
 
 require 'thing'
+require 'sound'
+require 'vec2'
 
 slash = thing:new {
   source = nil,
@@ -52,6 +54,7 @@ function slash:update (dt, map)
     self.source:shove(2*self.damage*(vec2:new{0,-1}-dir):normalized())
     self.source.airjumpsleft = 1
     self.bounced = true
+    sound.effect 'bounce'
   end
 end
 
