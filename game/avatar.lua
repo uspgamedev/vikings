@@ -132,11 +132,9 @@ function avatar:attack ()
 end
 
 function avatar:stopattack ()
-  if self.attacking then
-    self.attacking = false
-    self.frame.j = 1
-    self.slash.hitbox:unregister()
-  end
+  self.attacking = false
+  self.frame.j = 1
+  self.slash:deactivate()
 end
 
 function avatar:equip(slot, item)

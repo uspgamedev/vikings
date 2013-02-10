@@ -150,6 +150,7 @@ function thing:accelerate (dv)
 end
 
 function thing:shove (dv)
+  print 'shove'
   self.spd:add(dv)
 end
 
