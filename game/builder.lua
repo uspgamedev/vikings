@@ -176,10 +176,11 @@ function build_item (pos)
   item.hitboxes.helpful.class = 'weapon'
   item.hitboxes.helpful.targetclass = 'avatar'
   function item.hitboxes.helpful:on_collision (collisions)
-    if not collisions[1] or not collisions[1].owner then return end
-    collisions[1].owner:equip(1, {})
-    sound.effect 'pick'
-    message.send [[game]] {'kill', self.owner}
+    local p = collisions[1] 
+    if p and p.owner and not p.owner:get_equip(1) and p.owner:equip(1, {}) then
+      sound.effect 'pick'
+      message.send [[game]] {'kill', self.owner}
+    end
   end
   item.hitboxes.helpful:register()
   return item

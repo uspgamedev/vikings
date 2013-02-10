@@ -141,10 +141,16 @@ function avatar:stopattack ()
   self.dashing = false
 end
 
+function avatar:get_equip(slot)
+  return self.equipment[slot]
+end
+
 function avatar:equip(slot, item)
   if slot >= min_equipment_slot and slot <= max_equipment_slot then
     self.equipment[slot] = item
+    return true
   end
+  return false
 end
 
 function avatar:take_damage (amount)
