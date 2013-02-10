@@ -62,6 +62,10 @@ function love.load (args)
     slashspr  = builder.build_slash(),
     frame     = { i=4, j=1 },
   }
+  player.hitboxes.harmful = hitbox:new {
+    size  = vec2:new { 0.8, 0.8 },
+    class = 'damageable'
+  }
   function player:try_interact()
     collisions = player.hitboxes.helpful:get_collisions("avatar")
     for _,target in pairs(collisions) do

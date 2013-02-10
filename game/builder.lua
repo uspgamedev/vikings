@@ -124,7 +124,10 @@ function build_enemy (pos)
   function enemy.tasks.attack (self)
     self:attack()
   end
-  enemy.hitboxes.helpful.class = 'damageable'
+  enemy.hitboxes.harmful = hitbox:new {
+    size  = vec2:new { 1.2, 1.2 },
+    class = 'damageable'
+  }
   return enemy
 end
 
