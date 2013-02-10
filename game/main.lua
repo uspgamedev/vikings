@@ -82,7 +82,7 @@ function love.load (args)
     for _,av in pairs(avatars) do av:update(dt, current_map) end
   end
 
-  message.add_receiver('game', function (cmd, ...) game_message_commands[cmd](...) end)
+  message.add_receiver('game', function (cmd, ...) return game_message_commands[cmd](...) end)
 end
 
 

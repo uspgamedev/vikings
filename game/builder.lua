@@ -145,7 +145,14 @@ function build_enemy (pos)
   }
   enemy:equip(1, {})
   function enemy.tasks.attack (self)
-    self:attack()
+    local playerpos = message.send [[game]] {'position', 'player'}
+    if playerpos then
+      local distance = (playerpos - self.pos):length()
+      self.direction = (playerpos.x < self.pos.x) and 'left' or 'right'
+      if distance < 3 then
+        self:attack()
+      end
+    end
   end
   enemy.hitboxes.harmful = hitbox:new {
     size  = vec2:new { 1.2, 1.2 },
