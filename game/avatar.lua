@@ -29,7 +29,7 @@ end
 
 local JUMPSPDY        = -14
 local MINDASH         = 3
-local DASH_THRESHOLD  = 0.5
+local DASH_THRESHOLD  = 0.25
 local MAXCHARGE       = 1
 local DASHCOEF        = 13
 local min_equipment_slot = 1
@@ -115,15 +115,11 @@ function avatar:attack (charge_time)
     self.attacking = true
     self.frametime = 0
     self.frame.j = 1
+    self.dashing = (charge_time > DASH_THRESHOLD)
     local sign  = (self.direction=='right' and 1 or -1)
-    local dash  = MINDASH+charge_time*DASHCOEF
+    local dash  = MINDASH+(self.dashing and 1 or 0)*DASHCOEF
     local burst = vec2:new{dash, 0}*sign
     self.spd = burst
-    if charge_time > DASH_THRESHOLD then
-      self.dashing = true
-    --else
-    --  self:shove(burst)
-    end
   end
 end
 
