@@ -15,7 +15,7 @@ avatar = thing:new {
 
 function avatar:__init() 
   self.equipment = {}
-  self.hitbox.class = "avatar"
+  self.hitboxes.helpful.class = "avatar"
   self.atkhitbox = hitbox:new {
     owner       = self,
     targetclass = 'damageable',
@@ -39,11 +39,6 @@ end
 local JUMPSPDY   = -14
 local min_equipment_slot = 1
 local max_equipment_slot = 1
-
-function avatar:die ()
-  self.hitbox:unregister()
-  self.atkhitbox:unregister()
-end
 
 function avatar:update_animation (dt)
   self.frame.i =

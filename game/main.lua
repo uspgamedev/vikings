@@ -63,7 +63,7 @@ function love.load (args)
     frame     = { i=4, j=1 },
   }
   function player:try_interact()
-    collisions = player.hitbox:get_collisions("avatar")
+    collisions = player.hitboxes.helpful:get_collisions("avatar")
     for _,target in pairs(collisions) do
       if target.owner and target.owner ~= self
          and (self.pos - target.owner.pos):length() < 1.5 then

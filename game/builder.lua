@@ -124,7 +124,7 @@ function build_enemy (pos)
   function enemy.tasks.attack (self)
     self:attack()
   end
-  enemy.hitbox.class = 'damageable'
+  enemy.hitboxes.helpful.class = 'damageable'
   return enemy
 end
 
@@ -134,14 +134,14 @@ function build_item (pos)
     spd       = vec2:new{ 0, 0 },
     sprite    = build_axesprite(),
   }
-  item.hitbox.class = 'weapon'
-  item.hitbox.targetclass = 'avatar'
-  function item.hitbox:on_collision (collisions)
+  item.hitboxes.helpful.class = 'weapon'
+  item.hitboxes.helpful.targetclass = 'avatar'
+  function item.hitboxes.helpful:on_collision (collisions)
     if not collisions[1] or not collisions[1].owner then return end
     collisions[1].owner:equip(1, {})
     sound.effect 'pick'
     message.send [[game]] {'kill', self.owner}
   end
-  item.hitbox:register()
+  item.hitboxes.helpful:register()
   return item
 end

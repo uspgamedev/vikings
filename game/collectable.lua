@@ -6,5 +6,5 @@ require 'hitbox'
 collectable = thing:new {}
 
 function collectable:__init ()
-  self.hitbox.class = 'collectable'
+  self.hitboxes.helpful.class = 'collectable'
 end
