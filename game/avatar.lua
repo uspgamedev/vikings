@@ -92,7 +92,7 @@ function avatar:update (dt, map)
   self.slash:update(dt, map)
   self.dmg_delay = math.max(self.dmg_delay - dt, 0)
   if self.charging >= 0 then
-    self.charging = self.charging + dt
+    self.charging = math.min(self.charging + dt, DASH_THRESHOLD)
   end
 end
 
@@ -113,7 +113,9 @@ function avatar:accelerate (dv)
 end
 
 function avatar:charge ()
-  self.charging = 0
+  if self.equipment[1] then
+    self.charging = 0
+  end
 end
 
 function avatar:attack ()
@@ -123,7 +125,8 @@ function avatar:attack ()
     self.attacking = true
     self.frametime = 0
     self.frame.j = 1
-    self.dashing = (charge_time > DASH_THRESHOLD)
+    self.dashing = (charge_time >= DASH_THRESHOLD)
+    self.charging = -1
     local sign  = (self.direction=='right' and 1 or -1)
     local dash  = MINDASH+(self.dashing and 1 or 0)*DASHCOEF
     local burst = vec2:new{dash, 0}*sign
@@ -156,7 +159,8 @@ function avatar:take_damage (amount)
 end
 
 function avatar:draw (graphics)
-  if self.equipment[1] then graphics.setColor(255,   0,   0) end
+  local glow = self.charging >= 0 and self.charging/DASH_THRESHOLD or 0
+  if self.equipment[1] then graphics.setColor(255, 255*glow,   0) end
   self.sprite:draw(graphics, self.frame, self.pos)
   if self.equipment[1] then graphics.setColor(255, 255, 255) end
   if self.slash and self.attacking and self.frame.j >= 4 then
