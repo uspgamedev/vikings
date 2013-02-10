@@ -16,7 +16,7 @@ avatar = thing:new {
 function avatar:__init() 
   self.equipment = {}
   self.hitboxes.helpful.class = "avatar"
-  self.atkhitbox = hitbox:new {
+  self.hitboxes.attack = hitbox:new {
     owner       = self,
     targetclass = 'damageable',
     on_collision = function (self, collisions)
@@ -30,6 +30,9 @@ function avatar:__init()
           another:unregister()
         end
       end
+    end,
+    update = function (self, avatar, dt)
+      self.pos = avatar.pos+vec2:new{(avatar.direction=='right' and 0.75 or -1.75), -.5}
     end
   }
 
@@ -71,12 +74,8 @@ function avatar:animate_attack (dt)
     self:stopattack()
   end
   if self.attacking and self.frame.j >= 5 then
-    self.atkhitbox:register 'playeratk'
+    self.hitboxes.attack:register 'playeratk'
   end
-end
-
-function avatar:get_atkhitboxpos ()
-  return self.pos+vec2:new{(self.direction=='right' and 0.75 or -1.75), -.5}
 end
 
 function avatar:get_atkpos ()
@@ -90,9 +89,6 @@ function avatar:get_atkpos ()
 end
 
 function avatar:update (dt, map)
-  if self.atkhitbox then
-    self.atkhitbox.pos = self:get_atkhitboxpos()
-  end
   self.dmg_delay = math.max(self.dmg_delay - dt, 0)
   avatar:__super().update(self, dt, map)
 end
@@ -113,8 +109,6 @@ function avatar:attack ()
     self.attacking = true
     self.frametime = 0
     self.frame.j = 1
-    self.atkhitbox.pos = self:get_atkhitboxpos()
-    --self.atkhitbox:register 'playeratk'
   end
 end
 
@@ -122,7 +116,7 @@ function avatar:stopattack ()
   if self.attacking then
     self.attacking = false
     self.frame.j = 1
-    self.atkhitbox:unregister()
+    self.hitboxes.attack:unregister()
   end
 end
 

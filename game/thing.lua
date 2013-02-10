@@ -28,10 +28,6 @@ thing.__init = {
       class = 'thing'
     },
   },
-  hitbox    = hitbox:new {
-    size  = vec2:new { 1, 1 },
-    class = 'thing'
-  },
 
   frametime = 0
 }
@@ -134,13 +130,7 @@ end
 
 function thing:update_hitbox (dt)
   for _,hitbox in pairs(self.hitboxes) do
-    if hitbox.update then
-      hitbox:update(self, dt)
-    else
-      hitbox.owner = self
-      hitbox.pos   = self.pos - hitbox.size/2
-      hitbox:register()
-    end
+    hitbox:update(self, dt)
   end
 end
 
