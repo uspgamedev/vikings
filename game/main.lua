@@ -106,7 +106,7 @@ function love.keypressed (button)
   elseif button == "z" then
     avatars.player:jump()
   elseif button == "x" then
-    avatars.player:attack()
+    avatars.player:charge()
   elseif button == "up" then
     if avatars.player.try_interact then
       avatars.player:try_interact()
@@ -122,6 +122,8 @@ function love.keyreleased (button)
   local dv = speedhack[button]
   if dv then
     tasks['moveplayer'..dv.x] = nil
+  elseif button == "x" then
+    avatars.player:attack()
   end
 end
 
