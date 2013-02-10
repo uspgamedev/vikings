@@ -9,8 +9,9 @@ require 'sound'
 avatar = thing:new {
   slashspr  = nil,
   life      = 200,
-  dmg_delay = 0,
 
+  dmg_delay = 0,
+  charging  = -1,
   attacking = false
 }
 
@@ -90,6 +91,9 @@ function avatar:update (dt, map)
   avatar:__super().update(self, dt, map)
   self.slash:update(dt, map)
   self.dmg_delay = math.max(self.dmg_delay - dt, 0)
+  if self.charging >= 0 then
+    self.charging = self.charging + dt
+  end
 end
 
 function avatar:jump ()
@@ -108,9 +112,13 @@ function avatar:accelerate (dv)
   end
 end
 
-function avatar:attack (charge_time)
+function avatar:charge ()
+  self.charging = 0
+end
+
+function avatar:attack ()
   if not self.attacking and self.equipment[1] then
-    charge_time = math.min(charge_time or 0, MAXCHARGE)
+    local charge_time = math.min(math.max(self.charging, 0), MAXCHARGE)
     sound.effect 'slash'
     self.attacking = true
     self.frametime = 0
