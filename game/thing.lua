@@ -151,9 +151,6 @@ end
 
 function thing:shove (dv)
   self.spd:add(dv)
-  if self.air > 0 then
-    self.airjumpsleft = 1
-  end
 end
 
 function thing:animate_movement (dt)

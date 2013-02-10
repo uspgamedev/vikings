@@ -50,6 +50,7 @@ function slash:update (dt, map)
   if self.activated and not self.bounced and self:colliding(map, self.pos) then
     local dir = (self.pos-self.source.pos):normalized()
     self.source:shove(2*self.damage*(vec2:new{0,-1}-dir):normalized())
+    self.source.airjumpsleft = 1
     self.bounced = true
   end
 end
