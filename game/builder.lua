@@ -58,10 +58,10 @@ function build_slash ()
     quadsize  = 64,
     hotspot   = vec2:new{ 32, 32 },
     collpts   = {
-      vec2:new{0,0},
-      vec2:new{0,32},
-      vec2:new{32,32},
-      vec2:new{32,0}
+      vec2:new{16,16},
+      vec2:new{16,48},
+      vec2:new{48,48},
+      vec2:new{48,16}
     }
   }
   return slash
