@@ -57,7 +57,12 @@ function build_slash ()
     maxframe  = { i=3, j=1 },
     quadsize  = 64,
     hotspot   = vec2:new{ 32, 32 },
-    collpts   = {}
+    collpts   = {
+      vec2:new{16,16},
+      vec2:new{16,48},
+      vec2:new{48,48},
+      vec2:new{48,16}
+    }
   }
   return slash
 end
@@ -141,6 +146,7 @@ function build_enemy (pos)
   local enemy = avatar:new {
     pos       = pos,
     sprite    = build_sprite(),
+    slashspr  = build_slash(),
     direction = 'left'
   }
   enemy:equip(1, {})

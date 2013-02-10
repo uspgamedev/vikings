@@ -1,5 +1,6 @@
 
 require 'thing'
+require 'slash'
 require 'vec2'
 require 'hitbox'
 require 'message'
@@ -16,25 +17,12 @@ avatar = thing:new {
 function avatar:__init() 
   self.equipment = {}
   self.hitboxes.helpful.class = "avatar"
-  self.hitboxes.attack = hitbox:new {
-    owner       = self,
-    targetclass = 'damageable',
-    on_collision = function (self, collisions)
-      for _,another in ipairs(collisions) do
-        if another.owner then
-          another.owner:take_damage(
-            5,
-            (self.owner.pos-another.owner.pos):normalized()
-          )
-        else
-          another:unregister()
-        end
-      end
-    end,
-    update = function (self, avatar, dt)
-      self.pos = avatar.pos+vec2:new{(avatar.direction=='right' and 0.75 or -1.75), -.5}
-    end
+  self.slash = slash:new{
+    source = self,
+    damage = 5,
+    sprite = self.slashspr
   }
+  self.slashspr = nil
 
   self.airjumpsleft = 0
 end
@@ -74,7 +62,7 @@ function avatar:animate_attack (dt)
     self:stopattack()
   end
   if self.attacking and self.frame.j >= 5 then
-    self.hitboxes.attack:register 'playeratk'
+    self.slash:activate()
   end
 end
 
@@ -89,8 +77,9 @@ function avatar:get_atkpos ()
 end
 
 function avatar:update (dt, map)
-  self.dmg_delay = math.max(self.dmg_delay - dt, 0)
   avatar:__super().update(self, dt, map)
+  self.slash:update(dt, map)
+  self.dmg_delay = math.max(self.dmg_delay - dt, 0)
 end
 
 function avatar:jump ()
@@ -103,21 +92,26 @@ function avatar:jump ()
   end
 end
 
+function avatar:accelerate (dv)
+  if not self.attacking then
+    avatar:__super().accelerate(self, dv)
+  end
+end
+
 function avatar:attack ()
   if not self.attacking and self.equipment[1] then
     sound.effect 'slash'
     self.attacking = true
     self.frametime = 0
     self.frame.j = 1
+    self:shove(vec2:new{3, 0}*(self.direction=='right' and 1 or -1))
   end
 end
 
 function avatar:stopattack ()
-  if self.attacking then
-    self.attacking = false
-    self.frame.j = 1
-    self.hitboxes.attack:unregister()
-  end
+  self.attacking = false
+  self.frame.j = 1
+  self.slash:deactivate()
 end
 
 function avatar:equip(slot, item)
@@ -126,30 +120,23 @@ function avatar:equip(slot, item)
   end
 end
 
-function avatar:take_damage (amount, dir)
+function avatar:take_damage (amount)
   if self.dmg_delay > 0 then return end
   self.life = math.max(self.life - amount, 0)
   self.dmg_delay = 0.5
   sound.effect 'hit'
-  if dir then
-    self:shove(amount*(vec2:new{0,-1}-dir):normalized())
-  end
   if self.life <= 0 then
     message.send 'game' {'kill', self}
   end
+  return true
 end
 
 function avatar:draw (graphics)
   if self.equipment[1] then graphics.setColor(255,   0,   0) end
   self.sprite:draw(graphics, self.frame, self.pos)
   if self.equipment[1] then graphics.setColor(255, 255, 255) end
-  if self.slashspr and self.attacking and self.frame.j >= 4 then
-    self.slashspr:draw(
-      graphics,
-      {i=self.frame.j-3, j=1},
-      self:get_atkpos(),
-      self.direction=='right' and 'h' or nil
-    )
+  if self.slash and self.attacking and self.frame.j >= 4 then
+    self.slash:draw(graphics)
   end
   for _, task in pairs(self.drawtasks) do
     task(self, graphics)
