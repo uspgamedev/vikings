@@ -146,6 +146,7 @@ function build_enemy (pos)
   local enemy = avatar:new {
     pos       = pos,
     sprite    = build_sprite(),
+    slashspr  = build_slash(),
     direction = 'left'
   }
   enemy:equip(1, {})

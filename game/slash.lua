@@ -11,10 +11,10 @@ slash = thing:new {
 function slash:__init ()
   assert(self.source, "Slash without slasher.")
   self.bounced = true
-  self.hitbox.class = 'slash'
-  self.hitbox.owner = self
-  self.hitbox.targetclass = 'damageable'
-  self.hitbox.on_collision = function (self, collisions)
+  self.hitboxes.helpful.class = 'slash'
+  self.hitboxes.helpful.owner = self
+  self.hitboxes.helpful.targetclass = 'damageable'
+  self.hitboxes.helpful.on_collision = function (self, collisions)
     for _,another in ipairs(collisions) do
       if another.owner then
         local attacker = self.owner.source
@@ -29,24 +29,29 @@ function slash:__init ()
       end
     end
   end
+  self.hitboxes.helpful.update = function (self, owner, dt)
+    self.pos =
+      owner.source.pos
+      +
+      vec2:new{(owner.source.direction=='right' and 0.75 or -1.75), -.5}
+  end
 end
 
 function slash:activate ()
   if self.activated then return end
   self.activated = true
   self.bounced = false
-  self.hitbox:register 'playeratk'
+  self.hitboxes.helpful:register 'playeratk'
 end
 
 function slash:deactivate ()
   self.activated = false
   self.bounced = true
-  self.hitbox:unregister()
+  self.hitboxes.helpful:unregister()
 end
 
 function slash:update (dt, map)
   self.pos        = self.source:get_atkpos()
-  self.hitbox.pos = self.source:get_atkhitboxpos()
   self.frame      = {i=self.source.frame.j-3, j=1}
   self.mirror     = self.source.direction=='right' and 'h' or nil
   if self.activated and not self.bounced and self:colliding(map, self.pos) then
@@ -59,5 +64,6 @@ function slash:update (dt, map)
 end
 
 function slash:draw (graphics)
+  if not self.sprite then return end
   self.sprite:draw(graphics, self.frame, self.pos, self.mirror)
 end
