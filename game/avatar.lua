@@ -27,9 +27,19 @@ function avatar:__init()
   self.airjumpsleft = 0
 end
 
-local JUMPSPDY   = -14
+local JUMPSPDY        = -14
+local MINDASH         = 3
+local DASH_THRESHOLD  = 0.5
+local MAXCHARGE       = 1
+local DASHCOEF        = 13
 local min_equipment_slot = 1
 local max_equipment_slot = 1
+
+function avatar:apply_gravity (dt)
+  if not self.dashing then
+    avatar:__super().apply_gravity(self, dt)
+  end
+end
 
 function avatar:update_animation (dt)
   self.frame.i =
@@ -100,12 +110,20 @@ end
 
 function avatar:attack (charge_time)
   if not self.attacking and self.equipment[1] then
-    charge_time = math.min(charge_time or 0, 1)
+    charge_time = math.min(charge_time or 0, MAXCHARGE)
     sound.effect 'slash'
     self.attacking = true
     self.frametime = 0
     self.frame.j = 1
-    self:shove(vec2:new{3+charge_time*13, 0}*(self.direction=='right' and 1 or -1))
+    local sign  = (self.direction=='right' and 1 or -1)
+    local dash  = MINDASH+charge_time*DASHCOEF
+    local burst = vec2:new{dash, 0}*sign
+    self.spd = burst
+    if charge_time > DASH_THRESHOLD then
+      self.dashing = true
+    --else
+    --  self:shove(burst)
+    end
   end
 end
 
@@ -113,6 +131,7 @@ function avatar:stopattack ()
   self.attacking = false
   self.frame.j = 1
   self.slash:deactivate()
+  self.dashing = false
 end
 
 function avatar:equip(slot, item)

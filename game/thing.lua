@@ -64,6 +64,10 @@ local function sign_to_dir (sign)
   return sign >= 0 and 'right' or 'left'
 end
 
+function thing:apply_gravity (dt)
+    self.spd:add(GRAVITY * dt)
+end
+
 function thing:update_physics (dt, map)
   -- no, negative speed doesn't increase forever
   self.spd.x = math.min(math.max(-MAXSPD.x, self.spd.x), MAXSPD.x)
@@ -115,7 +119,7 @@ function thing:update_physics (dt, map)
     self.air = 0
   end
   -- (Re)apply gravity.
-  self.spd:add(GRAVITY * dt)
+  self:apply_gravity(dt)
 end
 
 function thing:update_animation (dt)
