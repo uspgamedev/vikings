@@ -22,9 +22,11 @@ thing.__init = {
   frame     = { i=1, j=1 },
   tasks     = {},
   drawtasks = {},
-  hitbox    = hitbox:new {
-    size  = vec2:new { 1, 1 },
-    class = 'thing'
+  hitboxes  = {
+    helpful = hitbox:new {
+      size  = vec2:new { 1, 1 },
+      class = 'thing'
+    },
   },
 
   frametime = 0
@@ -38,7 +40,9 @@ local DYNAMIC_FRICTION  = 1.0
 local STATIC_FRICTION   = 3.0
 
 function thing:die ()
-  self.hitbox:unregister()
+  for _,hitbox in pairs(self.hitboxes) do
+    hitbox:unregister()
+  end
 end
 
 local function pos_to_tile (map, point)
@@ -125,9 +129,9 @@ function thing:update_animation (dt)
 end
 
 function thing:update_hitbox (dt)
-  self.hitbox.owner = self
-  self.hitbox.pos   = self.pos - self.hitbox.size/2
-  self.hitbox:register()
+  for _,hitbox in pairs(self.hitboxes) do
+    hitbox:update(self, dt)
+  end
 end
 
 function thing:update (dt, map)

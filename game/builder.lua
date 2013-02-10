@@ -80,6 +80,29 @@ function build_axesprite ()
   return axe
 end
 
+function build_player (pos)
+  local player = avatar:new {
+    pos       = pos,
+    sprite    = build_sprite(),
+    slashspr  = build_slash(),
+    frame     = { i=4, j=1 },
+  }
+  player.hitboxes.harmful = hitbox:new {
+    size  = vec2:new { 0.8, 0.8 },
+    class = 'damageable'
+  }
+  function player:try_interact()
+    collisions = self.hitboxes.helpful:get_collisions("avatar")
+    for _,target in pairs(collisions) do
+      if target.owner and target.owner ~= self
+         and (self.pos - target.owner.pos):length() < 1.5 then
+        target.owner:interact(self)
+      end
+    end
+  end
+  return player
+end
+
 function build_npc (pos)
   local npc = avatar:new {
     pos    = pos,
@@ -120,7 +143,21 @@ function build_enemy (pos)
     sprite    = build_sprite(),
     direction = 'left'
   }
-  enemy.hitbox.class = 'damageable'
+  enemy:equip(1, {})
+  function enemy.tasks.attack (self)
+    local playerpos = message.send [[game]] {'position', 'player'}
+    if playerpos then
+      local distance = (playerpos - self.pos):length()
+      self.direction = (playerpos.x < self.pos.x) and 'left' or 'right'
+      if distance < 3 then
+        self:attack()
+      end
+    end
+  end
+  enemy.hitboxes.harmful = hitbox:new {
+    size  = vec2:new { 1.2, 1.2 },
+    class = 'damageable'
+  }
   return enemy
 end
 
@@ -130,14 +167,14 @@ function build_item (pos)
     spd       = vec2:new{ 0, 0 },
     sprite    = build_axesprite(),
   }
-  item.hitbox.class = 'weapon'
-  item.hitbox.targetclass = 'avatar'
-  function item.hitbox:on_collision (collisions)
+  item.hitboxes.helpful.class = 'weapon'
+  item.hitboxes.helpful.targetclass = 'avatar'
+  function item.hitboxes.helpful:on_collision (collisions)
     if not collisions[1] or not collisions[1].owner then return end
     collisions[1].owner:equip(1, {})
     sound.effect 'pick'
     message.send [[game]] {'kill', self.owner}
   end
-  item.hitbox:register()
+  item.hitboxes.helpful:register()
   return item
 end

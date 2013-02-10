@@ -31,6 +31,14 @@ function hitbox:right ()
   return self.pos.x + self.size.x
 end
 
+function hitbox:update(owner, dt)
+  self.owner = owner
+  if owner then
+    self.pos   = owner.pos - self.size/2
+    self:register()
+  end
+end
+
 function hitbox:colliding (another)
   if self:top() > another:bottom() then
     return false
