@@ -1,5 +1,6 @@
 
 require 'thing'
+require 'slash'
 require 'vec2'
 require 'hitbox'
 require 'message'
@@ -16,7 +17,14 @@ avatar = thing:new {
 function avatar:__init() 
   self.equipment = {}
   self.hitboxes.helpful.class = "avatar"
-  self.hitboxes.attack = hitbox:new {
+  self.slash = slash:new{
+    source = self,
+    damage = 5,
+    sprite = self.slashspr
+  }
+  self.slashspr = nil
+  --[[
+  self.atkhitbox = hitbox:new {
     owner       = self,
     targetclass = 'damageable',
     on_collision = function (self, collisions)
@@ -37,6 +45,7 @@ function avatar:__init()
       self.pos = avatar.pos+vec2:new{(avatar.direction=='right' and 0.75 or -1.75), -.5}
     end
   }
+  --]]
 
   self.airjumpsleft = 0
 end
@@ -76,7 +85,7 @@ function avatar:animate_attack (dt)
     self:stopattack()
   end
   if self.attacking and self.frame.j >= 5 then
-    self.hitboxes.attack:register 'playeratk'
+    self.slash:activate()
   end
 end
 
@@ -91,8 +100,9 @@ function avatar:get_atkpos ()
 end
 
 function avatar:update (dt, map)
-  self.dmg_delay = math.max(self.dmg_delay - dt, 0)
   avatar:__super().update(self, dt, map)
+  self.slash:update(dt, map)
+  self.dmg_delay = math.max(self.dmg_delay - dt, 0)
 end
 
 function avatar:jump ()
@@ -117,7 +127,6 @@ function avatar:attack ()
     self.attacking = true
     self.frametime = 0
     self.frame.j = 1
-    self.atkhitbox.pos = self:get_atkhitboxpos()
     self:shove(vec2:new{3, 0}*(self.direction=='right' and 1 or -1))
   end
 end
@@ -126,7 +135,7 @@ function avatar:stopattack ()
   if self.attacking then
     self.attacking = false
     self.frame.j = 1
-    self.hitboxes.attack:unregister()
+    self.slash.hitbox:unregister()
   end
 end
 
@@ -151,13 +160,8 @@ function avatar:draw (graphics)
   if self.equipment[1] then graphics.setColor(255,   0,   0) end
   self.sprite:draw(graphics, self.frame, self.pos)
   if self.equipment[1] then graphics.setColor(255, 255, 255) end
-  if self.slashspr and self.attacking and self.frame.j >= 4 then
-    self.slashspr:draw(
-      graphics,
-      {i=self.frame.j-3, j=1},
-      self:get_atkpos(),
-      self.direction=='right' and 'h' or nil
-    )
+  if self.slash and self.attacking and self.frame.j >= 4 then
+    self.slash:draw(graphics)
   end
   for _, task in pairs(self.drawtasks) do
     task(self, graphics)

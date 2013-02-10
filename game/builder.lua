@@ -57,7 +57,12 @@ function build_slash ()
     maxframe  = { i=3, j=1 },
     quadsize  = 64,
     hotspot   = vec2:new{ 32, 32 },
-    collpts   = {}
+    collpts   = {
+      vec2:new{0,0},
+      vec2:new{0,32},
+      vec2:new{32,32},
+      vec2:new{32,0}
+    }
   }
   return slash
 end
