@@ -2,20 +2,23 @@
 require 'lux.object'
 require 'vec2'
 require 'map'
+require 'animation'
 
 sprite = lux.object.new {
   img           = nil,
   maxframe      = nil,
-  animfps       = 25,
   quadsize      = nil, -- must be a number
   hotspot       = nil,
   collpts       = nil,
-  default_frame = 1,
-  dirmap        = nil
+  animation     = nil,
+  mirror        = { false, false }
+
+  framestep     = 1,
+  frametime     = 0
 }
 
 function sprite:__init()
-  self.dirmap = self.dirmap or {}
+  self.animation = self.animation or animation:new{}
   self.quads = {}
   for i=1, self.maxframe.i do
     self.quads[i] = {}
@@ -29,15 +32,28 @@ function sprite:__init()
   end
 end
 
-function sprite:frame_from_direction(dir)
-  return self.dirmap[dir] or self.default_frame
+function sprite:set_mirror (horizontal, vertical)
+  self.mirror = { horizontal, vertical }
 end
 
-function sprite:draw (graphics, frame, pos, mirror)
-  local tilesize = map.get_tilesize()
-  if mirror == 'h' then
-    self.quads[frame.i][frame.j]:flip(unpack(mirror))
+function sprite:play_animation (animation)
+  self.animation  = animation
+  self.framestep  = 1
+  self.frametime  = 0
+end
+
+function sprite:update (dt)
+  self.frametime = self.frametime + dt
+  while self.frametime >= 1/self.animation.fps do
+    self.framtestep = self.animation:step(self.framtestep)
+    self.frametime = self.frametime - 1/self.sprite.animfps
   end
+end
+
+function sprite:draw (graphics, pos)
+  local frame     = self.animation.frames[self.framestep]
+  local tilesize  = map.get_tilesize()
+  self.quads[frame.i][frame.j]:flip(unpack(self.mirror))
   graphics.drawq(
     self.img,
     self.quads[frame.i][frame.j],
@@ -45,7 +61,5 @@ function sprite:draw (graphics, frame, pos, mirror)
     0, 1, 1,
     self.hotspot:get()
   )
-  if mirror == 'h' then
-    self.quads[frame.i][frame.j]:flip(unpack(mirror))
-  end
+  self.quads[frame.i][frame.j]:flip(unpack(self.mirror))
 end
