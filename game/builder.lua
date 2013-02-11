@@ -11,24 +11,6 @@ require 'sound'
 require 'animationset.monster'
 require 'spriteeffect.speech'
 
-local function draw_buble (self, graphics)
-  if self.text then
-    graphics.setColor(255, 255, 255, math.min(self.counter, 1) * 255)
-    graphics.print(self.text, 
-      map.get_tilesize() * (self.pos.x - 0.5),
-      map.get_tilesize() * (self.pos.y - 2)
-    )
-    graphics.setColor(255, 255, 255, 255)
-  end
-end
-
-local function update_buble (self, dt)
-  self.counter = (self.counter or 0) - dt
-  if self.counter <= 0 then
-    self.text = nil
-  end
-end
-
 local butler
 function build_sprite ()
   butler = butler or spritedata:new {
