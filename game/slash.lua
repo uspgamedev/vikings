@@ -56,7 +56,7 @@ end
 
 function slash:update (dt, map)
   self.pos        = self.source:get_atkpos()
-  --self.frame      = {i=self.source.frame.j-3, j=1}
+  self.direction  = self.source.direction
   self:update_sprite(dt)
   self:update_hitbox()
   if self.activated and not self.bounced and self:colliding(map, self.pos) then

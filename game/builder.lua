@@ -89,7 +89,7 @@ function build_player (pos)
   local player = avatar:new {
     pos       = pos,
     sprite    = build_sprite():clone(),
-    slashspr  = build_slash(),
+    slashspr  = build_slash():clone(),
     frame     = { i=4, j=1 },
   }
   player.hitboxes.harmful = hitbox:new {
@@ -112,7 +112,7 @@ function build_npc (pos)
   local npc = avatar:new {
     pos    = pos,
     sprite = build_sprite():clone(),
-    slashspr  = build_slash(),
+    slashspr  = build_slash():clone(),
     counter = 0
   }
   npc.drawtasks.buble = draw_buble
@@ -128,7 +128,7 @@ function build_vendor (pos)
   local npc = avatar:new {
     pos    = pos,
     sprite = build_sprite():clone(),
-    slashspr  = build_slash(),
+    slashspr  = build_slash():clone(),
     counter = 0
   }
   npc.drawtasks.buble = draw_buble
@@ -148,7 +148,7 @@ function build_enemy (pos)
   local enemy = avatar:new {
     pos       = pos,
     sprite    = build_sprite():clone(),
-    slashspr  = build_slash(),
+    slashspr  = build_slash():clone(),
     direction = 'left'
   }
   enemy:equip(1, {})
