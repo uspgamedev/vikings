@@ -127,6 +127,8 @@ function avatar:attack ()
     local charge_time = math.min(math.max(self.charging, 0), MAXCHARGE)
     sound.effect 'slash'
     self.attacking = true
+    self.sprite:play_animation(self.animationset.attacking)
+    self.sprite:restart_animation()
     self.dashing = (charge_time >= DASH_THRESHOLD)
     self.charging = -1
     local sign  = (self.direction=='right' and 1 or -1)

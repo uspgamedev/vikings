@@ -6,7 +6,6 @@ module ('animationset', package.seeall)
 viking = {}
 
 viking.standing = animation:new {
-  name    = 'viking.standing',
   fps     = 1,
   type    = 'once',
   frames  = {
@@ -15,7 +14,6 @@ viking.standing = animation:new {
 }
 
 viking.moving = animation:new {
-  name    = 'viking.moving',
   fps     = 25,
   type    = 'loop',
   frames  = {
@@ -31,7 +29,6 @@ viking.moving = animation:new {
 }
 
 viking.attacking = animation:new {
-  name    = 'viking.attacking',
   fps     = 25,
   type    = 'once',
   frames  = {
