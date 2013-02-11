@@ -212,6 +212,7 @@ local function generate_cave_from_grid(grid)
       depth_set_group(tile, newgroup)
     end
   end)
+  -- Fill small groups
   pertile(advdata, function(tile)
     if tile.group and tile.group.size < MINGROUP_SIZE then
       tile.type = 'I'
@@ -260,6 +261,16 @@ local function generate_cave_from_grid(grid)
           shortest = (shortest.dist <= dist) and shortest or { this = tile, that = other, dist = dist }
         end
       end
+      for j = math.min(shortest.this.j, shortest.that.j), math.max(shortest.this.j, shortest.that.j) do
+        for i = math.min(shortest.this.i, shortest.that.i), math.max(shortest.this.i, shortest.that.i) do
+          local tile = advdata[j][i]
+          if tile and not tile.group and tile.type == 'I' then
+            tile.type = ' '
+            tile.group = group
+            group.size = group.size + 1
+          end
+        end
+      end
       group.shortest = shortest
     end
   end
@@ -268,12 +279,10 @@ local function generate_cave_from_grid(grid)
     print(id, group.size, #group.border, group.shortest.dist)
   end
 
-  for j=1,height do
-    for i=1,width do
-      assert(advdata[j][i].group or advdata[j][i].type ~= ' ')
-      fullmap[j][i] = advdata[j][i].type
-    end
-  end
+  pertile(advdata, function(tile, j, i)
+    assert(tile.group or tile.type ~= ' ')
+    fullmap[j][i] = tile.type
+  end)
 
   fullmap.width   = grid.width
   fullmap.height  = grid.height
