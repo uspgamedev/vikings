@@ -103,6 +103,11 @@ function build_axesprite ()
   return sprite:new { data = axe }
 end
 
+local speedhack = {
+  left  = vec2:new{ -10,  0 },
+  right = vec2:new{  10,  0 }
+}
+
 function build_player (pos)
   local player = avatar:new {
     pos       = pos,
@@ -124,6 +129,93 @@ function build_player (pos)
     end
   end
   return player
+end
+
+function add_keyboard_input(player)
+  function player.tasks.check_input(self, dt)
+    if love.keyboard.isDown "left" then
+      self:accelerate(speedhack.left)
+    end
+    if love.keyboard.isDown "right" then
+      self:accelerate(speedhack.right)
+    end
+  end
+  function player:input_pressed(button, joystick)
+    if joystick then return end
+    if button == "z" then
+      self:jump()
+    elseif button == "x" then
+      self:charge()
+    elseif button == "up" then
+      self:try_interact()
+    end
+  end
+  function player:input_released(button, joystick)
+    if joystick then return end
+    if button == "x" then
+      self:attack()
+    end
+  end
+end
+
+function add_joystick_input(player, joystick)
+  joystick = joystick or 1
+  local joystick_database = {
+    ["Twin USB Joystick"] = {
+      jump = 3,
+      attack = 4,
+      direction = function(dir)
+        return love.joystick.getHat(joystick,1):find(dir, 1, true) ~= nil
+      end
+    },
+    {
+      jump = 1,
+      attack = 2,
+      direction = function(dir)
+        if dir == "l" then
+          return love.joystick.getAxis(joystick,1) < -0.2
+        elseif dir == "r" then
+          return love.joystick.getAxis(joystick,1) > 0.2
+        elseif dir == "u" then
+          return love.joystick.getAxis(joystick,2) < -0.2
+        elseif dir == "d" then
+          return love.joystick.getAxis(joystick,2) > 0.2
+        end
+      end
+    }
+  }
+  local joy = joystick_database[love.joystick.getName(joystick)] or joystick_database[1]
+  local up_pressed = false
+  function player.tasks.check_input(self, dt)
+    if joy.direction("l") then
+      self:accelerate(speedhack.left)
+    end
+    if joy.direction("r") then
+      self:accelerate(speedhack.right)
+    end
+    if joy.direction("u") then
+      if not up_pressed then
+        self:try_interact()
+        up_pressed = true
+      end
+    else
+      up_pressed = false
+    end
+  end
+  function player:input_pressed(button, joystick)
+    if not joystick then return end
+    if button == joy.jump then
+      self:jump()
+    elseif button == joy.attack then
+      self:charge()
+    end
+  end
+  function player:input_released(button, joystick)
+    if not joystick then return end
+    if button == joy.attack then
+      self:attack()
+    end
+  end
 end
 
 function build_npc (pos)

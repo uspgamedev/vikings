@@ -67,9 +67,10 @@ function love.load (args)
   camera_pos = vec2:new{ w/2, h/2 }
 
   sound.set_bgm "music/JordanTrudgett-Snodom-ccby3.ogg"
-  local map_file
+  local map_file, no_joystick
   for _, arg in ipairs(args) do
     map_file = string.ends(arg, ".vikingmap") and arg or map_file
+    no_joystick = no_joystick or arg == "--no-joystick"
     if arg == '--debug' then
       debug = true
     end
@@ -78,6 +79,11 @@ function love.load (args)
   local valid_spots = find_grounded_open_spots(current_map)
 
   avatars.player = builder.build_player(get_random_position(valid_spots))
+  if love.joystick.getNumJoysticks() == 0 or no_joystick then
+    builder.add_keyboard_input(avatars.player)
+  else
+    builder.add_joystick_input(avatars.player)
+  end
   table.insert(avatars, builder.build_npc   (get_random_position(valid_spots)))
   table.insert(avatars, builder.build_vendor(get_random_position(valid_spots)))
   if debug then
@@ -107,38 +113,31 @@ function love.update (dt)
   end
 end
 
-local speedhack = {
-  left  = vec2:new{ -10,  0 },
-  right = vec2:new{  10,  0 }
-}
-
 function love.keypressed (button)
-  local dv = speedhack[button]
-  if dv then
-    tasks['moveplayer'..dv.x] = function (dt)
-      avatars.player:accelerate(dv)
-    end
-  elseif button == "z" then
-    avatars.player:jump()
-  elseif button == "x" then
-    avatars.player:charge()
-  elseif button == "up" then
-    if avatars.player.try_interact then
-      avatars.player:try_interact()
-    end
-  elseif button == "p" then
+  if button == "p" then
     if current_map then current_map:save_to_file(os.date "%Y-%m-%d_%H-%M-%S.vikingmap") end
   elseif button == "escape" then
     love.event.push("quit")
+  elseif avatars.player.input_pressed then
+    avatars.player:input_pressed(button)
   end
 end
 
 function love.keyreleased (button)
-  local dv = speedhack[button]
-  if dv then
-    tasks['moveplayer'..dv.x] = nil
-  elseif button == "x" then
-    avatars.player:attack()
+  if avatars.player.input_released then
+    avatars.player:input_released(button)
+  end
+end
+
+function love.joystickpressed(joystick, button)
+  if avatars.player.input_pressed then
+    avatars.player:input_pressed(button, joystick)
+  end
+end
+
+function love.joystickreleased(joystick, button)
+  if avatars.player.input_pressed then
+    avatars.player:input_released(button, joystick)
   end
 end
 
@@ -186,7 +185,7 @@ function love.draw ()
     hitbox.draw_all(love.graphics)
   end
 
-  if love.keyboard.isDown("tab") then
+  if love.keyboard.isDown("tab") or love.joystick.isDown(1, 5) then
     love.graphics.translate((-(screencenter - avatars.player.pos * map.get_tilesize())):get())
     love.graphics.translate(20, 20)
     love.graphics.scale(0.1, 0.1)
