@@ -310,21 +310,8 @@ end
 function build_item (pos)
   local item = collectable:new {
     pos       = pos,
-    spd       = vec2:new{ 0, 0 },
     sprite    = build_axesprite(),
-    pick_delay = 0
   }
   item.hitboxes.helpful.class = 'weapon'
-  item.hitboxes.helpful.targetclass = 'avatar'
-  function item.hitboxes.helpful:on_collision (collisions)
-    local p = collisions[1] 
-    if self.owner.pick_delay == 0 and p and p.owner and p.owner:equip(1, self.owner) then
-      sound.effect 'pick'
-      message.send [[game]] {'kill', self.owner}
-    end
-  end
-  function item.tasks.pick_delay(self, dt)
-    self.pick_delay = math.max(self.pick_delay - dt, 0)
-  end
   return item
 end
