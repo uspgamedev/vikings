@@ -2,6 +2,7 @@
 require 'thing'
 require 'sound'
 require 'vec2'
+require 'animationset.slash'
 
 slash = thing:new {
   source = nil,
@@ -40,12 +41,14 @@ end
 
 function slash:activate ()
   if self.activated then return end
+  self.sprite:play_animation(animationset.slash.active)
   self.activated = true
   self.bounced = false
   self.hitboxes.helpful:register 'playeratk'
 end
 
 function slash:deactivate ()
+  self.sprite:play_animation(animationset.slash.inactive)
   self.activated = false
   self.bounced = true
   self.hitboxes.helpful:unregister()
