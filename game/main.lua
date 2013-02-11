@@ -72,6 +72,7 @@ function love.load (args)
   local valid_spots = find_grounded_open_spots(current_map)
 
   avatars.player = builder.build_player(get_random_position(valid_spots))
+  builder.add_joystick_input(avatars.player)
   table.insert(avatars, builder.build_npc   (get_random_position(valid_spots)))
   table.insert(avatars, builder.build_vendor(get_random_position(valid_spots)))
   table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))
@@ -105,6 +106,18 @@ end
 function love.keyreleased (button)
   if avatars.player.input_released then
     avatars.player:input_released(button)
+  end
+end
+
+function love.joystickpressed(joystick, button)
+  if avatars.player.input_pressed then
+    avatars.player:input_pressed(button, joystick)
+  end
+end
+
+function love.joystickreleased(joystick, button)
+  if avatars.player.input_pressed then
+    avatars.player:input_released(button, joystick)
   end
 end
 

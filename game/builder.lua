@@ -128,6 +128,10 @@ function build_player (pos)
       end
     end
   end
+  return player
+end
+
+function add_keyboard_input(player)
   function player.tasks.check_input(self, dt)
     if love.keyboard.isDown "left" then
       self:accelerate(speedhack.left)
@@ -152,7 +156,34 @@ function build_player (pos)
       self:attack()
     end
   end
-  return player
+end
+
+function add_joystick_input(player)
+  function player.tasks.check_input(self, dt)
+    local dir = love.joystick.getHat(1,1)
+    if dir:find("l", 1, true) then
+      self:accelerate(speedhack.left)
+    end
+    if dir:find("r", 1, true) then
+      self:accelerate(speedhack.right)
+    end
+  end
+  function player:input_pressed(button, joystick)
+    if not joystick then return end
+    if button == 3 then
+      self:jump()
+    elseif button == 4 then
+      self:charge()
+    elseif love.joystick.getHat(1,1):find("u", 1, true) then
+      self:try_interact()
+    end
+  end
+  function player:input_released(button, joystick)
+    if not joystick then return end
+    if button == 4 then
+      self:attack()
+    end
+  end
 end
 
 function build_npc (pos)
