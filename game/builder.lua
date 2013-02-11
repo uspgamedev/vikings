@@ -178,6 +178,12 @@ function build_enemy (pos)
       self.direction = (playerpos.x < self.pos.x) and 'left' or 'right'
       if distance < 3 then
         self:attack()
+      else
+        local dir = vec2:new{(self.direction=='right' and 1 or -1), 0}
+        self:accelerate(5*dir)
+        --if self:colliding(self.pos+2*dir) then
+        --  self:jump()
+        --end
       end
     end
   end
