@@ -88,7 +88,7 @@ function thing:update_physics (dt, map)
       self.pos.y = self.pos.y - self.spd.y*dt
       if self.spd.y > 0 then
         if self.air > MIN_AIRTIME then
-          sound.effect 'land'
+          sound.effect('land', self.pos)
         end
         self.air = 0
       end

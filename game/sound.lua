@@ -13,9 +13,12 @@ function sound.load (audio)
   sounds.land   = audio.newSource('sound/land.wav', 'static')
 end
 
-function sound.effect (id)
+function sound.effect (id, pos)
   local effect = sounds[id]
   if not effect then return end
+  local playerpos = message.send [[game]] {'position', 'player'}
+  pos = pos or playerpos
+  if (playerpos - pos):norm1() > 20 then return end
   effect:stop()
   effect:play()
 end

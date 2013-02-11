@@ -7,7 +7,7 @@ require 'message'
 require 'mapgenerator'
 require 'sound'
 
-local debug = true
+local debug = false
 local w,h
 local screencenter
 local background
@@ -67,6 +67,9 @@ function love.load (args)
   local map_file
   for _, arg in ipairs(args) do
     map_file = string.ends(arg, ".vikingmap") and arg or map_file
+    if arg == '--debug' then
+      debug = true
+    end
   end
   current_map = map_file and mapgenerator.from_file(map_file) or mapgenerator.random_map()
   local valid_spots = find_grounded_open_spots(current_map)
@@ -74,8 +77,17 @@ function love.load (args)
   avatars.player = builder.build_player(get_random_position(valid_spots))
   table.insert(avatars, builder.build_npc   (get_random_position(valid_spots)))
   table.insert(avatars, builder.build_vendor(get_random_position(valid_spots)))
-  table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))
-  table.insert(avatars, builder.build_item  (get_random_position(valid_spots)))
+  if debug then
+    table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))
+    table.insert(avatars, builder.build_item  (get_random_position(valid_spots)))
+  else
+    for i=1,10 do
+      table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))
+    end
+    for i=1,5 do
+      table.insert(avatars, builder.build_item  (get_random_position(valid_spots)))
+    end
+  end
 
   tasks.check_collisions = hitbox.check_collisions
   tasks.updateavatars = function (dt)

@@ -39,6 +39,12 @@ local DASHCOEF        = 13
 local min_equipment_slot = 1
 local max_equipment_slot = 1
 
+
+function avatar:die ()
+  avatar:__super().die(self)
+  self.slash:die()
+end
+
 function avatar:apply_gravity (dt)
   if not self.dashing then
     avatar:__super().apply_gravity(self, dt)
@@ -87,7 +93,7 @@ function avatar:jump ()
       self.airjumpsleft = self.airjumpsleft - 1
     end
     self.spd.y = JUMPSPDY
-    sound.effect 'jump'
+    sound.effect('jump', self.pos)
   end
 end
 
@@ -106,7 +112,7 @@ end
 function avatar:attack ()
   if not self.attacking and self.equipment[1] then
     local charge_time = math.min(math.max(self.charging, 0), MAXCHARGE)
-    sound.effect 'slash'
+    sound.effect('slash', self.pos)
     self.attacking = true
     self.sprite:play_animation(self.animationset.attacking)
     self.sprite:restart_animation()
@@ -141,7 +147,7 @@ function avatar:take_damage (amount)
   if self.dmg_delay > 0 then return end
   self.life = math.max(self.life - amount, 0)
   self.dmg_delay = 0.5
-  sound.effect 'hit'
+  sound.effect('hit', self.pos)
   if self.life <= 0 then
     message.send 'game' {'kill', self}
   end
