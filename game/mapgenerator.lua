@@ -161,8 +161,95 @@ local function generate_cave_from_grid(grid)
     end
   end
 
-  for i,v in ipairs(fullmap) do
-    print(i, table.concat(v))
+  local advdata = {}
+  local groups  = {}
+  for j=1,height do
+    advdata[j] = {}
+    for i=1,width do
+      advdata[j][i] = { j=j, i=i, type=fullmap[j][i] }
+    end
+  end
+  local function depth_set_group(j, i, newgroup)
+    if j < 1 or i < 1 or j > height or i > width 
+      or advdata[j][i].group == newgroup then 
+      return false
+    end
+    if advdata[j][i].type ~= ' '  then 
+      return true
+    end
+    assert(not advdata[j][i].group, "If groups not the same then i has no group.")
+    advdata[j][i].group = newgroup
+    newgroup.size = newgroup.size + 1
+    local border = depth_set_group(j-1, i, newgroup)
+    border = depth_set_group(j+1, i, newgroup) or border
+    border = depth_set_group(j, i-1, newgroup) or border
+    border = depth_set_group(j, i+1, newgroup) or border
+    if border then
+      table.insert(newgroup.border, advdata[j][i])
+    end
+    return false
+  end
+  for j=1,height do
+    for i=1,width do
+      if advdata[j][i].type == ' ' and not advdata[j][i].group then
+        local newgroup = { size = 0, border = {} }
+        table.insert(groups, newgroup)
+        depth_set_group(j, i, newgroup)
+      end
+    end
+  end
+  local maxgroup = groups[1]
+  maxgroup.shortest = {dist = 0}
+  for _,group in ipairs(groups) do
+    maxgroup = (group.size > maxgroup.size) and group or maxgroup
+  end
+  local function find_nearest_from_other_group(tile)
+    local group = tile.group
+    local already_searched = { tile = true }
+    local queue = { tile }
+    repeat
+      local t = table.remove(queue, 1)
+      for _,v in ipairs{{j=t.j-1, i=t.i},{j=t.j+1, i=t.i},{j=t.j, i=t.i-1},{j=t.j, i=t.i+1}} do
+        if v.j >= 1 and v.j <= height and v.i >= 1 and v.i <= width then
+          local target = advdata[v.j][v.i]
+          -- found a tile from another group
+          if target.group and target.group ~= group then
+            return target
+          end
+          if not already_searched[target] then
+            table.insert(queue, target)
+            already_searched[target] = true
+          end
+        end
+      end
+    until #queue == 0
+    error "Queue is empty?!"
+  end
+  for _,group in ipairs(groups) do
+    if group ~= maxgroup then
+      local shortest
+      for _,tile in ipairs(group.border) do
+        local other = find_nearest_from_other_group(tile)
+        local dist = math.abs(other.j - tile.j) + math.abs(other.i - tile.i)
+        if not shortest then
+          shortest = { this = tile, that = other, dist = dist }
+        else
+          shortest = (shortest.dist <= dist) and shortest or { this = tile, that = other, dist = dist }
+        end
+      end
+      group.shortest = shortest
+    end
+  end
+
+  for id,group in ipairs(groups) do
+    print(id, group.size, #group.border, group.shortest.dist)
+  end
+
+  for j=1,height do
+    for i=1,width do
+      assert(advdata[j][i].group or advdata[j][i].type ~= ' ')
+      fullmap[j][i] = advdata[j][i].type
+    end
   end
 
   fullmap.width   = grid.width
