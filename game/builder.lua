@@ -128,13 +128,17 @@ function build_player (pos)
       end
     end
   end
-  function player:input_pressed(button)
-    local dv = speedhack[button]
-    if dv then
-      self.tasks['moveplayer'..dv.x] = function (dt)
-        self:accelerate(dv)
-      end
-    elseif button == "z" then
+  function player.tasks.check_input(self, dt)
+    if love.keyboard.isDown "left" then
+      self:accelerate(speedhack.left)
+    end
+    if love.keyboard.isDown "right" then
+      self:accelerate(speedhack.right)
+    end
+  end
+  function player:input_pressed(button, joystick)
+    if joystick then return end
+    if button == "z" then
       self:jump()
     elseif button == "x" then
       self:charge()
@@ -142,11 +146,9 @@ function build_player (pos)
       self:try_interact()
     end
   end
-  function player:input_released(button)
-    local dv = speedhack[button]
-    if dv then
-      self.tasks['moveplayer'..dv.x] = nil
-    elseif button == "x" then
+  function player:input_released(button, joystick)
+    if joystick then return end
+    if button == "x" then
       self:attack()
     end
   end
