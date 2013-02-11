@@ -160,9 +160,23 @@ function avatar:draw (graphics)
   local font = love.graphics.getFont()
   local s = self.life .. "/" .. self.maxlife
   graphics.setColor(255, 255, 255)
-  graphics.print(s, self.pos.x * map.get_tilesize() + 1, self.pos.y * map.get_tilesize() + 1, 0, 1, 1, font:getWidth(s), font:getHeight(s) + self.sprite.data.quadsize)
+  graphics.print(
+    s,
+    self.pos.x * map.get_tilesize() + 1,
+    self.pos.y * map.get_tilesize() + 1,
+    0, 1, 1,
+    font:getWidth(s),
+    font:getHeight(s) + self.sprite.data.quadsize
+  )
   graphics.setColor(0, 0, 0)
-  graphics.print(s, self.pos.x * map.get_tilesize(), self.pos.y * map.get_tilesize(), 0, 1, 1, font:getWidth(s), font:getHeight(s) + self.sprite.data.quadsize)
+  graphics.print(
+    s,
+    self.pos.x * map.get_tilesize(),
+    self.pos.y * map.get_tilesize(),
+    0, 1, 1,
+    font:getWidth(s),
+    font:getHeight(s) + self.sprite.data.quadsize
+  )
   graphics.setColor(255, 255, 255)
   local glow = self.charging >= 0 and self.charging/DASH_THRESHOLD or 0
   if message.send [[game]] {'debug'} and self.equipment[1] then
