@@ -75,6 +75,10 @@ function vec2:length()
   return math.sqrt(self[1]^2 + self[2]^2)
 end
 
+function vec2:norm1 ()
+  return math.abs(self[1]) + math.abs(self[2])
+end
+
 function vec2:normalized ()
   return self/self:length()
 end

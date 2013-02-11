@@ -86,11 +86,8 @@ function avatar:jump ()
     if self.air > 0 then
       self.airjumpsleft = self.airjumpsleft - 1
     end
-    local playerpos = message.send [[game]] {'position', 'player'}
     self.spd.y = JUMPSPDY
-    if (self.pos - playerpos):length() < 30 then
-      sound.effect 'jump'
-    end
+    sound.effect('jump', self.pos)
   end
 end
 
@@ -109,7 +106,7 @@ end
 function avatar:attack ()
   if not self.attacking and self.equipment[1] then
     local charge_time = math.min(math.max(self.charging, 0), MAXCHARGE)
-    sound.effect 'slash'
+    sound.effect('slash', self.pos)
     self.attacking = true
     self.sprite:play_animation(self.animationset.attacking)
     self.sprite:restart_animation()
@@ -144,7 +141,7 @@ function avatar:take_damage (amount)
   if self.dmg_delay > 0 then return end
   self.life = math.max(self.life - amount, 0)
   self.dmg_delay = 0.5
-  sound.effect 'hit'
+  sound.effect('hit', self.pos)
   if self.life <= 0 then
     message.send 'game' {'kill', self}
   end
