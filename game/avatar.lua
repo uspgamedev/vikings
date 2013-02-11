@@ -52,27 +52,11 @@ function avatar:update_sprite (dt)
   elseif self.attacking then
     self.sprite:play_animation(self.animationset.attacking)
   else
+    self.sprite.speed = math.max(math.abs(self.spd.x)/5, 0.4)
     self.sprite:play_animation(self.animationset.moving)
   end
   avatar:__super().update_sprite(self, dt)
-end
-
-function avatar:animate_attack (dt)
-  self.frametime = self.frametime + dt
-  while self.frametime >= 1/self.sprite.animfps do
-    if self.frame.j > 6 then
-      self:stopattack()
-    else
-      self.frame.j = self.frame.j + 1
-      self.frametime = self.frametime - 1/self.sprite.animfps
-    end
-  end
-  if self.frame.j > 6 then
-    self:stopattack()
-  end
-  if self.attacking and self.frame.j >= 5 then
-    self.slash:activate()
-  end
+  self.sprite.speed = 1
 end
 
 function avatar:get_atkpos ()

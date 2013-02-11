@@ -6,6 +6,7 @@ require 'animation'
 sprite = lux.object.new {
   data          = nil,
   animation     = nil,
+  speed         = 1,
   mirror        = { false, false },
 
   framestep     = 1,
@@ -32,7 +33,7 @@ function sprite:restart_animation ()
 end
 
 function sprite:update (observer, dt)
-  self.frametime = self.frametime + dt
+  self.frametime = self.frametime + dt*self.speed
   while self.frametime >= 1/self.animation.fps do
     self.framestep = self.animation:step(self.framestep, observer)
     self.frametime = self.frametime - 1/self.animation.fps
