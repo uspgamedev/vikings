@@ -118,7 +118,7 @@ end
 
 function thing:update_sprite (dt)
   self.sprite:set_mirror(self.direction == 'right', false)
-  self.sprite:update(dt)
+  self.sprite:update(self, dt)
 end
 
 function thing:update_hitbox (dt)

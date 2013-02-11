@@ -47,10 +47,10 @@ function sprite:restart_animation ()
   self.frametime  = 0
 end
 
-function sprite:update (dt)
+function sprite:update (observer, dt)
   self.frametime = self.frametime + dt
   while self.frametime >= 1/self.animation.fps do
-    self.framestep = self.animation:step(self.framestep)
+    self.framestep = self.animation:step(self.framestep, observer)
     self.frametime = self.frametime - 1/self.animation.fps
   end
 end

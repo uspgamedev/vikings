@@ -2,7 +2,6 @@
 require 'lux.object'
 
 animation = lux.object.new {
-  observer  = nil,
   fps       = 10,
   type      = 'loop',
   frames    = nil
@@ -20,13 +19,13 @@ function animation:step_once (last)
   return math.min(last + 1, #self.frames)
 end
 
-function animation:step (last)
+function animation:step (last, observer)
   local next = self['step_'..self.type] (self, last)
   if self.frames[next].event then
-    self.frames[next].event(self.observer)
+    self.frames[next].event(observer)
   end
   if last == #self.frames and self.finishevent then
-    self.finishevent(self.observer)
+    self.finishevent(observer)
   end
   return next
 end

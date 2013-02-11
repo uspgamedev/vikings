@@ -20,10 +20,7 @@ avatar = thing:new {
 function avatar:__init() 
   self.equipment = {}
   self.hitboxes.helpful.class = "avatar"
-  self.animationset = self.animationset or lux.object.clone(animationset.viking)
-  for _,animation in pairs(self.animationset) do
-    animation.observer = self
-  end
+  self.animationset = self.animationset or animationset.viking
   self.slash = slash:new{
     source = self,
     damage = 5,
