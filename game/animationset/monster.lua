@@ -14,7 +14,7 @@ monster.standing = animation:new {
 }
 
 monster.moving = animation:new {
-  fps     = 20,
+  fps     = 25,
   type    = 'loop',
   frames  = {
     {i=1, j=2},

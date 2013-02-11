@@ -171,6 +171,7 @@ function build_enemy (pos)
     direction     = 'left'
   }
   enemy:equip(1, {})
+  enemy.slash.hitboxes.helpful.size:set(0.8, 0.8)
   function enemy.tasks.attack (self)
     local playerpos = message.send [[game]] {'position', 'player'}
     if playerpos then
@@ -188,7 +189,7 @@ function build_enemy (pos)
     end
   end
   enemy.hitboxes.harmful = hitbox:new {
-    size  = vec2:new { 1.2, 1.2 },
+    size  = vec2:new { 1.4, 1.4 },
     class = 'damageable'
   }
   return enemy
