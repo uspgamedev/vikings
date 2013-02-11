@@ -2,6 +2,7 @@
 require 'thing'
 require 'sound'
 require 'vec2'
+require 'animationset.slash'
 
 slash = thing:new {
   source = nil,
@@ -32,20 +33,24 @@ function slash:__init ()
   end
   self.hitboxes.helpful.update = function (self, owner, dt)
     self.pos =
-      owner.source.pos
+      owner.pos
+      -
+      self.size/2
       +
-      vec2:new{(owner.source.direction=='right' and 0.75 or -1.75), -.5}
+      vec2:new{(owner.direction=='right' and 1 or -1)*self.size.x/2, 0}
   end
 end
 
 function slash:activate ()
   if self.activated then return end
+  self.sprite:play_animation(animationset.slash.active)
   self.activated = true
   self.bounced = false
   self.hitboxes.helpful:register 'playeratk'
 end
 
 function slash:deactivate ()
+  self.sprite:play_animation(animationset.slash.inactive)
   self.activated = false
   self.bounced = true
   self.hitboxes.helpful:unregister()
@@ -53,9 +58,8 @@ end
 
 function slash:update (dt, map)
   self.pos        = self.source:get_atkpos()
-  --self.hitboxes.helpful.pos = self.source:get_atkhitboxpos()
-  self.frame      = {i=self.source.frame.j-3, j=1}
-  self.mirror     = self.source.direction=='right' and 'h' or nil
+  self.direction  = self.source.direction
+  self:update_sprite(dt)
   self:update_hitbox()
   if self.activated and not self.bounced and self:colliding(map, self.pos) then
     local dir = (self.pos-self.source.pos):normalized()
@@ -64,8 +68,4 @@ function slash:update (dt, map)
     self.bounced = true
     sound.effect 'bounce'
   end
-end
-
-function slash:draw (graphics)
-  self.sprite:draw(graphics, self.frame, self.pos, self.mirror)
 end

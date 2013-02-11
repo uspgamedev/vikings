@@ -5,8 +5,10 @@ require 'vec2'
 require 'avatar'
 require 'collectable'
 require 'sprite'
+require 'spritedata'
 require 'message'
 require 'sound'
+require 'animationset.monster'
 
 local function draw_buble (self, graphics)
   if self.text then
@@ -28,11 +30,10 @@ end
 
 local butler
 function build_sprite ()
-  butler = butler or sprite:new {
+  butler = butler or spritedata:new {
     img       = love.graphics.newImage "sprite/viking_male_spritesheet.png",
     maxframe  = { i=13, j=9 },
     quadsize  = 64,
-    animfps   = 25,
     hotspot   = vec2:new{ 32, 40 },
     collpts   = {
       vec2:new{20,60},
@@ -41,18 +42,35 @@ function build_sprite ()
       vec2:new{44,60},
       vec2:new{44,15+45/2},
       vec2:new{44,15}
-    },
-    dirmap = {
-      left = 2,
-      right = 4
     }
   }
-  return butler
+  return sprite:new{ data = butler }
+end
+
+local monster
+function build_monster ()
+  monster = monster or spritedata:new {
+    img       = love.graphics.newImage "sprite/hornbeast.png",
+    maxframe  = { i=2, j=7 },
+    quadsize  = 64,
+    hotspot   = vec2:new{ 32, 32 },
+    collpts   = {
+      vec2:new{15,      15},
+      vec2:new{15,      15+44/2},
+      vec2:new{15,      60},
+      vec2:new{15+34/2, 15},
+      vec2:new{15+34/2, 60},
+      vec2:new{64-15,   15},
+      vec2:new{64-15,   15+44/2},
+      vec2:new{64-15,   60}
+    }
+  }
+  return sprite:new{ data = monster }
 end
 
 local slash
 function build_slash ()
-  slash = slash or sprite:new {
+  slash = slash or spritedata:new {
     img       = love.graphics.newImage "sprite/slash.png",
     maxframe  = { i=3, j=1 },
     quadsize  = 64,
@@ -64,12 +82,12 @@ function build_slash ()
       vec2:new{48,16}
     }
   }
-  return slash
+  return sprite:new { data = slash }
 end
 
 local axe
 function build_axesprite ()
-  axe = axe or sprite:new {
+  axe = axe or spritedata:new {
     img       = love.graphics.newImage "sprite/battle-axe-v02.png",
     maxframe  = { i=1, j=1 },
     quadsize  = 32,
@@ -82,7 +100,7 @@ function build_axesprite ()
     }
   }
   axe.img:setFilter("linear", "linear")
-  return axe
+  return sprite:new { data = axe }
 end
 
 function build_player (pos)
@@ -112,6 +130,7 @@ function build_npc (pos)
   local npc = avatar:new {
     pos    = pos,
     sprite = build_sprite(),
+    slashspr  = build_slash(),
     counter = 0
   }
   npc.drawtasks.buble = draw_buble
@@ -127,6 +146,7 @@ function build_vendor (pos)
   local npc = avatar:new {
     pos    = pos,
     sprite = build_sprite(),
+    slashspr  = build_slash(),
     counter = 0
   }
   npc.drawtasks.buble = draw_buble
@@ -144,24 +164,45 @@ end
 
 function build_enemy (pos)
   local enemy = avatar:new {
-    pos       = pos,
-    sprite    = build_sprite(),
-    slashspr  = build_slash(),
-    direction = 'left'
+    pos           = pos,
+    sprite        = build_monster(),
+    animationset  = animationset.monster,
+    slashspr      = build_slash(),
+    direction     = 'left'
   }
   enemy:equip(1, {})
-  function enemy.tasks.attack (self)
+  enemy.slash.hitboxes.helpful.size:set(0.8, 0.8)
+  local counter = 0
+  local change  = 0
+  function enemy.tasks.attack (self, dt)
+    counter = counter + dt
     local playerpos = message.send [[game]] {'position', 'player'}
     if playerpos then
       local distance = (playerpos - self.pos):length()
-      self.direction = (playerpos.x < self.pos.x) and 'left' or 'right'
       if distance < 3 then
+        self.direction = (playerpos.x < self.pos.x) and 'left' or 'right'
         self:attack()
+      elseif distance < 6 then
+        local dir = vec2:new{((playerpos.x > self.pos.x) and 1 or -1), 0}
+        self:accelerate(8*dir)
+      elseif change <= 0 then
+        local dir = vec2:new{math.random() < .5 and 1 or -1, 0}
+        self:accelerate(5*dir)
+        change = 1+math.random()*5
+      else
+        local dir = vec2:new{(self.direction=='right' and 1 or -1), 0}
+        self:accelerate(5*dir)
+        change = change - dt
+      end
+      --if self:colliding(self.pos+2*dir) then
+      if counter > 5 then
+        self:jump()
+        counter = 0
       end
     end
   end
   enemy.hitboxes.harmful = hitbox:new {
-    size  = vec2:new { 1.2, 1.2 },
+    size  = vec2:new { 1.4, 1.4 },
     class = 'damageable'
   }
   return enemy

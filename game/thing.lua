@@ -8,7 +8,6 @@ thing = lux.object.new {
   spd       = nil,
   accel     = nil,
   sprite    = nil,
-  frame     = nil,
   hitbox    = nil,
   air       = 0,
 
@@ -19,7 +18,6 @@ thing.__init = {
   pos       = vec2:new{ 0, 0 },
   spd       = vec2:new{ 0, 0 },
   accel     = vec2:new{ 0, 0 },
-  frame     = { i=1, j=1 },
   tasks     = {},
   drawtasks = {},
   hitboxes  = {
@@ -27,17 +25,15 @@ thing.__init = {
       size  = vec2:new { 1, 1 },
       class = 'thing'
     },
-  },
-
-  frametime = 0
+  }
 }
 
 local GRAVITY           = vec2:new{  0,  30 }
 local MAXSPD            = vec2:new{ 38,  30 }
 local MIN_AIRTIME       = 0.1
 local SPD_THRESHOLD     = 1.5
-local DYNAMIC_FRICTION  = 1.0
-local STATIC_FRICTION   = 3.0
+local DYNAMIC_FRICTION  = 2.0
+local STATIC_FRICTION   = 5.0
 
 function thing:die ()
   for _,hitbox in pairs(self.hitboxes) do
@@ -51,8 +47,8 @@ end
 
 function thing:colliding(map, position)
   local tilesize = map.get_tilesize()
-  for _,p in ipairs(self.sprite.collpts) do
-    local tile = pos_to_tile(map, position-(self.sprite.hotspot-p)/tilesize)
+  for _,p in ipairs(self.sprite.data.collpts) do
+    local tile = pos_to_tile(map, position-(self.sprite.data.hotspot-p)/tilesize)
     if not tile or tile.floor then
       return true
     end
@@ -120,14 +116,9 @@ function thing:update_physics (dt, map)
   self:apply_gravity(dt)
 end
 
-function thing:update_animation (dt)
-  self.frame.i = self.sprite:frame_from_direction(self.direction)
-  local moving = self.accelerated
-  if not moving then
-    self.frame.j = 1
-    return
-  end
-  self:animate_movement(dt)
+function thing:update_sprite (dt)
+  self.sprite:set_mirror(self.direction == 'right', false)
+  self.sprite:update(self, dt)
 end
 
 function thing:update_hitbox (dt)
@@ -137,7 +128,7 @@ function thing:update_hitbox (dt)
 end
 
 function thing:update (dt, map)
-  self:update_animation(dt)
+  self:update_sprite(dt)
   self:update_physics(dt, map)
   self:update_hitbox(dt)
   for _, task in pairs(self.tasks) do
@@ -155,17 +146,8 @@ function thing:shove (dv)
   self.spd:add(dv)
 end
 
-function thing:animate_movement (dt)
-  self.frametime = self.frametime + dt
-  while self.frametime >= 1/self.sprite.animfps do
-    self.frame.j = self.frame.j % (#self.sprite.quads[self.frame.i]) + 1
-    if self.frame.j == 1 then self.frame.j = 2 end
-    self.frametime = self.frametime - 1/self.sprite.animfps
-  end
-end
-
 function thing:draw (graphics)
-  self.sprite:draw(graphics, self.frame, self.pos)
+  self.sprite:draw(graphics, self.pos)
   for _, task in pairs(self.drawtasks) do
     task(self, graphics)
   end

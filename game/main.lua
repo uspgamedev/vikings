@@ -93,8 +93,8 @@ function love.update (dt)
 end
 
 local speedhack = {
-  left  = vec2:new{ -5,  0 },
-  right = vec2:new{  5,  0 }
+  left  = vec2:new{ -10,  0 },
+  right = vec2:new{  10,  0 }
 }
 
 function love.keypressed (button)

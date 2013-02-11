@@ -1,51 +1,46 @@
 
 require 'lux.object'
 require 'vec2'
-require 'map'
+require 'animation'
 
 sprite = lux.object.new {
-  img           = nil,
-  maxframe      = nil,
-  animfps       = 25,
-  quadsize      = nil, -- must be a number
-  hotspot       = nil,
-  collpts       = nil,
-  default_frame = 1,
-  dirmap        = nil
+  data          = nil,
+  animation     = nil,
+  speed         = 1,
+  mirror        = { false, false },
+
+  framestep     = 1,
+  frametime     = 0
 }
 
-function sprite:__init()
-  self.dirmap = self.dirmap or {}
-  self.quads = {}
-  for i=1, self.maxframe.i do
-    self.quads[i] = {}
-    for j=1, self.maxframe.j do
-      self.quads[i][j] = love.graphics.newQuad(
-        self.quadsize*(j-1),
-        self.quadsize*(i-1),
-        self.quadsize, self.quadsize, self.img:getWidth(), self.img:getHeight()
-      )
-    end
+sprite.__init = {
+  animation = animation:new{}
+}
+
+function sprite:set_mirror (horizontal, vertical)
+  self.mirror = { horizontal, vertical }
+end
+
+function sprite:play_animation (animation)
+  if self.animation == animation then return end
+  self.animation  = animation
+  self:restart_animation()
+end
+
+function sprite:restart_animation ()
+  self.framestep  = 1
+  self.frametime  = 0
+end
+
+function sprite:update (observer, dt)
+  self.frametime = self.frametime + dt*self.speed
+  while self.frametime >= 1/self.animation.fps do
+    self.framestep = self.animation:step(self.framestep, observer)
+    self.frametime = self.frametime - 1/self.animation.fps
   end
 end
 
-function sprite:frame_from_direction(dir)
-  return self.dirmap[dir] or self.default_frame
-end
-
-function sprite:draw (graphics, frame, pos, mirror)
-  local tilesize = map.get_tilesize()
-  if mirror == 'h' then
-    self.quads[frame.i][frame.j]:flip(true, false)
-  end
-  graphics.drawq(
-    self.img,
-    self.quads[frame.i][frame.j],
-    tilesize*(pos.x-1), tilesize*(pos.y-1),
-    0, 1, 1,
-    self.hotspot:get()
-  )
-  if mirror == 'h' then
-    self.quads[frame.i][frame.j]:flip(true, false)
-  end
+function sprite:draw (graphics, pos)
+  local frame = self.animation.frames[self.framestep]
+  self.data:draw(graphics, frame, pos, self.mirror)
 end
