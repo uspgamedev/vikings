@@ -168,7 +168,7 @@ function love.draw ()
   end
   hitbox.draw_all(love.graphics)
 
-  if love.keyboard.isDown("tab") then
+  if love.keyboard.isDown("tab") or love.joystick.isDown(1, 5) then
     love.graphics.translate((-(screencenter - avatars.player.pos * map.get_tilesize())):get())
     love.graphics.translate(20, 20)
     love.graphics.scale(0.1, 0.1)
