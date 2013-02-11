@@ -8,6 +8,7 @@ require 'sprite'
 require 'spritedata'
 require 'message'
 require 'sound'
+require 'animationset.monster'
 
 local function draw_buble (self, graphics)
   if self.text then
@@ -44,6 +45,27 @@ function build_sprite ()
     }
   }
   return sprite:new{ data = butler }
+end
+
+local monster
+function build_monster ()
+  monster = monster or spritedata:new {
+    img       = love.graphics.newImage "sprite/hornbeast.png",
+    maxframe  = { i=2, j=7 },
+    quadsize  = 64,
+    hotspot   = vec2:new{ 32, 32 },
+    collpts   = {
+      vec2:new{15,      15},
+      vec2:new{15,      15+44/2},
+      vec2:new{15,      60},
+      vec2:new{15+34/2, 15},
+      vec2:new{15+34/2, 60},
+      vec2:new{64-15,   15},
+      vec2:new{64-15,   15+44/2},
+      vec2:new{64-15,   60}
+    }
+  }
+  return sprite:new{ data = monster }
 end
 
 local slash
@@ -142,10 +164,11 @@ end
 
 function build_enemy (pos)
   local enemy = avatar:new {
-    pos       = pos,
-    sprite    = build_sprite(),
-    slashspr  = build_slash(),
-    direction = 'left'
+    pos           = pos,
+    sprite        = build_monster(),
+    animationset  = animationset.monster,
+    slashspr      = build_slash(),
+    direction     = 'left'
   }
   enemy:equip(1, {})
   function enemy.tasks.attack (self)
