@@ -32,8 +32,8 @@ local GRAVITY           = vec2:new{  0,  30 }
 local MAXSPD            = vec2:new{ 38,  30 }
 local MIN_AIRTIME       = 0.1
 local SPD_THRESHOLD     = 1.5
-local DYNAMIC_FRICTION  = 1.0
-local STATIC_FRICTION   = 3.0
+local DYNAMIC_FRICTION  = 2.0
+local STATIC_FRICTION   = 5.0
 
 function thing:die ()
   for _,hitbox in pairs(self.hitboxes) do
