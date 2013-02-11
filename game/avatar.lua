@@ -170,7 +170,7 @@ end
 function avatar:draw (graphics)
   local glow = self.charging >= 0 and self.charging/DASH_THRESHOLD or 0
   if self.equipment[1] then graphics.setColor(255, 255*glow,   0) end
-  self.sprite:draw(graphics, self.frame, self.pos)
+  self.sprite:draw(graphics, self.pos)
   if self.equipment[1] then graphics.setColor(255, 255, 255) end
   if self.slash and self.attacking and self.frame.j >= 4 then
     self.slash:draw(graphics)

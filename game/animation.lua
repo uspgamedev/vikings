@@ -3,11 +3,11 @@ require 'lux.object'
 
 animation = lux.object.new {
   fps     = 10,
-  type    = 'loop'
+  type    = 'loop',
   frames  = nil
 }
 
-animation.__init = {}
+animation.__init = {
   frames = { {i=1, j=1} }
 }
 

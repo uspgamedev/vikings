@@ -11,7 +11,7 @@ sprite = lux.object.new {
   hotspot       = nil,
   collpts       = nil,
   animation     = nil,
-  mirror        = { false, false }
+  mirror        = { false, false },
 
   framestep     = 1,
   frametime     = 0
@@ -45,8 +45,8 @@ end
 function sprite:update (dt)
   self.frametime = self.frametime + dt
   while self.frametime >= 1/self.animation.fps do
-    self.framtestep = self.animation:step(self.framtestep)
-    self.frametime = self.frametime - 1/self.sprite.animfps
+    self.framtestep = self.animation:step(self.framestep)
+    self.frametime = self.frametime - 1/self.animation.fps
   end
 end
 

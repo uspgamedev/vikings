@@ -112,6 +112,7 @@ function build_npc (pos)
   local npc = avatar:new {
     pos    = pos,
     sprite = build_sprite(),
+    slashspr  = build_slash(),
     counter = 0
   }
   npc.drawtasks.buble = draw_buble
@@ -127,6 +128,7 @@ function build_vendor (pos)
   local npc = avatar:new {
     pos    = pos,
     sprite = build_sprite(),
+    slashspr  = build_slash(),
     counter = 0
   }
   npc.drawtasks.buble = draw_buble
