@@ -3,6 +3,36 @@ module ('mapgenerator', package.seeall)
 
 require "map"
 
+local function pertile(table, fun)
+  for j,row in ipairs(table) do
+    for i,tile in ipairs(row) do
+      fun(tile, j, i)
+    end
+  end 
+end
+local function matrix_get(table, j, i)
+  return table[j] and table[j][i]
+end
+local function array_remove_if(array, fun)
+  local result = {}
+  for _,v in ipairs(array) do
+    if not fun(v) then table.insert(result, v) end
+  end
+  return result
+end
+local function create_matrix(height, width, fun)
+  local matrix = {}
+  for j=1,height do
+    matrix[j] = {}
+    if fun then
+      for i=1,width do
+        matrix[j][i] = fun(j,i)
+      end
+    end
+  end
+  return matrix
+end
+
 local tileset
 function get_tileset()
   tileset = tileset or {
@@ -120,24 +150,6 @@ local function random_grid_with_chance(tileset, width, height, chance)
   return grid
 end
 
-local function pertile(table, fun)
-  for j,row in ipairs(table) do
-    for i,tile in ipairs(row) do
-      fun(tile, j, i)
-    end
-  end 
-end
-local function matrix_get(table, j, i)
-  return table[j] and table[j][i]
-end
-local function array_remove_if(array, fun)
-  local result = {}
-  for _,v in ipairs(array) do
-    if not fun(v) then table.insert(result, v) end
-  end
-  return result
-end
-
 local function generate_cave_from_grid(grid)
   local width, height = grid.width, grid.height
   
@@ -157,37 +169,28 @@ local function generate_cave_from_grid(grid)
   local fullmap, oldmap = grid
   for iterations=1,3 do
     oldmap = fullmap
-    fullmap = {}
-    for j=1,height do
-      fullmap[j] = {}
-      for i=1,width do
-        nearby_walls = walls_nearby(grid, oldmap, j, i, 1, 2)
-        far_walls    = walls_nearby(grid, oldmap, j, i, 2, 2)
-        fullmap[j][i] = ((nearby_walls >= 7 or far_walls == 0) and 'I') or ' '
-      end
-    end
+    fullmap = create_matrix(height, width, function(j, i)
+      local nearby_walls = walls_nearby(grid, oldmap, j, i, 1, 2)
+      local far_walls    = walls_nearby(grid, oldmap, j, i, 2, 2)
+      return ((nearby_walls >= 7 or far_walls == 0) and 'I') or ' '
+    end)
   end
   for iterations=1,2 do
     oldmap = fullmap
-    fullmap = {}
-    for j=1,height do
-      fullmap[j] = {}
-      for i=1,width do
-        nearby_walls = walls_nearby(grid, oldmap, j, i, 1, 2)
-        fullmap[j][i] = ((nearby_walls >= 8) and 'I') or ' '
-      end
-    end
+    fullmap = create_matrix(height, width, function(j, i)
+      local nearby_walls = walls_nearby(grid, oldmap, j, i, 1, 2)
+      return ((nearby_walls >= 8) and 'I') or ' '
+    end)
   end
 
-  local advdata = { width = width, height = height }
-  local MINGROUP_SIZE = 20
-  local groups  = {}
-  for j=1,height do
-    advdata[j] = {}
-    for i=1,width do
-      advdata[j][i] = { j=j, i=i, type=fullmap[j][i] }
-    end
-  end
+  -- Each tile needs to be a table for extra informations and ease of use
+  -- Since in the grid a tile is just a char, we create a new table
+  local advdata = create_matrix(height, width, function(j, i)
+    return { j=j, i=i, type=fullmap[j][i] }
+  end)
+
+  -- Depth search function.
+  -- All tiles you can reach from a tile belongs to the same group.
   local function depth_set_group(tile, newgroup)
     if not tile or tile.group == newgroup then return false end
     if tile.type ~= ' ' then return true  end
@@ -204,6 +207,8 @@ local function generate_cave_from_grid(grid)
     end
     return false
   end
+  
+  local groups  = {}
   -- Find the groups
   pertile(advdata, function(tile)
     if tile.type == ' ' and not tile.group then
@@ -212,7 +217,9 @@ local function generate_cave_from_grid(grid)
       depth_set_group(tile, newgroup)
     end
   end)
+
   -- Fill small groups
+  local MINGROUP_SIZE = 20
   pertile(advdata, function(tile)
     if tile.group and tile.group.size < MINGROUP_SIZE then
       tile.type = 'I'
@@ -222,14 +229,16 @@ local function generate_cave_from_grid(grid)
   end)
   groups = array_remove_if(groups, function(group) return group.size == 0 end)
 
-  local maxgroup = groups[1]
-  maxgroup.shortest = {dist = 0}
-  for _,group in ipairs(groups) do
-    maxgroup = (group.size > maxgroup.size) and group or maxgroup
+  -- Ignore the biggest group
+  local maxgroup = 1
+  for id,group in ipairs(groups) do
+    maxgroup = (group.size > groups[maxgroup].size) and id or maxgroup
   end
+  table.remove(groups, maxgroup)
+
   local function find_nearest_from_other_group(tile)
     local group = tile.group
-    local already_searched = { tile = true }
+    local already_searched = { tile = true } 
     local queue = { tile }
     repeat
       local t = table.remove(queue, 1)
@@ -249,36 +258,43 @@ local function generate_cave_from_grid(grid)
     until #queue == 0
     error "Queue is empty?!"
   end
-  for _,group in ipairs(groups) do
-    if group ~= maxgroup then
-      local shortest
-      for _,tile in ipairs(group.border) do
-        local other = find_nearest_from_other_group(tile)
-        local dist = math.abs(other.j - tile.j) + math.abs(other.i - tile.i)
-        if not shortest then
-          shortest = { this = tile, that = other, dist = dist }
-        else
-          shortest = (shortest.dist <= dist) and shortest or { this = tile, that = other, dist = dist }
-        end
+  local function find_shortest_path(tiles)
+    local shortest
+    for _,tile in ipairs(tiles) do
+      local other = find_nearest_from_other_group(tile)
+      local dist = math.abs(other.j - tile.j) + math.abs(other.i - tile.i)
+      if not shortest then
+        shortest = { this = tile, that = other, dist = dist }
+      else
+        shortest = (shortest.dist <= dist) and shortest or { this = tile, that = other, dist = dist }
       end
-      for j = math.min(shortest.this.j, shortest.that.j), math.max(shortest.this.j, shortest.that.j) do
-        for i = math.min(shortest.this.i, shortest.that.i), math.max(shortest.this.i, shortest.that.i) do
-          local tile = advdata[j][i]
-          if tile and not tile.group and tile.type == 'I' then
-            tile.type = ' '
-            tile.group = group
-            group.size = group.size + 1
-          end
-        end
-      end
-      group.shortest = shortest
     end
+    return shortest
   end
 
-  for id,group in ipairs(groups) do
-    print(id, group.size, #group.border, group.shortest.dist)
+  while #groups > 0 do
+    local group = table.remove(groups)
+    local shortest = find_shortest_path(group.border)
+    for j = math.min(shortest.this.j, shortest.that.j)-1, math.max(shortest.this.j, shortest.that.j) +1 do
+      for i = math.min(shortest.this.i, shortest.that.i)-1, math.max(shortest.this.i, shortest.that.i) +1 do
+        local tile = advdata[j][i]
+        if tile and not tile.group and tile.type == 'I' then
+          tile.type = ' '
+          tile.group = group
+          group.size = group.size + 1
+        end
+      end
+    end
+    -- Move all elements from this group to the group we just connected to
+    pertile(advdata, function(tile, j, i)
+      if tile.group == group then
+        tile.group = shortest.that.group
+        shortest.that.group.size = shortest.that.group.size + 1
+      end
+    end)
   end
 
+  -- Check if all tiles either has a group or is a wall. And update the main grid with changes
   pertile(advdata, function(tile, j, i)
     assert(tile.group or tile.type ~= ' ')
     fullmap[j][i] = tile.type
