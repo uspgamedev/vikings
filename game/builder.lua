@@ -172,7 +172,9 @@ function build_enemy (pos)
   }
   enemy:equip(1, {})
   enemy.slash.hitboxes.helpful.size:set(0.8, 0.8)
-  function enemy.tasks.attack (self)
+  local counter = 0
+  function enemy.tasks.attack (self, dt)
+    counter = counter + dt
     local playerpos = message.send [[game]] {'position', 'player'}
     if playerpos then
       local distance = (playerpos - self.pos):length()
@@ -183,8 +185,10 @@ function build_enemy (pos)
         local dir = vec2:new{(self.direction=='right' and 1 or -1), 0}
         self:accelerate(5*dir)
         --if self:colliding(self.pos+2*dir) then
-        --  self:jump()
-        --end
+        if counter > 5 then
+          self:jump()
+          counter = 0
+        end
       end
     end
   end

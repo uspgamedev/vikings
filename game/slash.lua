@@ -38,10 +38,6 @@ function slash:__init ()
       self.size/2
       +
       vec2:new{(owner.direction=='right' and 1 or -1)*self.size.x/2, 0}
-    --self.pos =
-    --  owner.source.pos
-    --  +
-    --  vec2:new{(owner.source.direction=='right' and 0.75 or -1.75), -.5}
   end
 end
 
