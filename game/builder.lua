@@ -14,8 +14,8 @@ local function draw_buble (self, graphics)
   if self.text then
     graphics.setColor(255, 255, 255, math.min(self.counter, 1) * 255)
     graphics.print(self.text, 
-      map.get_tilesize() * (self.pos.x - 1),
-      map.get_tilesize() * (self.pos.y - 2.5)
+      map.get_tilesize() * (self.pos.x - 0.5),
+      map.get_tilesize() * (self.pos.y - 2)
     )
     graphics.setColor(255, 255, 255, 255)
   end
@@ -228,8 +228,9 @@ function build_npc (pos)
   npc.drawtasks.buble = draw_buble
   npc.tasks.buble = update_buble
   function npc:interact (player)
-    self.text = "Stay a while and listen."
+    self.text = "Stay a while and listen. And heal."
     self.counter = 2
+    player.life = player.maxlife
   end
   return npc
 end
@@ -245,9 +246,12 @@ function build_vendor (pos)
   npc.tasks.buble = update_buble
   function npc:interact (player)
     if player.equipment[1] then
-      self.text = "Nice color."
+      self.text = "Nice axe."
     else
-      self.text = "You don't have equipment?"
+      self.text = "Here, have an axe."
+      if player:equip(1, {}) then
+        sound.effect 'pick'
+      end
     end
     self.counter = 2
   end
