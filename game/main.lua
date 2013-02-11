@@ -64,15 +64,20 @@ function love.load (args)
   camera_pos = vec2:new{ w/2, h/2 }
 
   sound.set_bgm "music/JordanTrudgett-Snodom-ccby3.ogg"
-  local map_file
+  local map_file, no_joystick
   for _, arg in ipairs(args) do
     map_file = string.ends(arg, ".vikingmap") and arg or map_file
+    no_joystick = no_joystick or arg == "--no-joystick"
   end
   current_map = map_file and mapgenerator.from_file(map_file) or mapgenerator.random_map()
   local valid_spots = find_grounded_open_spots(current_map)
 
   avatars.player = builder.build_player(get_random_position(valid_spots))
-  builder.add_joystick_input(avatars.player)
+  if love.joystick.getNumJoysticks() == 0 or no_joystick then
+    builder.add_keyboard_input(avatars.player)
+  else
+    builder.add_joystick_input(avatars.player)
+  end
   table.insert(avatars, builder.build_npc   (get_random_position(valid_spots)))
   table.insert(avatars, builder.build_vendor(get_random_position(valid_spots)))
   table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))

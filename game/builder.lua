@@ -159,28 +159,59 @@ function add_keyboard_input(player)
 end
 
 function add_joystick_input(player)
+  local joystick_database = {
+    ["Twin USB Joystick"] = {
+      jump = 3,
+      attack = 4,
+      direction = function(dir)
+        return love.joystick.getHat(1,1):find(dir, 1, true) ~= nil
+      end
+    },
+    {
+      jump = 1,
+      attack = 2,
+      direction = function(dir)
+        if dir == "l" then
+          return love.joystick.getAxis(1,1) < -0.2
+        elseif dir == "r" then
+          return love.joystick.getAxis(1,1) > 0.2
+        elseif dir == "u" then
+          return love.joystick.getAxis(1,2) < -0.2
+        elseif dir == "d" then
+          return love.joystick.getAxis(1,2) > 0.2
+        end
+      end
+    }
+  }
+  local joy = joystick_database[love.joystick.getName(1)] or joystick_database[1]
+  local up_pressed = false
   function player.tasks.check_input(self, dt)
-    local dir = love.joystick.getHat(1,1)
-    if dir:find("l", 1, true) then
+    if joy.direction("l") then
       self:accelerate(speedhack.left)
     end
-    if dir:find("r", 1, true) then
+    if joy.direction("r") then
       self:accelerate(speedhack.right)
+    end
+    if joy.direction("u") then
+      if not up_pressed then
+        self:try_interact()
+        up_pressed = true
+      end
+    else
+      up_pressed = false
     end
   end
   function player:input_pressed(button, joystick)
     if not joystick then return end
-    if button == 3 then
+    if button == joy.jump then
       self:jump()
-    elseif button == 4 then
+    elseif button == joy.attack then
       self:charge()
-    elseif love.joystick.getHat(1,1):find("u", 1, true) then
-      self:try_interact()
     end
   end
   function player:input_released(button, joystick)
     if not joystick then return end
-    if button == 4 then
+    if button == joy.attack then
       self:attack()
     end
   end
