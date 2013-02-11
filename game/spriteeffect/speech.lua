@@ -2,7 +2,9 @@
 require 'lux.object'
 require 'vec2'
 
-speech = lux.objet.new{
+module ('spriteeffect', package.seeall)
+
+speech = lux.object.new{
   pos     = nil,
   text    = "",
   counter = 2

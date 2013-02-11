@@ -9,6 +9,7 @@ require 'spritedata'
 require 'message'
 require 'sound'
 require 'animationset.monster'
+require 'spriteeffect.speech'
 
 local function draw_buble (self, graphics)
   if self.text then
@@ -223,13 +224,13 @@ function build_npc (pos)
     pos    = pos,
     sprite = build_sprite(),
     slashspr  = build_slash(),
-    counter = 0
   }
-  npc.drawtasks.buble = draw_buble
-  npc.tasks.buble = update_buble
   function npc:interact (player)
-    self.text = "Stay a while and listen. And heal."
-    self.counter = 2
+    self.sprite.effects.speech = spriteeffect.speech:new {
+      pos     = self.pos:clone(),
+      text    = "Stay a while and listen. And heal.",
+      counter = 2
+    }
     player.life = player.maxlife
   end
   return npc
@@ -240,20 +241,22 @@ function build_vendor (pos)
     pos    = pos,
     sprite = build_sprite(),
     slashspr  = build_slash(),
-    counter = 0
   }
-  npc.drawtasks.buble = draw_buble
-  npc.tasks.buble = update_buble
   function npc:interact (player)
+    local text
     if player.equipment[1] then
-      self.text = "Nice axe."
+      text = "Nice axe."
     else
-      self.text = "Here, have an axe."
+      text = "Here, have an axe."
       if player:equip(1, {}) then
         sound.effect 'pick'
       end
     end
-    self.counter = 2
+    self.sprite.effects.speech = spriteeffect.speech:new {
+      pos     = self.pos:clone(),
+      text    = text,
+      counter = 2
+    }
   end
   return npc
 end
