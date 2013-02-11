@@ -1,15 +1,10 @@
 
 require 'lux.object'
 require 'vec2'
-require 'map'
 require 'animation'
 
 sprite = lux.object.new {
-  img           = nil,
-  maxframe      = nil,
-  quadsize      = nil, -- must be a number
-  hotspot       = nil,
-  collpts       = nil,
+  data          = nil,
   animation     = nil,
   mirror        = { false, false },
 
@@ -17,20 +12,9 @@ sprite = lux.object.new {
   frametime     = 0
 }
 
-function sprite:__init()
-  self.animation = self.animation or animation:new{}
-  self.quads = {}
-  for i=1, self.maxframe.i do
-    self.quads[i] = {}
-    for j=1, self.maxframe.j do
-      self.quads[i][j] = love.graphics.newQuad(
-        self.quadsize*(j-1),
-        self.quadsize*(i-1),
-        self.quadsize, self.quadsize, self.img:getWidth(), self.img:getHeight()
-      )
-    end
-  end
-end
+sprite.__init = {
+  animation = animation:new{}
+}
 
 function sprite:set_mirror (horizontal, vertical)
   self.mirror = { horizontal, vertical }
@@ -56,15 +40,6 @@ function sprite:update (observer, dt)
 end
 
 function sprite:draw (graphics, pos)
-  local frame     = self.animation.frames[self.framestep]
-  local tilesize  = map.get_tilesize()
-  self.quads[frame.i][frame.j]:flip(unpack(self.mirror))
-  graphics.drawq(
-    self.img,
-    self.quads[frame.i][frame.j],
-    tilesize*(pos.x-1), tilesize*(pos.y-1),
-    0, 1, 1,
-    self.hotspot:get()
-  )
-  self.quads[frame.i][frame.j]:flip(unpack(self.mirror))
+  local frame = self.animation.frames[self.framestep]
+  self.data:draw(graphics, frame, pos, self.mirror)
 end

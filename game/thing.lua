@@ -47,8 +47,8 @@ end
 
 function thing:colliding(map, position)
   local tilesize = map.get_tilesize()
-  for _,p in ipairs(self.sprite.collpts) do
-    local tile = pos_to_tile(map, position-(self.sprite.hotspot-p)/tilesize)
+  for _,p in ipairs(self.sprite.data.collpts) do
+    local tile = pos_to_tile(map, position-(self.sprite.data.hotspot-p)/tilesize)
     if not tile or tile.floor then
       return true
     end
