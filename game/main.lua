@@ -29,6 +29,9 @@ local game_message_commands = {
   position = function ( ... )
     local args = { ... }
     return avatars[args[1]] and avatars[args[1]].pos
+  end,
+  debug = function ()
+    return debug
   end
 }
 
@@ -179,7 +182,9 @@ function love.draw ()
   for _,av in pairs(avatars) do
     av:draw(love.graphics)
   end
-  hitbox.draw_all(love.graphics)
+  if debug then
+    hitbox.draw_all(love.graphics)
+  end
 
   if love.keyboard.isDown("tab") then
     love.graphics.translate((-(screencenter - avatars.player.pos * map.get_tilesize())):get())
