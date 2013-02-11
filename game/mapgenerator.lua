@@ -120,6 +120,24 @@ local function random_grid_with_chance(tileset, width, height, chance)
   return grid
 end
 
+local function pertile(table, fun)
+  for j,row in ipairs(table) do
+    for i,tile in ipairs(row) do
+      fun(tile, j, i)
+    end
+  end 
+end
+local function matrix_get(table, j, i)
+  return table[j] and table[j][i]
+end
+local function array_remove_if(array, fun)
+  local result = {}
+  for _,v in ipairs(array) do
+    if not fun(v) then table.insert(result, v) end
+  end
+  return result
+end
+
 local function generate_cave_from_grid(grid)
   local width, height = grid.width, grid.height
   
@@ -161,7 +179,8 @@ local function generate_cave_from_grid(grid)
     end
   end
 
-  local advdata = {}
+  local advdata = { width = width, height = height }
+  local MINGROUP_SIZE = 20
   local groups  = {}
   for j=1,height do
     advdata[j] = {}
@@ -169,35 +188,39 @@ local function generate_cave_from_grid(grid)
       advdata[j][i] = { j=j, i=i, type=fullmap[j][i] }
     end
   end
-  local function depth_set_group(j, i, newgroup)
-    if j < 1 or i < 1 or j > height or i > width 
-      or advdata[j][i].group == newgroup then 
-      return false
-    end
-    if advdata[j][i].type ~= ' '  then 
-      return true
-    end
-    assert(not advdata[j][i].group, "If groups not the same then i has no group.")
-    advdata[j][i].group = newgroup
+  local function depth_set_group(tile, newgroup)
+    if not tile or tile.group == newgroup then return false end
+    if tile.type ~= ' ' then return true  end
+    assert(not tile.group, "If groups not the same then i has no group.")
+    tile.group = newgroup
     newgroup.size = newgroup.size + 1
-    local border = depth_set_group(j-1, i, newgroup)
-    border = depth_set_group(j+1, i, newgroup) or border
-    border = depth_set_group(j, i-1, newgroup) or border
-    border = depth_set_group(j, i+1, newgroup) or border
+    local border
+    border = depth_set_group(matrix_get(advdata, tile.j-1, tile.i), newgroup) or border
+    border = depth_set_group(matrix_get(advdata, tile.j+1, tile.i), newgroup) or border
+    border = depth_set_group(matrix_get(advdata, tile.j, tile.i-1), newgroup) or border
+    border = depth_set_group(matrix_get(advdata, tile.j, tile.i+1), newgroup) or border
     if border then
-      table.insert(newgroup.border, advdata[j][i])
+      table.insert(newgroup.border, tile)
     end
     return false
   end
-  for j=1,height do
-    for i=1,width do
-      if advdata[j][i].type == ' ' and not advdata[j][i].group then
-        local newgroup = { size = 0, border = {} }
-        table.insert(groups, newgroup)
-        depth_set_group(j, i, newgroup)
-      end
+  -- Find the groups
+  pertile(advdata, function(tile)
+    if tile.type == ' ' and not tile.group then
+      local newgroup = { size = 0, border = {} }
+      table.insert(groups, newgroup)
+      depth_set_group(tile, newgroup)
     end
-  end
+  end)
+  pertile(advdata, function(tile)
+    if tile.group and tile.group.size < MINGROUP_SIZE then
+      tile.type = 'I'
+      tile.group.size = tile.group.size - 1
+      tile.group = nil
+    end
+  end)
+  groups = array_remove_if(groups, function(group) return group.size == 0 end)
+
   local maxgroup = groups[1]
   maxgroup.shortest = {dist = 0}
   for _,group in ipairs(groups) do
