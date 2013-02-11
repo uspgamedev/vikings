@@ -103,6 +103,11 @@ function build_axesprite ()
   return sprite:new { data = axe }
 end
 
+local speedhack = {
+  left  = vec2:new{ -10,  0 },
+  right = vec2:new{  10,  0 }
+}
+
 function build_player (pos)
   local player = avatar:new {
     pos       = pos,
@@ -121,6 +126,28 @@ function build_player (pos)
          and (self.pos - target.owner.pos):length() < 1.5 then
         target.owner:interact(self)
       end
+    end
+  end
+  function player:input_pressed(button)
+    local dv = speedhack[button]
+    if dv then
+      self.tasks['moveplayer'..dv.x] = function (dt)
+        self:accelerate(dv)
+      end
+    elseif button == "z" then
+      self:jump()
+    elseif button == "x" then
+      self:charge()
+    elseif button == "up" then
+      self:try_interact()
+    end
+  end
+  function player:input_released(button)
+    local dv = speedhack[button]
+    if dv then
+      self.tasks['moveplayer'..dv.x] = nil
+    elseif button == "x" then
+      self:attack()
     end
   end
   return player

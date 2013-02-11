@@ -92,38 +92,19 @@ function love.update (dt)
   end
 end
 
-local speedhack = {
-  left  = vec2:new{ -10,  0 },
-  right = vec2:new{  10,  0 }
-}
-
 function love.keypressed (button)
-  local dv = speedhack[button]
-  if dv then
-    tasks['moveplayer'..dv.x] = function (dt)
-      avatars.player:accelerate(dv)
-    end
-  elseif button == "z" then
-    avatars.player:jump()
-  elseif button == "x" then
-    avatars.player:charge()
-  elseif button == "up" then
-    if avatars.player.try_interact then
-      avatars.player:try_interact()
-    end
-  elseif button == "p" then
+  if button == "p" then
     if current_map then current_map:save_to_file(os.date "%Y-%m-%d_%H-%M-%S.vikingmap") end
   elseif button == "escape" then
     love.event.push("quit")
+  elseif avatars.player.input_pressed then
+    avatars.player:input_pressed(button)
   end
 end
 
 function love.keyreleased (button)
-  local dv = speedhack[button]
-  if dv then
-    tasks['moveplayer'..dv.x] = nil
-  elseif button == "x" then
-    avatars.player:attack()
+  if avatars.player.input_released then
+    avatars.player:input_released(button)
   end
 end
 
