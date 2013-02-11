@@ -173,22 +173,31 @@ function build_enemy (pos)
   enemy:equip(1, {})
   enemy.slash.hitboxes.helpful.size:set(0.8, 0.8)
   local counter = 0
+  local change  = 0
   function enemy.tasks.attack (self, dt)
     counter = counter + dt
     local playerpos = message.send [[game]] {'position', 'player'}
     if playerpos then
       local distance = (playerpos - self.pos):length()
-      self.direction = (playerpos.x < self.pos.x) and 'left' or 'right'
       if distance < 3 then
+        self.direction = (playerpos.x < self.pos.x) and 'left' or 'right'
         self:attack()
+      elseif distance < 6 then
+        local dir = vec2:new{((playerpos.x > self.pos.x) and 1 or -1), 0}
+        self:accelerate(8*dir)
+      elseif change <= 0 then
+        local dir = vec2:new{math.random() < .5 and 1 or -1, 0}
+        self:accelerate(5*dir)
+        change = 1+math.random()*5
       else
         local dir = vec2:new{(self.direction=='right' and 1 or -1), 0}
         self:accelerate(5*dir)
-        --if self:colliding(self.pos+2*dir) then
-        if counter > 5 then
-          self:jump()
-          counter = 0
-        end
+        change = change - dt
+      end
+      --if self:colliding(self.pos+2*dir) then
+      if counter > 5 then
+        self:jump()
+        counter = 0
       end
     end
   end
