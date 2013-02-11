@@ -14,14 +14,14 @@ speech.__init = {
   pos = vec2:new{}
 }
 
-function speech:update (dt)
+function speech:update (sprite, dt)
   self.counter = self.counter - dt
   if self.counter <= 0 then
     return true
   end
 end
 
-function speech:draw (graphics)
+function speech:draw (graphics, sprite)
   graphics.setColor(255, 255, 255, math.min(self.counter, 1) * 255)
   graphics.print(
     self.text, 

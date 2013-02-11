@@ -42,7 +42,7 @@ function sprite:update (observer, dt)
   end
   local to_remove = {}
   for k,effect in pairs(self.effects) do
-    if effect:update(dt) then
+    if effect:update(self, dt) then
       table.insert(to_remove, k)
     end
   end
@@ -51,10 +51,14 @@ function sprite:update (observer, dt)
   end
 end
 
-function sprite:draw (graphics, pos)
+function sprite:draw_data (graphics, pos)
   local frame = self.animation.frames[self.framestep]
   self.data:draw(graphics, frame, pos, self.mirror)
+end
+
+function sprite:draw (graphics, pos)
+  self:draw_data(graphics, pos)
   for _,effect in pairs(self.effects) do
-    effect:draw(graphics)
+    effect:draw(graphics, self)
   end
 end
