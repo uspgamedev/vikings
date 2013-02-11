@@ -5,19 +5,22 @@ require 'vec2'
 require 'hitbox'
 require 'message'
 require 'sound'
+require 'animationset.viking'
 
 avatar = thing:new {
-  slashspr  = nil,
-  life      = 200,
+  slashspr      = nil,
+  life          = 200,
+  animationset  = nil,
 
-  dmg_delay = 0,
-  charging  = -1,
-  attacking = false
+  dmg_delay     = 0,
+  charging      = -1,
+  attacking     = false
 }
 
 function avatar:__init() 
   self.equipment = {}
   self.hitboxes.helpful.class = "avatar"
+  self.animationset = self.animationset or animationset.viking
   self.slash = slash:new{
     source = self,
     damage = 5,
@@ -42,21 +45,16 @@ function avatar:apply_gravity (dt)
   end
 end
 
-function avatar:update_animation (dt)
-  self.frame.i =
-    self.sprite:frame_from_direction(self.direction)
-    +
-    (self.attacking and 4 or 0)
+function avatar:update_sprite (dt)
   local moving = self.accelerated
   if not moving and not self.attacking then
-    self.frame.j = 1
-    return
-  end
-  if self.attacking then
-    self:animate_attack(dt)
+    self.sprite:play_animation(self.animationset.standing)
+  elseif self.attacking then
+    self.sprite:play_animation(self.animationset.attacking)
   else
-    self:animate_movement(dt)
+    self.sprite:play_animation(self.animationset.moving)
   end
+  avatar:__super().update_sprite(self, dt)
 end
 
 function avatar:animate_attack (dt)
@@ -126,8 +124,6 @@ function avatar:attack ()
     local charge_time = math.min(math.max(self.charging, 0), MAXCHARGE)
     sound.effect 'slash'
     self.attacking = true
-    self.frametime = 0
-    self.frame.j = 1
     self.dashing = (charge_time >= DASH_THRESHOLD)
     self.charging = -1
     local sign  = (self.direction=='right' and 1 or -1)
@@ -139,7 +135,6 @@ end
 
 function avatar:stopattack ()
   self.attacking = false
-  self.frame.j = 1
   self.slash:deactivate()
   self.dashing = false
 end
@@ -172,7 +167,7 @@ function avatar:draw (graphics)
   if self.equipment[1] then graphics.setColor(255, 255*glow,   0) end
   self.sprite:draw(graphics, self.pos)
   if self.equipment[1] then graphics.setColor(255, 255, 255) end
-  if self.slash and self.attacking and self.frame.j >= 4 then
+  if self.slash and self.attacking and self.slash.activated then
     self.slash:draw(graphics)
   end
   for _, task in pairs(self.drawtasks) do

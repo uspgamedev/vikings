@@ -37,6 +37,7 @@ function sprite:set_mirror (horizontal, vertical)
 end
 
 function sprite:play_animation (animation)
+  if self.animation == animation then return end
   self.animation  = animation
   self.framestep  = 1
   self.frametime  = 0
