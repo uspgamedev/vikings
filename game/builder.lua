@@ -148,6 +148,8 @@ function add_keyboard_input(player)
       self:charge()
     elseif button == "up" then
       self:try_interact()
+    elseif button == "q" then
+      message.send [[game]] {'add', build_item(self.pos:clone()) }
     end
   end
   function player:input_released(button, joystick)
@@ -249,7 +251,7 @@ function build_vendor (pos)
       self.text = "Nice axe."
     else
       self.text = "Here, have an axe."
-      if player:equip(1, {}) then
+      if player:equip(1, build_item()) then
         sound.effect 'pick'
       end
     end
@@ -267,7 +269,7 @@ function build_enemy (pos)
     slashspr      = build_slash(),
     direction     = 'left'
   }
-  enemy:equip(1, {})
+  enemy:equip(1, build_item())
   enemy.slash.hitboxes.helpful.size:set(0.8, 0.8)
   local counter = math.random()*5
   local change  = 0
@@ -310,16 +312,19 @@ function build_item (pos)
     pos       = pos,
     spd       = vec2:new{ 0, 0 },
     sprite    = build_axesprite(),
+    pick_delay = 0
   }
   item.hitboxes.helpful.class = 'weapon'
   item.hitboxes.helpful.targetclass = 'avatar'
   function item.hitboxes.helpful:on_collision (collisions)
     local p = collisions[1] 
-    if p and p.owner and not p.owner:get_equip(1) and p.owner:equip(1, {}) then
+    if self.owner.pick_delay == 0 and p and p.owner and p.owner:equip(1, self.owner) then
       sound.effect 'pick'
       message.send [[game]] {'kill', self.owner}
     end
   end
-  item.hitboxes.helpful:register()
+  function item.tasks.pick_delay(self, dt)
+    self.pick_delay = math.max(self.pick_delay - dt, 0)
+  end
   return item
 end
