@@ -158,13 +158,14 @@ function add_keyboard_input(player)
   end
 end
 
-function add_joystick_input(player)
+function add_joystick_input(player, joystick)
+  joystick = joystick or 1
   local joystick_database = {
     ["Twin USB Joystick"] = {
       jump = 3,
       attack = 4,
       direction = function(dir)
-        return love.joystick.getHat(1,1):find(dir, 1, true) ~= nil
+        return love.joystick.getHat(joystick,1):find(dir, 1, true) ~= nil
       end
     },
     {
@@ -172,18 +173,18 @@ function add_joystick_input(player)
       attack = 2,
       direction = function(dir)
         if dir == "l" then
-          return love.joystick.getAxis(1,1) < -0.2
+          return love.joystick.getAxis(joystick,1) < -0.2
         elseif dir == "r" then
-          return love.joystick.getAxis(1,1) > 0.2
+          return love.joystick.getAxis(joystick,1) > 0.2
         elseif dir == "u" then
-          return love.joystick.getAxis(1,2) < -0.2
+          return love.joystick.getAxis(joystick,2) < -0.2
         elseif dir == "d" then
-          return love.joystick.getAxis(1,2) > 0.2
+          return love.joystick.getAxis(joystick,2) > 0.2
         end
       end
     }
   }
-  local joy = joystick_database[love.joystick.getName(1)] or joystick_database[1]
+  local joy = joystick_database[love.joystick.getName(joystick)] or joystick_database[1]
   local up_pressed = false
   function player.tasks.check_input(self, dt)
     if joy.direction("l") then
