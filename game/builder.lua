@@ -172,7 +172,7 @@ function build_enemy (pos)
   }
   enemy:equip(1, {})
   enemy.slash.hitboxes.helpful.size:set(0.8, 0.8)
-  local counter = 0
+  local counter = math.random()*5
   local change  = 0
   function enemy.tasks.attack (self, dt)
     counter = counter + dt
