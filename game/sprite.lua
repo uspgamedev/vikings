@@ -1,6 +1,7 @@
 
 require 'lux.object'
 require 'vec2'
+require 'map'
 require 'animation'
 
 sprite = lux.object.new {
@@ -51,14 +52,18 @@ function sprite:update (observer, dt)
   end
 end
 
-function sprite:draw_data (graphics, pos)
+function sprite:draw_data (graphics)
   local frame = self.animation.frames[self.framestep]
-  self.data:draw(graphics, frame, pos, self.mirror)
+  self.data:draw(graphics, frame, self.mirror)
 end
 
 function sprite:draw (graphics, pos)
-  self:draw_data(graphics, pos)
+  local tilesize = map.get_tilesize()
+  graphics.push()
+  graphics.translate((tilesize*(pos-vec2:new{1,1})):get())
+  self:draw_data(graphics)
   for _,effect in pairs(self.effects) do
     effect:draw(graphics, self)
   end
+  graphics.pop()
 end

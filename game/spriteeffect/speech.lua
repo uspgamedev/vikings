@@ -25,8 +25,8 @@ function speech:draw (graphics, sprite)
   graphics.setColor(255, 255, 255, math.min(self.counter, 1) * 255)
   graphics.print(
     self.text, 
-    map.get_tilesize() * (self.pos.x - 0.5),
-    map.get_tilesize() * (self.pos.y - 2)
+    map.get_tilesize() * (-0.5),
+    map.get_tilesize() * (-2)
   )
   graphics.setColor(255, 255, 255, 255)
 end
