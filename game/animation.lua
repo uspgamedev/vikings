@@ -10,9 +10,9 @@ animation = lux.object.new {
 }
 
 function animation:__init ()
-  self.animations = animation or {
+  self.animations = self.animations or {
     default = {
-      type    = 'loop'
+      type    = 'loop',
       fps     = 10,
       frames  = {{i=1, j=1}}
     }
@@ -35,6 +35,7 @@ end
 
 function animation:play (id)
   self.current    = self.animations[id]
+  self.frame_step = 1
   self.frametime  = 0
 end
 
@@ -59,6 +60,6 @@ function animation:update (dt)
 end
 
 function animation:draw (graphics, sprite, pos)
-  sprite:draw(graphics, self.current.frames[self.frame_step], pos)
+  sprite:draw(graphics, self.current.frames[self.frame_step], pos, self.mirror)
 end
 
