@@ -65,6 +65,7 @@ function love.load (args)
   background = love.graphics.newImage "background/Ardentryst-Background_SnowCave_Backing.png"
   screencenter = vec2:new{w,h} * 0.5
   camera_pos = vec2:new{ w/2, h/2 }
+  love.graphics.setFont(love.graphics.newFont(12))
 
   sound.set_bgm "music/JordanTrudgett-Snodom-ccby3.ogg"
   local map_file, no_joystick
@@ -176,7 +177,8 @@ function love.draw ()
   local bg_y = (avatars.player.pos.y / current_map.height) * (h - background:getHeight() * 2)
   love.graphics.draw(background, bg_x, bg_y, 0, 2, 2)
 
-  love.graphics.translate((screencenter - avatars.player.pos * map.get_tilesize()):get())
+  local camera_pos = screencenter - avatars.player.pos * map.get_tilesize()
+  love.graphics.translate(math.floor(camera_pos.x), math.floor(camera_pos.y))
   current_map:draw(love.graphics)
   for _,av in pairs(avatars) do
     av:draw(love.graphics)
@@ -186,7 +188,7 @@ function love.draw ()
   end
 
   if love.keyboard.isDown("tab") or love.joystick.isDown(1, 5) then
-    love.graphics.translate((-(screencenter - avatars.player.pos * map.get_tilesize())):get())
+    love.graphics.translate(-math.floor(camera_pos.x), -math.floor(camera_pos.y))
     love.graphics.translate(20, 20)
     love.graphics.scale(0.1, 0.1)
     love.graphics.setColor(0, 0, 0, 127)

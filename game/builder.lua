@@ -256,7 +256,7 @@ end
 
 function build_enemy (pos)
   local enemy = avatar:new {
-    life          = 20,
+    maxlife       = 20,
     pos           = pos,
     sprite        = build_monster(),
     animationset  = animationset.monster,

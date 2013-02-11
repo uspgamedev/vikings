@@ -9,15 +9,17 @@ require 'animationset.viking'
 
 avatar = thing:new {
   slashspr      = nil,
-  life          = 200,
+  maxlife       = 200,
   animationset  = nil,
 
   dmg_delay     = 0,
   charging      = -1,
-  attacking     = false
+  attacking     = false,
+  life          = nil, -- will be set to maxlife if not set
 }
 
-function avatar:__init() 
+function avatar:__init()
+  self.life = self.life or self.maxlife
   self.equipment = {}
   self.hitboxes.helpful.class = "avatar"
   self.animationset = self.animationset or animationset.viking
@@ -155,6 +157,13 @@ function avatar:take_damage (amount)
 end
 
 function avatar:draw (graphics)
+  local font = love.graphics.getFont()
+  local s = self.life .. "/" .. self.maxlife
+  graphics.setColor(255, 255, 255)
+  graphics.print(s, self.pos.x * map.get_tilesize() + 1, self.pos.y * map.get_tilesize() + 1, 0, 1, 1, font:getWidth(s), font:getHeight(s) + self.sprite.data.quadsize)
+  graphics.setColor(0, 0, 0)
+  graphics.print(s, self.pos.x * map.get_tilesize(), self.pos.y * map.get_tilesize(), 0, 1, 1, font:getWidth(s), font:getHeight(s) + self.sprite.data.quadsize)
+  graphics.setColor(255, 255, 255)
   local glow = self.charging >= 0 and self.charging/DASH_THRESHOLD or 0
   if message.send [[game]] {'debug'} and self.equipment[1] then
     graphics.setColor(255, 255*glow, 0)
