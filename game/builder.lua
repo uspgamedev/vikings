@@ -88,7 +88,7 @@ end
 function build_player (pos)
   local player = avatar:new {
     pos       = pos,
-    sprite    = build_sprite(),
+    sprite    = build_sprite():clone(),
     slashspr  = build_slash(),
     frame     = { i=4, j=1 },
   }
@@ -111,7 +111,7 @@ end
 function build_npc (pos)
   local npc = avatar:new {
     pos    = pos,
-    sprite = build_sprite(),
+    sprite = build_sprite():clone(),
     slashspr  = build_slash(),
     counter = 0
   }
@@ -127,7 +127,7 @@ end
 function build_vendor (pos)
   local npc = avatar:new {
     pos    = pos,
-    sprite = build_sprite(),
+    sprite = build_sprite():clone(),
     slashspr  = build_slash(),
     counter = 0
   }
@@ -147,7 +147,7 @@ end
 function build_enemy (pos)
   local enemy = avatar:new {
     pos       = pos,
-    sprite    = build_sprite(),
+    sprite    = build_sprite():clone(),
     slashspr  = build_slash(),
     direction = 'left'
   }

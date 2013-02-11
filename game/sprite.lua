@@ -46,7 +46,7 @@ end
 function sprite:update (dt)
   self.frametime = self.frametime + dt
   while self.frametime >= 1/self.animation.fps do
-    self.framtestep = self.animation:step(self.framestep)
+    self.framestep = self.animation:step(self.framestep)
     self.frametime = self.frametime - 1/self.animation.fps
   end
 end
