@@ -86,8 +86,11 @@ function avatar:jump ()
     if self.air > 0 then
       self.airjumpsleft = self.airjumpsleft - 1
     end
+    local playerpos = message.send [[game]] {'position', 'player'}
     self.spd.y = JUMPSPDY
-    sound.effect 'jump'
+    if (self.pos - playerpos):length() < 30 then
+      sound.effect 'jump'
+    end
   end
 end
 
