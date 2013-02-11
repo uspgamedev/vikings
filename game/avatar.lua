@@ -39,6 +39,12 @@ local DASHCOEF        = 13
 local min_equipment_slot = 1
 local max_equipment_slot = 1
 
+
+function avatar:die ()
+  avatar:__super().die(self)
+  self.slash:die()
+end
+
 function avatar:apply_gravity (dt)
   if not self.dashing then
     avatar:__super().apply_gravity(self, dt)
