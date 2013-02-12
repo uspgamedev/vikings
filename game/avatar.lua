@@ -6,6 +6,7 @@ require 'hitbox'
 require 'message'
 require 'sound'
 require 'animationset.viking'
+require 'spriteeffect.blink'
 
 avatar = thing:new {
   slashspr      = nil,
@@ -150,6 +151,7 @@ function avatar:take_damage (amount)
   self.life = math.max(self.life - amount, 0)
   self.dmg_delay = 0.5
   sound.effect('hit', self.pos)
+  self.sprite.effects.blink = spriteeffect.blink:new{ color = {150, 20, 20} }
   if self.life <= 0 then
     message.send 'game' {'kill', self}
   end
