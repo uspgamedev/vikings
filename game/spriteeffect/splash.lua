@@ -4,24 +4,34 @@ require 'vec2'
 
 module ('spriteeffect', package.seeall)
 
-local particle_img = nil
+splash = lux.object.new {}
 
-splash = lux.object.new {
-  counter = 1
-}
+local particle_img = nil
+local function get_img ()
+  if not particle_img then
+    local img_data = love.image.newImageData(1,1)
+    img_data:mapPixel(
+      function ()
+        return 255, 255, 255, 255
+      end
+    )
+    particle_img = love.graphics.newImage(img_data)
+  end
+  return particle_img
+end
 
 function splash:__init ()
-  particle_img = particle_img or love.graphics.newImage 'tile/ice.png'
-  self.particles = love.graphics.newParticleSystem(particle_img, 6)
-  self.particles:setParticleLife(1, 1)
+  self.particles = love.graphics.newParticleSystem(get_img(), 6)
+  self.particles:setParticleLife(0.3, 0.3)
   self.particles:setEmissionRate(40)
-  self.particles:setSizes(0.2)
-  self.particles:setColors(255,255,255,255, 255,255,255,0)
+  self.particles:setSizes(4)
+  self.particles:setColors(146,197,198,255, 146,197,198,0)
   self.particles:setSpread(2*math.pi)
-  self.particles:setSpeed(32,64)
-  self.particles:setGravity(100,200)
+  self.particles:setSpeed(128,128)
+  self.particles:setGravity(400,400)
   self.particles:setSpin(-10*math.pi, -10*math.pi, 0)
   self.particles:start()
+  self.totalcount = self.counter
 end
 
 function splash:update (sprite, dt)

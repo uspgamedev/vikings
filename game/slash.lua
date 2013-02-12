@@ -14,7 +14,7 @@ slash = thing:new {
 
 local function splash_agent (reference, tile)
   local agent = agent:new{
-    counter = 1.0
+    counter = .3
   }
   function agent.tasks:timer (dt)
     self.counter = self.counter - dt
