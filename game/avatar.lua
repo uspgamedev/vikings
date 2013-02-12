@@ -140,14 +140,19 @@ end
 function avatar:equip(slot, item)
   if slot >= min_equipment_slot and slot <= max_equipment_slot then
     if self.equipment[slot] then
-      self.equipment[slot].pos = self.pos:clone()
-      self.equipment[slot].pick_delay = 1
-      message.send [[game]] {'add', self.equipment[slot]}
+      self:drop(slot)
     end
     self.equipment[slot] = item
     return true
   end
   return false
+end
+
+function avatar:drop (slot)
+  self.equipment[slot].pos = self.pos:clone()
+  self.equipment[slot].pick_delay = 1
+  message.send [[game]] {'add', self.equipment[slot]}
+  self.equipment[slot] = nil
 end
 
 function avatar:take_damage (amount)
