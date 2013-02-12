@@ -131,6 +131,8 @@ function add_keyboard_input(player)
       self:charge()
     elseif button == "up" then
       self:try_interact()
+    elseif button == "q" then
+      message.send [[game]] {'add', build_item(self.pos:clone()) }
     end
   end
   function player:input_released(button, joystick)
@@ -230,7 +232,7 @@ function build_vendor (pos)
       text = "Nice axe."
     else
       text = "Here, have an axe."
-      if player:equip(1, {}) then
+      if player:equip(1, build_item()) then
         sound.effect 'pick'
       end
     end
@@ -252,7 +254,7 @@ function build_enemy (pos)
     slashspr      = build_slash(),
     direction     = 'left'
   }
-  enemy:equip(1, {})
+  enemy:equip(1, build_item())
   enemy.slash.hitboxes.helpful.size:set(0.8, 0.8)
   local counter = math.random()*5
   local change  = 0
@@ -293,18 +295,9 @@ end
 function build_item (pos)
   local item = collectable:new {
     pos       = pos,
-    spd       = vec2:new{ 0, 0 },
+    damage    = math.random(3,7),
     sprite    = build_axesprite(),
   }
   item.hitboxes.helpful.class = 'weapon'
-  item.hitboxes.helpful.targetclass = 'avatar'
-  function item.hitboxes.helpful:on_collision (collisions)
-    local p = collisions[1] 
-    if p and p.owner and not p.owner:get_equip(1) and p.owner:equip(1, {}) then
-      sound.effect 'pick'
-      message.send [[game]] {'kill', self.owner}
-    end
-  end
-  item.hitboxes.helpful:register()
   return item
 end

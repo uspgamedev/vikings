@@ -7,7 +7,7 @@ require 'message'
 require 'mapgenerator'
 require 'sound'
 
-local debug = false
+local debug = true
 local w,h
 local screencenter
 local background
@@ -16,6 +16,11 @@ local tasks = {}
 local avatars = {}
 local current_map
 local game_message_commands = {
+  add = function ( ... )
+    for _,avatar in ipairs{...} do
+      table.insert(avatars, avatar)
+    end
+  end,
   kill = function ( ... )
     for _,avatar in ipairs{...} do
       for i,check in ipairs(avatars) do
@@ -91,7 +96,9 @@ function love.load (args)
   table.insert(avatars, builder.build_vendor(get_random_position(valid_spots)))
   if debug then
     table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))
-    table.insert(avatars, builder.build_item  (get_random_position(valid_spots)))
+    for i=1,5 do
+      table.insert(avatars, builder.build_item  (get_random_position(valid_spots)))
+    end
   else
     for i=1,10 do
       table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))

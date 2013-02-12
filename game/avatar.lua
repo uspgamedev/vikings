@@ -26,7 +26,6 @@ function avatar:__init()
   self.animationset = self.animationset or animationset.viking
   self.slash = slash:new{
     source = self,
-    damage = 5,
     sprite = self.slashspr
   }
   self.slashspr = nil
@@ -140,6 +139,11 @@ end
 
 function avatar:equip(slot, item)
   if slot >= min_equipment_slot and slot <= max_equipment_slot then
+    if self.equipment[slot] then
+      self.equipment[slot].pos = self.pos:clone()
+      self.equipment[slot].pick_delay = 1
+      message.send [[game]] {'add', self.equipment[slot]}
+    end
     self.equipment[slot] = item
     return true
   end
