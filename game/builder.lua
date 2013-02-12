@@ -91,6 +91,22 @@ local speedhack = {
   right = vec2:new{  10,  0 }
 }
 
+function build_bumpbox (owner)
+  return hitbox:new {
+    owner         = owner
+    class         = 'bump',
+    targetclass   = 'bump',
+    on_collision  = function (collisions)
+      for _,another in ipairs(collisions) do
+        if self ~= another and another.owner then
+          local dir = another.owner.pos - self.owner.pos
+          another.owner:shove(dir:normalized()/(dir:length()^2)
+        end
+      end
+    end
+  }
+end
+
 function build_player (pos)
   local player = avatar:new {
     pos       = pos,
