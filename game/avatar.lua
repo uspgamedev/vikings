@@ -25,7 +25,6 @@ function avatar:__init()
   self.animationset = self.animationset or animationset.viking
   self.slash = slash:new{
     source = self,
-    damage = 5,
     sprite = self.slashspr
   }
   self.slashspr = nil

@@ -93,7 +93,7 @@ function love.load (args)
   table.insert(avatars, builder.build_npc   (get_random_position(valid_spots)))
   table.insert(avatars, builder.build_vendor(get_random_position(valid_spots)))
   if debug then
-    --table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))
+    table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))
     for i=1,5 do
       table.insert(avatars, builder.build_item  (get_random_position(valid_spots)))
     end

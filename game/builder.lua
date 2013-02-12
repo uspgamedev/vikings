@@ -310,6 +310,7 @@ end
 function build_item (pos)
   local item = collectable:new {
     pos       = pos,
+    damage    = math.random(3,7),
     sprite    = build_axesprite(),
   }
   item.hitboxes.helpful.class = 'weapon'

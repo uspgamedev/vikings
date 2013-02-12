@@ -6,7 +6,6 @@ require 'animationset.slash'
 
 slash = thing:new {
   source = nil,
-  damage = 5
 }
 
 function slash:__init ()
@@ -20,7 +19,7 @@ function slash:__init ()
     for _,another in ipairs(collisions) do
       if another.owner then
         local attacker = self.owner.source
-        local amount = self.owner.damage
+        local amount = self.owner:get_damage()
         if another.owner:take_damage(amount) then
           local dir = (attacker.pos-another.owner.pos):normalized()
           another.owner:shove(2*amount*(vec2:new{0,-1}-dir):normalized())
@@ -39,6 +38,11 @@ function slash:__init ()
       +
       vec2:new{(owner.direction=='right' and 1 or -1)*self.size.x/2, 0}
   end
+end
+
+function slash:get_damage()
+  return self.source and self.source:get_equip(1) and 
+    self.source:get_equip(1).damage or 0
 end
 
 function slash:activate ()
@@ -63,7 +67,7 @@ function slash:update (dt, map)
   self:update_hitbox()
   if self.activated and not self.bounced and self:colliding(map, self.pos) then
     local dir = (self.pos-self.source.pos):normalized()
-    self.source:shove(2*self.damage*(vec2:new{0,-1}-dir):normalized())
+    self.source:shove(2*self:get_damage()*(vec2:new{0,-1}-dir):normalized())
     self.source.airjumpsleft = 1
     self.bounced = true
     sound.effect 'bounce'
