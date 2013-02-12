@@ -26,9 +26,11 @@ local game_message_commands = {
       end
     end
   end,
-  position = function ( ... )
-    local args = { ... }
-    return avatars[args[1]] and avatars[args[1]].pos
+  put = function (thing)
+    table.insert(avatars, thing)
+  end,
+  position = function (thing_id)
+    return avatars[thing_id] and avatars[thing_id].pos
   end,
   debug = function ()
     return debug

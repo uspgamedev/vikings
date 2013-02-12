@@ -46,14 +46,16 @@ local function pos_to_tile (map, point)
 end
 
 function thing:colliding(map, position)
-  local tilesize = map.get_tilesize()
+  local tilesize  = map.get_tilesize()
+  local collisions = nil
   for _,p in ipairs(self.sprite.data.collpts) do
     local tile = pos_to_tile(map, position-(self.sprite.data.hotspot-p)/tilesize)
     if not tile or tile.floor then
-      return true
+      collisions = collisions or {}
+      table.insert(collisions, tile)
     end
   end
-  return false
+  return collisions
 end
 
 local function sign_to_dir (sign)
@@ -61,7 +63,7 @@ local function sign_to_dir (sign)
 end
 
 function thing:apply_gravity (dt)
-    self.spd:add(GRAVITY * dt)
+  self.spd:add(GRAVITY * dt)
 end
 
 function thing:update_physics (dt, map)
@@ -127,13 +129,17 @@ function thing:update_hitbox (dt)
   end
 end
 
+function thing:update_tasks (dt)
+  for _, task in pairs(self.tasks) do
+    task(self, dt)
+  end
+end
+
 function thing:update (dt, map)
   self:update_sprite(dt)
   self:update_physics(dt, map)
   self:update_hitbox(dt)
-  for _, task in pairs(self.tasks) do
-    task(self, dt)
-  end
+  self:update_tasks(dt)
 end
 
 function thing:accelerate (dv)

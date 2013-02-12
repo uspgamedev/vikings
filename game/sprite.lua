@@ -1,6 +1,7 @@
 
 require 'lux.object'
 require 'vec2'
+require 'map'
 require 'animation'
 
 sprite = lux.object.new {
@@ -8,13 +9,15 @@ sprite = lux.object.new {
   animation     = nil,
   speed         = 1,
   mirror        = { false, false },
+  effects   = nil,
 
   framestep     = 1,
   frametime     = 0
 }
 
 sprite.__init = {
-  animation = animation:new{}
+  animation   = animation:new{},
+  effects = {}
 }
 
 function sprite:set_mirror (horizontal, vertical)
@@ -38,9 +41,29 @@ function sprite:update (observer, dt)
     self.framestep = self.animation:step(self.framestep, observer)
     self.frametime = self.frametime - 1/self.animation.fps
   end
+  local to_remove = {}
+  for k,effect in pairs(self.effects) do
+    if effect:update(self, dt) then
+      table.insert(to_remove, k)
+    end
+  end
+  for _,k in ipairs(to_remove) do
+    self.effects[k] = nil
+  end
+end
+
+function sprite:draw_data (graphics)
+  local frame = self.animation.frames[self.framestep]
+  self.data:draw(graphics, frame, self.mirror)
 end
 
 function sprite:draw (graphics, pos)
-  local frame = self.animation.frames[self.framestep]
-  self.data:draw(graphics, frame, pos, self.mirror)
+  local tilesize = map.get_tilesize()
+  graphics.push()
+  graphics.translate((tilesize*(pos-vec2:new{1,1})):get())
+  self:draw_data(graphics)
+  for _,effect in pairs(self.effects) do
+    effect:draw(graphics, self)
+  end
+  graphics.pop()
 end

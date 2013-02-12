@@ -3,11 +3,29 @@ require 'thing'
 require 'sound'
 require 'vec2'
 require 'animationset.slash'
+require 'agent'
+require 'spriteeffect.splash'
+require 'message'
 
 slash = thing:new {
   source = nil,
   damage = 5
 }
+
+local function splash_agent (reference, tile)
+  local agent = agent:new{
+    counter = .3
+  }
+  function agent.tasks:timer (dt)
+    self.counter = self.counter - dt
+    if self.counter <= 0 then
+      message.send [[game]] {'kill', self}
+    end
+  end
+  agent.sprite.effects.splash = spriteeffect.splash:new{}
+  agent.pos = (reference + vec2:new{tile.i, tile.j} + vec2:new{.5,.5})/2
+  return agent
+end
 
 function slash:__init ()
   assert(self.source, "Slash without slasher.")
@@ -61,11 +79,16 @@ function slash:update (dt, map)
   self.direction  = self.source.direction
   self:update_sprite(dt)
   self:update_hitbox()
-  if self.activated and not self.bounced and self:colliding(map, self.pos) then
+  if self.activated and not self.bounced then
+    local collisions = self:colliding(map, self.pos)
+    if not collisions then return end
     local dir = (self.pos-self.source.pos):normalized()
     self.source:shove(2*self.damage*(vec2:new{0,-1}-dir):normalized())
     self.source.airjumpsleft = 1
     self.bounced = true
     sound.effect 'bounce'
+    for _,collision in ipairs(collisions) do
+      message.send [[game]] {'put', splash_agent(self.pos, collision)}
+    end
   end
 end

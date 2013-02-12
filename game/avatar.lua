@@ -6,6 +6,7 @@ require 'hitbox'
 require 'message'
 require 'sound'
 require 'animationset.viking'
+require 'spriteeffect.blink'
 
 avatar = thing:new {
   slashspr      = nil,
@@ -150,6 +151,7 @@ function avatar:take_damage (amount)
   self.life = math.max(self.life - amount, 0)
   self.dmg_delay = 0.5
   sound.effect('hit', self.pos)
+  self.sprite.effects.blink = spriteeffect.blink:new{ color = {150, 20, 20} }
   if self.life <= 0 then
     message.send 'game' {'kill', self}
   end
@@ -160,9 +162,23 @@ function avatar:draw (graphics)
   local font = love.graphics.getFont()
   local s = self.life .. "/" .. self.maxlife
   graphics.setColor(255, 255, 255)
-  graphics.print(s, self.pos.x * map.get_tilesize() + 1, self.pos.y * map.get_tilesize() + 1, 0, 1, 1, font:getWidth(s), font:getHeight(s) + self.sprite.data.quadsize)
+  graphics.print(
+    s,
+    self.pos.x * map.get_tilesize() + 1,
+    self.pos.y * map.get_tilesize() + 1,
+    0, 1, 1,
+    font:getWidth(s),
+    font:getHeight(s) + self.sprite.data.quadsize
+  )
   graphics.setColor(0, 0, 0)
-  graphics.print(s, self.pos.x * map.get_tilesize(), self.pos.y * map.get_tilesize(), 0, 1, 1, font:getWidth(s), font:getHeight(s) + self.sprite.data.quadsize)
+  graphics.print(
+    s,
+    self.pos.x * map.get_tilesize(),
+    self.pos.y * map.get_tilesize(),
+    0, 1, 1,
+    font:getWidth(s),
+    font:getHeight(s) + self.sprite.data.quadsize
+  )
   graphics.setColor(255, 255, 255)
   local glow = self.charging >= 0 and self.charging/DASH_THRESHOLD or 0
   if message.send [[game]] {'debug'} and self.equipment[1] then

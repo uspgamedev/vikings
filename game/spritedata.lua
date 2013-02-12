@@ -24,13 +24,13 @@ function spritedata:__init ()
   end
 end
 
-function spritedata:draw (graphics, frame, pos, mirror)
+function spritedata:draw (graphics, frame, mirror)
   local tilesize  = map.get_tilesize()
   self.quads[frame.i][frame.j]:flip(unpack(mirror))
   graphics.drawq(
     self.img,
     self.quads[frame.i][frame.j],
-    tilesize*(pos.x-1), tilesize*(pos.y-1),
+    0, 0,
     0, 1, 1,
     self.hotspot:get()
   )

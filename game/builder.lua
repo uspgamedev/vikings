@@ -9,24 +9,7 @@ require 'spritedata'
 require 'message'
 require 'sound'
 require 'animationset.monster'
-
-local function draw_buble (self, graphics)
-  if self.text then
-    graphics.setColor(255, 255, 255, math.min(self.counter, 1) * 255)
-    graphics.print(self.text, 
-      map.get_tilesize() * (self.pos.x - 0.5),
-      map.get_tilesize() * (self.pos.y - 2)
-    )
-    graphics.setColor(255, 255, 255, 255)
-  end
-end
-
-local function update_buble (self, dt)
-  self.counter = (self.counter or 0) - dt
-  if self.counter <= 0 then
-    self.text = nil
-  end
-end
+require 'spriteeffect.speech'
 
 local butler
 function build_sprite ()
@@ -223,13 +206,13 @@ function build_npc (pos)
     pos    = pos,
     sprite = build_sprite(),
     slashspr  = build_slash(),
-    counter = 0
   }
-  npc.drawtasks.buble = draw_buble
-  npc.tasks.buble = update_buble
   function npc:interact (player)
-    self.text = "Stay a while and listen. And heal."
-    self.counter = 2
+    self.sprite.effects.speech = spriteeffect.speech:new {
+      pos     = self.pos:clone(),
+      text    = "Stay a while and listen. And heal.",
+      counter = 2
+    }
     player.life = player.maxlife
   end
   return npc
@@ -240,20 +223,22 @@ function build_vendor (pos)
     pos    = pos,
     sprite = build_sprite(),
     slashspr  = build_slash(),
-    counter = 0
   }
-  npc.drawtasks.buble = draw_buble
-  npc.tasks.buble = update_buble
   function npc:interact (player)
+    local text
     if player.equipment[1] then
-      self.text = "Nice axe."
+      text = "Nice axe."
     else
-      self.text = "Here, have an axe."
+      text = "Here, have an axe."
       if player:equip(1, {}) then
         sound.effect 'pick'
       end
     end
-    self.counter = 2
+    self.sprite.effects.speech = spriteeffect.speech:new {
+      pos     = self.pos:clone(),
+      text    = text,
+      counter = 2
+    }
   end
   return npc
 end
