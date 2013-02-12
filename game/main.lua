@@ -197,15 +197,27 @@ function love.draw ()
   end
 
   if love.keyboard.isDown("tab") or love.joystick.isDown(1, 5) then
-    love.graphics.translate(-math.floor(camera_pos.x), -math.floor(camera_pos.y))
-    love.graphics.translate(20, 20)
-    love.graphics.scale(0.1, 0.1)
-    love.graphics.setColor(0, 0, 0, 127)
-    love.graphics.rectangle('fill', 0, 0, current_map.width*map.get_tilesize(), current_map.height*map.get_tilesize())
-    love.graphics.setColor(255, 255, 255, 127)
-    current_map:draw(love.graphics)
-    love.graphics.setColor(255, 0, 0, 127)
-    love.graphics.circle('fill', avatars.player.pos.x * map.get_tilesize(), (avatars.player.pos.y - 1) * map.get_tilesize(), map.get_tilesize() / 2)
+    love.graphics.push()
+      love.graphics.translate(-math.floor(camera_pos.x), -math.floor(camera_pos.y))
+      love.graphics.translate(20, 20)
+      love.graphics.scale(0.1, 0.1)
+      love.graphics.setColor(0, 0, 0, 127)
+      love.graphics.rectangle('fill', 0, 0, current_map.width*map.get_tilesize(), current_map.height*map.get_tilesize())
+      love.graphics.setColor(255, 255, 255, 127)
+      current_map:draw(love.graphics)
+      love.graphics.setColor(255, 0, 0, 127)
+      love.graphics.circle('fill', avatars.player.pos.x * map.get_tilesize(), (avatars.player.pos.y - 1) * map.get_tilesize(), map.get_tilesize() / 2)
+    love.graphics.pop()
+    love.graphics.push()
+      love.graphics.translate(-math.floor(camera_pos.x), -math.floor(camera_pos.y))
+      love.graphics.translate(20, 300)
+      love.graphics.scale(2,2)
+      love.graphics.setColor(150, 50, 50, 255)
+      love.graphics.print("Equipment:", 0, 0)
+      for slot,equip in ipairs(avatars.player.equipment) do
+        love.graphics.print("[slot "..slot.."] Axe (atk="..equip.damage..")", 0, slot*20)
+      end
+    love.graphics.pop()
     love.graphics.setColor(255, 255, 255, 255)
   end
 end
