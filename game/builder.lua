@@ -102,6 +102,7 @@ function build_player (pos)
     size  = vec2:new { 0.8, 0.8 },
     class = 'damageable'
   }
+  player.slash.hitboxes.helpful.size:set(1.2, 1.2)
   function player:try_interact()
     collisions = self.hitboxes.helpful:get_collisions("avatar")
     for _,target in pairs(collisions) do
