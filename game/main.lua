@@ -215,7 +215,7 @@ function love.draw ()
       love.graphics.setColor(150, 50, 50, 255)
       love.graphics.print("Equipment:", 0, 0)
       for slot,equip in ipairs(avatars.player.equipment) do
-        love.graphics.print("[slot "..slot.."] Axe (atk="..equip.damage..")", 0, slot*20)
+        love.graphics.print("[slot "..slot.."] Axe (atk="..equip.damage.."/wgt="..equip.weight..")", 0, slot*20)
       end
     love.graphics.pop()
     love.graphics.setColor(255, 255, 255, 255)

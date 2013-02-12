@@ -36,12 +36,12 @@ function slash:__init ()
   self.hitboxes.helpful.on_collision = function (self, collisions)
     for _,another in ipairs(collisions) do
       if another.owner then
-        local attacker = self.owner.source
-        local amount = self.owner:get_damage()
+        local attacker  = self.owner.source
+        local amount    = self.owner:get_damage()
         if another.owner:take_damage(amount) then
           local dir = (attacker.pos-another.owner.pos):normalized()
-          another.owner:shove(2*amount*(vec2:new{0,-1}-dir):normalized())
-          attacker:shove(2*amount*(vec2:new{0,-1}+dir):normalized())
+          another.owner:shove((self.owner:get_weight()*2+amount)/3*(vec2:new{0,-1}-dir):normalized())
+          attacker:shove(2*another.owner:get_weight()*(vec2:new{0,-1}+dir):normalized())
         end
       else
         another:unregister()
@@ -59,8 +59,11 @@ function slash:__init ()
 end
 
 function slash:get_damage()
-  return self.source and self.source:get_equip(1) and 
-    self.source:get_equip(1).damage or 0
+  return self.source and self.source:get_damage() or 0
+end
+
+function slash:get_weight()
+  return self.source and self.source:get_weight() or 0
 end
 
 function slash:activate ()

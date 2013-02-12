@@ -142,6 +142,14 @@ function avatar:get_equip(slot)
   return self.equipment[slot]
 end
 
+function avatar:get_damage()
+  return self.equipment[1] and self.equipment[1].damage or 0
+end
+
+function avatar:get_weight()
+  return self.equipment[1] and self.equipment[1].weight or 0
+end
+
 function avatar:equip(slot, item)
   if slot >= min_equipment_slot and slot <= max_equipment_slot then
     if self.equipment[slot] then
