@@ -7,7 +7,7 @@ require 'message'
 require 'mapgenerator'
 require 'sound'
 
-local debug = true
+local debug = false
 local w,h
 local screencenter
 local background
