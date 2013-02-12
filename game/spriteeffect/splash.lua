@@ -21,11 +21,11 @@ local function get_img ()
 end
 
 function splash:__init ()
-  self.particles = love.graphics.newParticleSystem(get_img(), 6)
+  self.particles = love.graphics.newParticleSystem(get_img(), 4)
   self.particles:setParticleLife(0.3, 0.3)
   self.particles:setEmissionRate(40)
   self.particles:setSizes(4)
-  self.particles:setColors(146,197,198,255, 146,197,198,0)
+  self.particles:setColors(170,220,220,255, 170,220,220,0)
   self.particles:setSpread(2*math.pi)
   self.particles:setSpeed(128,128)
   self.particles:setGravity(400,400)
