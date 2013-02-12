@@ -38,10 +38,11 @@ function slash:__init ()
       if another.owner then
         local attacker  = self.owner.source
         local amount    = self.owner:get_damage()
+        local wgt_ratio = (2*self.owner:get_weight()+amount)/3/another.owner:get_weight()
         if another.owner:take_damage(amount) then
           local dir = (attacker.pos-another.owner.pos):normalized()
-          another.owner:shove((self.owner:get_weight()*2+amount)/3*(vec2:new{0,-1}-dir):normalized())
-          attacker:shove(2*another.owner:get_weight()*(vec2:new{0,-1}+dir):normalized())
+          another.owner:shove(7*wgt_ratio*(vec2:new{0,-1}-dir):normalized())
+          attacker:shove(7/wgt_ratio*(vec2:new{0,-1}+dir):normalized())
         end
       else
         another:unregister()
@@ -63,7 +64,7 @@ function slash:get_damage()
 end
 
 function slash:get_weight()
-  return self.source and self.source:get_weight() or 0
+  return self.source and self.source:get_weight() or 1
 end
 
 function slash:activate ()

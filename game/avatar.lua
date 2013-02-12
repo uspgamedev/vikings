@@ -147,7 +147,7 @@ function avatar:get_damage()
 end
 
 function avatar:get_weight()
-  return self.equipment[1] and self.equipment[1].weight or 0
+  return self.equipment[1] and self.equipment[1].weight or 1
 end
 
 function avatar:equip(slot, item)
