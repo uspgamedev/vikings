@@ -163,8 +163,10 @@ function avatar:take_damage (amount)
 end
 
 function avatar:draw (graphics)
+  local debug = message.send [[game]] {'debug'}
   local font = love.graphics.getFont()
   local s = self.life .. "/" .. self.maxlife
+  if debug and self.equipment[1] then s = s .. "*" end
   graphics.setColor(255, 255, 255)
   graphics.print(
     s,
@@ -184,9 +186,9 @@ function avatar:draw (graphics)
     font:getHeight(s) + self.sprite.data.quadsize
   )
   graphics.setColor(255, 255, 255)
-  local glow = self.charging >= 0 and self.charging/DASH_THRESHOLD or 0
-  if message.send [[game]] {'debug'} and self.equipment[1] then
-    graphics.setColor(255, 255*glow, 0)
+  if debug and self.equipment[1] then
+    local glow = self.charging >= 0 and self.charging/DASH_THRESHOLD or 0
+    graphics.setColor(255, 255*(1-glow), 255)
   end
   self.sprite:draw(graphics, self.pos)
   graphics.setColor(255, 255, 255)
