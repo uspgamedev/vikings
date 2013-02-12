@@ -90,7 +90,7 @@ function slash:update (dt, map)
     local collisions = self:colliding(map, self.pos)
     if not collisions then return end
     local dir = (self.pos-self.source.pos):normalized()
-    self.source:shove(2*self:get_damage()*(vec2:new{0,-1}-dir):normalized())
+    self.source:shove(60/self:get_weight()*(vec2:new{0,-1}-dir):normalized())
     self.source.airjumpsleft = 1
     self.bounced = true
     sound.effect 'bounce'
