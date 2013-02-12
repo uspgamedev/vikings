@@ -45,6 +45,11 @@ local max_equipment_slot = 1
 function avatar:die ()
   avatar:__super().die(self)
   self.slash:die()
+  for slot,equip in ipairs(self.equipment) do
+    if equip then
+      self:drop(slot)
+    end
+  end
 end
 
 function avatar:apply_gravity (dt)
