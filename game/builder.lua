@@ -91,6 +91,22 @@ local speedhack = {
   right = vec2:new{  10,  0 }
 }
 
+function build_bumpbox (type)
+  return hitbox:new {
+    class         = 'bump_'..type,
+    targetclass   = 'bump_'..type,
+    on_collision  = function (self, collisions)
+      for _,another in ipairs(collisions) do
+        if not self.owner then return end
+        if self ~= another and another.owner then
+          local dir = another.owner.pos - self.owner.pos
+          another.owner:shove(2*dir:normalized()/(dir:length()^2))
+        end
+      end
+    end
+  }
+end
+
 function build_player (pos)
   local player = avatar:new {
     pos       = pos,
@@ -102,6 +118,7 @@ function build_player (pos)
     size  = vec2:new { 0.8, 0.8 },
     class = 'damageable'
   }
+  player.hitboxes.bump = build_bumpbox 'avatar'
   player.slash.hitboxes.helpful.size:set(1.2, 1.2)
   function player:try_interact()
     collisions = self.hitboxes.helpful:get_collisions("avatar")
@@ -256,6 +273,7 @@ function build_enemy (pos)
     direction     = 'left'
   }
   enemy:equip(1, build_item())
+  enemy.hitboxes.bump = build_bumpbox 'avatar'
   enemy.slash.hitboxes.helpful.size:set(0.8, 0.8)
   local counter = math.random()*5
   local change  = 0
@@ -301,5 +319,6 @@ function build_item (pos)
     sprite    = build_axesprite(),
   }
   item.hitboxes.helpful.class = 'weapon'
+  item.hitboxes.bump = build_bumpbox 'item'
   return item
 end
