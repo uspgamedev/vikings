@@ -102,6 +102,7 @@ function build_player (pos)
     size  = vec2:new { 0.8, 0.8 },
     class = 'damageable'
   }
+  player.slash.hitboxes.helpful.size:set(1.2, 1.2)
   function player:try_interact()
     collisions = self.hitboxes.helpful:get_collisions("avatar")
     for _,target in pairs(collisions) do
@@ -295,7 +296,8 @@ end
 function build_item (pos)
   local item = collectable:new {
     pos       = pos,
-    damage    = math.random(3,7),
+    damage    = math.random(3,20),
+    weight    = math.random(3,7),
     sprite    = build_axesprite(),
   }
   item.hitboxes.helpful.class = 'weapon'
