@@ -96,8 +96,9 @@ function love.load (args)
   table.insert(avatars, builder.build_vendor(get_random_position(valid_spots)))
   if debug then
     table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))
-    for i=1,5 do
+    for i=1,3 do
       table.insert(avatars, builder.build_item  (get_random_position(valid_spots)))
+      table.insert(avatars, builder.build_armor (get_random_position(valid_spots)))
     end
   else
     for i=1,10 do
@@ -214,8 +215,12 @@ function love.draw ()
       love.graphics.scale(2,2)
       love.graphics.setColor(150, 50, 50, 255)
       love.graphics.print("Equipment:", 0, 0)
-      for slot,equip in ipairs(avatars.player.equipment) do
-        love.graphics.print("[slot "..slot.."] Axe (atk="..equip.damage.."/wgt="..equip.weight..")", 0, slot*20)
+      for slot,equip in pairs(avatars.player.equipment) do
+        if equip.damage then
+          love.graphics.print("[slot "..slot.."] Axe (atk="..equip.damage.."/wgt="..equip.weight..")", 0, slot*20)
+        else
+          love.graphics.print("[slot "..slot.."] Armor (def="..equip.armor.."/wgt="..equip.weight..")", 0, slot*20)
+        end
       end
     love.graphics.pop()
     love.graphics.setColor(255, 255, 255, 255)

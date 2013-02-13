@@ -39,13 +39,14 @@ local DASH_THRESHOLD  = 0.25
 local MAXCHARGE       = 1
 local DASHCOEF        = 13
 local min_equipment_slot = 1
-local max_equipment_slot = 1
-
+local max_equipment_slot = 2
+local WEAPON_SLOT   = 1
+local ARMOR_SLOT    = 2
 
 function avatar:die ()
   avatar:__super().die(self)
   self.slash:die()
-  for slot,equip in ipairs(self.equipment) do
+  for slot,equip in pairs(self.equipment) do
     if equip then
       self:drop(slot)
     end
@@ -143,11 +144,19 @@ function avatar:get_equip(slot)
 end
 
 function avatar:get_damage()
-  return self.equipment[1] and self.equipment[1].damage or 0
+  return self.equipment[WEAPON_SLOT] and self.equipment[WEAPON_SLOT].damage or 0
+end
+
+function avatar:get_armor()
+  return self.equipment[ARMOR_SLOT] and self.equipment[ARMOR_SLOT].armor or 0
 end
 
 function avatar:get_weight()
-  return self.equipment[1] and self.equipment[1].weight or 1
+  local weight = 1
+  for _,equip in pairs(self.equipment) do
+    weight = weight + equip.weight
+  end
+  return weight
 end
 
 function avatar:equip(slot, item)
@@ -170,6 +179,8 @@ end
 
 function avatar:take_damage (amount)
   if self.dmg_delay > 0 then return end
+  amount = amount - self:get_armor()
+  --if amount <= 0 then return end
   self.life = math.max(self.life - amount, 0)
   self.dmg_delay = 0.5
   sound.effect('hit', self.pos)
