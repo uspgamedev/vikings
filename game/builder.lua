@@ -86,6 +86,24 @@ function build_axesprite ()
   return sprite:new { data = axe }
 end
 
+local armor
+function build_armorsprite ()
+  armor = armor or spritedata:new {
+    img       = love.graphics.newImage "sprite/mail-shirt.png",
+    maxframe  = { i=1, j=1 },
+    quadsize  = 32,
+    hotspot   = vec2:new{ 16, 16 },
+    collpts   = {
+      vec2:new{4,4},
+      vec2:new{4,32-4},
+      vec2:new{32-4,4},
+      vec2:new{32-4,32-4}
+    }
+  }
+  armor.img:setFilter("linear", "linear")
+  return sprite:new { data = armor }
+end
+
 local speedhack = {
   left  = vec2:new{ -10,  0 },
   right = vec2:new{  10,  0 }
@@ -319,6 +337,19 @@ function build_item (pos)
     sprite    = build_axesprite(),
   }
   item.hitboxes.helpful.class = 'weapon'
+  item.hitboxes.bump = build_bumpbox 'item'
+  return item
+end
+
+function build_armor (pos)
+  local item = collectable:new {
+    pos       = pos,
+    armor     = math.random(3, 7),
+    weight    = math.random(4, 8),
+    sprite    = build_armorsprite(),
+    slot      = 2,
+  }
+  item.hitboxes.helpful.class = 'armor'
   item.hitboxes.bump = build_bumpbox 'item'
   return item
 end
