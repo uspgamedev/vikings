@@ -106,6 +106,7 @@ function love.load (args)
     end
     for i=1,5 do
       table.insert(avatars, builder.build_item  (get_random_position(valid_spots)))
+      table.insert(avatars, builder.build_armor (get_random_position(valid_spots)))
     end
   end
 
