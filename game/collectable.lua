@@ -11,15 +11,6 @@ collectable = thing:new {
 
 function collectable:__init ()
   self.hitboxes.helpful.class = 'collectable'
-  self.hitboxes.helpful.targetclass = 'avatar'
-  function self.hitboxes.helpful:on_collision (collisions)
-    local p = collisions[1] 
-    if self.owner.pick_delay == 0 and p and p.owner and 
-        p.owner:equip(self.owner.slot, self.owner) then
-      sound.effect 'pick'
-      message.send [[game]] {'kill', self.owner}
-    end
-  end
 end
 
 function collectable:update(dt, map)
