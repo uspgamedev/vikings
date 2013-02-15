@@ -35,7 +35,7 @@ end
 
 local JUMPSPDY        = -13.64 -- sqrt(3.1 * 2gravity)
 local MINDASH         = 3
-local DASH_THRESHOLD  = 0.25
+local DASH_THRESHOLD  = 0.5
 local MAXCHARGE       = 1
 local DASHCOEF        = 13
 local min_equipment_slot = 1
@@ -101,8 +101,8 @@ function avatar:jump ()
       self.airjumpsleft = self.airjumpsleft - 1
     end
     local jumpspd = JUMPSPDY
-    if self.dashing then
-      jumpspd = jumpspd*self:get_slowdown()*(self.dashing and 2^.5 or 1)
+    if self.dashing and self.airjumpsleft > 0 then
+      jumpspd = jumpspd*self:get_slowdown()*2^.5
       self.airjumpsleft = 0
     end
     self.spd.y    = jumpspd
