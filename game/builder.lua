@@ -355,11 +355,13 @@ function build_enemy (pos)
   return enemy
 end
 
-function build_item (pos)
+function build_item (pos, dmg, wgt)
+  dmg = dmg or {3,20}
+  wgt = wgt or {3,7}
   local item = collectable:new {
     pos       = pos,
-    damage    = math.random(3,20),
-    weight    = math.random(3,7),
+    damage    = math.random(unpack(dmg)),
+    weight    = math.random(unpack(wgt)),
     sprite    = build_axesprite(),
   }
   --item.hitboxes.helpful.class = 'weapon'

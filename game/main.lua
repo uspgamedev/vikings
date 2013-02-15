@@ -72,7 +72,9 @@ function love.load (args)
     end
   end
   do 
-    local player = builder.build_player(vec2:new{})
+    local player  = builder.build_player(vec2:new{})
+    local axe     = builder.build_item(vec2:new{}, {3,3}, {3,3})
+    player:equip(axe.slot, axe)
     if love.joystick.getNumJoysticks() == 0 or no_joystick then
       builder.add_keyboard_input(player)
     else
