@@ -59,11 +59,19 @@ function hitbox:register (class)
 end
 
 function hitbox:unregister (class)
-  if class then
-    classes[class][self] = nil
+  if self then
+    if class then
+      classes[class][self] = nil
+    else
+      for _,possibleclass in pairs(classes) do
+        possibleclass[self] = nil
+      end
+    end
   else
-    for _,possibleclass in pairs(classes) do
-      possibleclass[self] = nil
+    for _,class in pairs(classes) do
+      for hitbox,check in pairs(class) do
+        hitbox:unregister()
+      end
     end
   end
 end
