@@ -46,25 +46,8 @@ function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
 end
 
-local function find_grounded_open_spots(map)
-  local spots = {}
-  for j=1,map.height-2 do
-    for i=1,map.width-1 do
-      if not map.tiles[j  ][i].floor and not map.tiles[j  ][i+1].floor and
-         not map.tiles[j+1][i].floor and not map.tiles[j+1][i+1].floor and
-             map.tiles[j+2][i].floor and     map.tiles[j+2][i+1].floor then
-        table.insert(spots, {j=j,i=i})
-      end
-    end
-  end
-  return spots
-end
-
-local function get_random_position(spots)
-  local i = (debug and 1) or math.random(#spots)
-  local result = spots[i]
-  table.remove(spots, i)
-  return vec2:new{result.i+1, result.j+1}
+local function change_map (player)
+    current_map, avatars = maploader.load(map_file, player, debug)
 end
 
 function love.load (args)
@@ -91,7 +74,7 @@ function love.load (args)
     else
       builder.add_joystick_input(player)
     end
-    current_map, avatars = maploader.load(map_file, player, debug)
+    change_map(player)
   end
   tasks.check_collisions = hitbox.check_collisions
   tasks.updateavatars = function (dt)
