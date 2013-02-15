@@ -15,6 +15,11 @@ local camera_pos
 local tasks = {}
 local avatars = {}
 local current_map
+
+local function change_map (player)
+    current_map, avatars = maploader.load(map_file, player, debug)
+end
+
 local game_message_commands = {
   add = function ( ... )
     for _,avatar in ipairs{...} do
@@ -37,6 +42,9 @@ local game_message_commands = {
   position = function (thing_id)
     return avatars[thing_id] and avatars[thing_id].pos
   end,
+  changemap = function ()
+    change_map(avatars.player)
+  end,
   debug = function ()
     return debug
   end
@@ -44,10 +52,6 @@ local game_message_commands = {
 
 function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
-end
-
-local function change_map (player)
-    current_map, avatars = maploader.load(map_file, player, debug)
 end
 
 function love.load (args)

@@ -159,13 +159,18 @@ function build_player (pos)
       end
     end
     collisions = self.hitboxes.helpful:get_collisions 'collectable'
-    if not collisions then return end
-    for _,itemhit in pairs(collisions) do
-      local item = itemhit.owner
-      if item.pick_delay == 0 and self:equip(item.slot, item) then
-        sound.effect 'pick'
-        message.send [[game]] {'kill', item}
+    if #collisions > 0 then
+      for _,itemhit in pairs(collisions) do
+        local item = itemhit.owner
+        if item.pick_delay == 0 and self:equip(item.slot, item) then
+          sound.effect 'pick'
+          message.send [[game]] {'kill', item}
+        end
       end
+    else
+      collisions = self.hitboxes.helpful:get_collisions 'door'
+      if #collisions <= 0 then return end
+      message.send [[game]] {'changemap'}
     end
   end
   return player
