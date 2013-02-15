@@ -27,6 +27,7 @@ local function get_random_position(spots, debug)
 end
 
 local function add_things (things, valid_spots, debug)
+  table.insert(things, builder.build_door  (get_random_position(valid_spots, debug)))
   table.insert(things, builder.build_npc   (get_random_position(valid_spots, debug)))
   table.insert(things, builder.build_vendor(get_random_position(valid_spots, debug)))
   if debug then

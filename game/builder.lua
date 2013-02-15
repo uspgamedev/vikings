@@ -104,6 +104,18 @@ function build_armorsprite ()
   return sprite:new { data = armor }
 end
 
+local doorsprite
+function build_doorsprite ()
+  doorsprite = doorsprite or spritedata:new {
+    img       = love.graphics.newImage 'sprite/door.png',
+    quadsize  = 64,
+    maxframe  = { i=1, j=1 },
+    hotspot   = vec2:new {32, 32},
+    collpts   = { vec2:new{32,64} }
+  }
+  return sprite:new { data = doorsprite }
+end
+
 local speedhack = {
   left  = vec2:new{ -10,  0 },
   right = vec2:new{  10,  0 }
@@ -361,4 +373,15 @@ function build_armor (pos)
   --item.hitboxes.helpful.class = 'armor'
   item.hitboxes.bump = build_bumpbox 'item'
   return item
+end
+
+function build_door (pos)
+  local door = thing:new {
+    pos       = pos,
+    sprite    = build_doorsprite(),
+    direction = 'left'
+  }
+  door.hitboxes.helpful.class = 'door'
+  door.hitboxes.helpful.size = vec2:new{1,2}
+  return door
 end
