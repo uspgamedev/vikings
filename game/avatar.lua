@@ -46,8 +46,8 @@ local ARMOR_SLOT    = 2
 function avatar:die ()
   avatar:__super().die(self)
   self.slash:die()
-  for slot,equip in pairs(self.equipment) do
-    if equip then
+  for _,slot in pairs{WEAPON_SLOT, ARMOR_SLOT} do
+    if self.equipment[slot] and math.random() > .5 then
       self:drop(slot)
     end
   end
