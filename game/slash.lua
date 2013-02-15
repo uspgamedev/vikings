@@ -11,7 +11,7 @@ slash = thing:new {
   source = nil,
 }
 
-local function splash_agent (reference, tile)
+local function splash_ice (reference, tile)
   local agent = agent:new{
     counter = .3
   }
@@ -23,6 +23,21 @@ local function splash_agent (reference, tile)
   end
   agent.sprite.effects.splash = spriteeffect.splash:new{ color = { 190,240,240 } }
   agent.pos = (reference + vec2:new{tile.i, tile.j} + vec2:new{.5,.5})/2
+  return agent
+end
+
+local function splash_blood (pos)
+  local agent = agent:new{
+    counter = .3
+  }
+  function agent.tasks:timer (dt)
+    self.counter = self.counter - dt
+    if self.counter <= 0 then
+      message.send [[game]] {'kill', self}
+    end
+  end
+  agent.sprite.effects.splash = spriteeffect.splash:new{ color = { 200,10,10 } }
+  agent.pos = pos
   return agent
 end
 
@@ -43,6 +58,7 @@ function slash:__init ()
           local dir = (attacker.pos-another.owner.pos):normalized()
           another.owner:shove(7*wgt_ratio*(vec2:new{0,-1}-dir):normalized())
           attacker:shove(7/wgt_ratio*(vec2:new{0,-1}+dir):normalized())
+          message.send [[game]] {'put', splash_blood((self.owner.pos+another.pos)/2)}
         end
       else
         another:unregister()
@@ -96,7 +112,7 @@ function slash:update (dt, map)
     self.bounced = true
     sound.effect 'bounce'
     for _,collision in ipairs(collisions) do
-      message.send [[game]] {'put', splash_agent(self.pos, collision)}
+      message.send [[game]] {'put', splash_ice(self.pos, collision)}
     end
   end
 end
