@@ -33,7 +33,7 @@ function avatar:__init()
   self.airjumpsleft = 0
 end
 
-local JUMPSPDY        = -14
+local JUMPSPDY        = -13.64 -- sqrt(3.1 * 2gravity)
 local MINDASH         = 3
 local DASH_THRESHOLD  = 0.25
 local MAXCHARGE       = 1
@@ -100,14 +100,20 @@ function avatar:jump ()
     if self.air > 0 then
       self.airjumpsleft = self.airjumpsleft - 1
     end
-    self.spd.y = JUMPSPDY
+    local jumpspd = JUMPSPDY
+    if self.dashing then
+      jumpspd = jumpspd*self:get_slowdown()*(self.dashing and 2^.5 or 1)
+      self.airjumpsleft = 0
+    end
+    self.spd.y    = jumpspd
+    self.dashing  = false
     sound.effect('jump', self.pos)
   end
 end
 
 function avatar:accelerate (dv)
   if not self.attacking then
-    avatar:__super().accelerate(self, dv)
+    avatar:__super().accelerate(self, dv*self:get_slowdown())
   end
 end
 
@@ -128,9 +134,13 @@ function avatar:attack ()
     self.charging = -1
     local sign  = (self.direction=='right' and 1 or -1)
     local dash  = MINDASH+(self.dashing and 1 or 0)*DASHCOEF
-    local burst = vec2:new{dash, 0}*sign
+    local burst = vec2:new{dash, 0}*sign*self:get_slowdown()
     self.spd = burst
   end
+end
+
+function avatar:get_slowdown ()
+  return 1/(math.max(1, self:get_weight()/10))
 end
 
 function avatar:stopattack ()
