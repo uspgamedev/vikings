@@ -26,33 +26,34 @@ local function get_random_position(spots, debug)
   return vec2:new{result.i+1, result.j+1}
 end
 
-local function add_things (things, valid_spots)
-  table.insert(things, builder.build_npc   (get_random_position(valid_spots)))
-  table.insert(things, builder.build_vendor(get_random_position(valid_spots)))
+local function add_things (things, valid_spots, debug)
+  table.insert(things, builder.build_npc   (get_random_position(valid_spots, debug)))
+  table.insert(things, builder.build_vendor(get_random_position(valid_spots, debug)))
   if debug then
-    table.insert(things, builder.build_enemy (get_random_position(valid_spots)))
+    table.insert(things, builder.build_enemy (get_random_position(valid_spots, debug)))
     for i=1,3 do
-      table.insert(things, builder.build_item  (get_random_position(valid_spots)))
-      table.insert(things, builder.build_armor (get_random_position(valid_spots)))
+      table.insert(things, builder.build_item  (get_random_position(valid_spots, debug)))
+      table.insert(things, builder.build_armor (get_random_position(valid_spots, debug)))
     end
   else
     for i=1,10 do
-      table.insert(things, builder.build_enemy (get_random_position(valid_spots)))
+      table.insert(things, builder.build_enemy (get_random_position(valid_spots, debug)))
     end
     for i=1,5 do
-      table.insert(things, builder.build_item  (get_random_position(valid_spots)))
-      table.insert(things, builder.build_armor (get_random_position(valid_spots)))
+      table.insert(things, builder.build_item  (get_random_position(valid_spots, debug)))
+      table.insert(things, builder.build_armor (get_random_position(valid_spots, debug)))
     end
   end
 end
 
 function load (map_file, player, debug)
   local newmap      = map_file and mapgenerator.from_file(map_file) or mapgenerator.random_map()
-  local valid_spots = find_grounded_open_spots(current_map)
+  local valid_spots = find_grounded_open_spots(newmap)
   local things      = {}
 
   things.player = player
-  add_things(things, valid_spots)
+  player.pos    = get_random_position(valid_spots, debug)
+  add_things(things, valid_spots, debug)
   hitbox.unregister()
 
   return newmap, things

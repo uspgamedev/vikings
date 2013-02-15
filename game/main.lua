@@ -4,7 +4,7 @@ require 'map'
 require 'avatar'
 require 'builder'
 require 'message'
-require 'mapgenerator'
+require 'maploader'
 require 'sound'
 
 local debug = false
@@ -59,6 +59,7 @@ local function find_grounded_open_spots(map)
   end
   return spots
 end
+
 local function get_random_position(spots)
   local i = (debug and 1) or math.random(#spots)
   local result = spots[i]
@@ -83,33 +84,15 @@ function love.load (args)
       debug = true
     end
   end
-  current_map = map_file and mapgenerator.from_file(map_file) or mapgenerator.random_map()
-  local valid_spots = find_grounded_open_spots(current_map)
-
-  avatars.player = builder.build_player(get_random_position(valid_spots))
-  if love.joystick.getNumJoysticks() == 0 or no_joystick then
-    builder.add_keyboard_input(avatars.player)
-  else
-    builder.add_joystick_input(avatars.player)
+  do 
+    local player = builder.build_player(vec2:new{})
+    if love.joystick.getNumJoysticks() == 0 or no_joystick then
+      builder.add_keyboard_input(player)
+    else
+      builder.add_joystick_input(player)
+    end
+    current_map, avatars = maploader.load(map_file, player, debug)
   end
-  table.insert(avatars, builder.build_npc   (get_random_position(valid_spots)))
-  table.insert(avatars, builder.build_vendor(get_random_position(valid_spots)))
-  if debug then
-    table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))
-    for i=1,3 do
-      table.insert(avatars, builder.build_item  (get_random_position(valid_spots)))
-      table.insert(avatars, builder.build_armor (get_random_position(valid_spots)))
-    end
-  else
-    for i=1,10 do
-      table.insert(avatars, builder.build_enemy (get_random_position(valid_spots)))
-    end
-    for i=1,5 do
-      table.insert(avatars, builder.build_item  (get_random_position(valid_spots)))
-      table.insert(avatars, builder.build_armor (get_random_position(valid_spots)))
-    end
-  end
-
   tasks.check_collisions = hitbox.check_collisions
   tasks.updateavatars = function (dt)
     for _,av in pairs(avatars) do av:update(dt, current_map) end
