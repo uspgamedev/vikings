@@ -139,11 +139,20 @@ function build_player (pos)
   player.hitboxes.bump = build_bumpbox 'avatar'
   player.slash.hitboxes.helpful.size:set(1.2, 1.2)
   function player:try_interact()
-    collisions = self.hitboxes.helpful:get_collisions("avatar")
+    local collisions = self.hitboxes.helpful:get_collisions 'avatar'
     for _,target in pairs(collisions) do
       if target.owner and target.owner ~= self
          and (self.pos - target.owner.pos):length() < 1.5 then
         target.owner:interact(self)
+      end
+    end
+    collisions = self.hitboxes.helpful:get_collisions 'collectable'
+    if not collisions then return end
+    for _,itemhit in pairs(collisions) do
+      local item = itemhit.owner
+      if item.pick_delay == 0 and self:equip(item.slot, item) then
+        sound.effect 'pick'
+        message.send [[game]] {'kill', item}
       end
     end
   end
@@ -336,7 +345,7 @@ function build_item (pos)
     weight    = math.random(3,7),
     sprite    = build_axesprite(),
   }
-  item.hitboxes.helpful.class = 'weapon'
+  --item.hitboxes.helpful.class = 'weapon'
   item.hitboxes.bump = build_bumpbox 'item'
   return item
 end
@@ -349,7 +358,7 @@ function build_armor (pos)
     sprite    = build_armorsprite(),
     slot      = 2,
   }
-  item.hitboxes.helpful.class = 'armor'
+  --item.hitboxes.helpful.class = 'armor'
   item.hitboxes.bump = build_bumpbox 'item'
   return item
 end
