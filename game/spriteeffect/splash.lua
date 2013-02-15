@@ -4,7 +4,9 @@ require 'vec2'
 
 module ('spriteeffect', package.seeall)
 
-splash = lux.object.new {}
+splash = lux.object.new {
+  color = { 255, 255, 255 }
+}
 
 local particle_img = nil
 local function get_img ()
@@ -21,11 +23,12 @@ local function get_img ()
 end
 
 function splash:__init ()
+  local color = self.color
   self.particles = love.graphics.newParticleSystem(get_img(), 4)
   self.particles:setParticleLife(0.3, 0.3)
   self.particles:setEmissionRate(40)
   self.particles:setSizes(4)
-  self.particles:setColors(170,220,220,255, 170,220,220,0)
+  self.particles:setColors(color[1],color[2],color[3],255, color[1],color[2],color[3],0)
   self.particles:setSpread(2*math.pi)
   self.particles:setSpeed(128,128)
   self.particles:setGravity(400,400)

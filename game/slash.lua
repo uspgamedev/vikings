@@ -21,7 +21,7 @@ local function splash_agent (reference, tile)
       message.send [[game]] {'kill', self}
     end
   end
-  agent.sprite.effects.splash = spriteeffect.splash:new{}
+  agent.sprite.effects.splash = spriteeffect.splash:new{ color = { 190,240,240 } }
   agent.pos = (reference + vec2:new{tile.i, tile.j} + vec2:new{.5,.5})/2
   return agent
 end
