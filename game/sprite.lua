@@ -26,7 +26,7 @@ end
 
 function sprite:play_animation (animation)
   if self.animation == animation then return end
-  self.animation  = animation
+  self.animation = animation
   self:restart_animation()
 end
 

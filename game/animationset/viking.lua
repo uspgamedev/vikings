@@ -29,7 +29,7 @@ viking.moving = animation:new {
 }
 
 viking.dashing = animation:new {
-  fps     = 25,
+  fps     = 30,
   type    = 'once',
   frames  = {
     {i=2, j=2},

@@ -38,8 +38,8 @@ end
 local JUMPSPDY        = -13.64 -- sqrt(3.1 * 2gravity)
 
 local DASHSPD         = 16
-local DASHTIME        = 0.1
-local DASHCOOLDOWN    = 0.4
+local DASHTIME        = 0.3
+local DASHCOOLDOWN    = 0.2
 
 local ATKMOVE         = 3
 
@@ -68,10 +68,12 @@ end
 
 function avatar:update_sprite (dt)
   local moving = self.accelerated
-  if not moving and not self.attacking then
+  if not moving and not self.attacking and not self:dashing() then
     self.sprite:play_animation(self.animationset.standing)
   elseif self.attacking then
     self.sprite:play_animation(self.animationset.attacking)
+  elseif self:dashing() then
+    self.sprite:play_animation(self.animationset.dashing)
   else
     self.sprite.speed = math.max(math.abs(self.spd.x)/5, 0.4)
     self.sprite:play_animation(self.animationset.moving)
@@ -140,12 +142,14 @@ function avatar:dashing ()
 end
 
 function avatar:dash ()
-  if self.dashtime > 0 or self.dashcooldown > 0 then return end
+  if self.attacking or self.dashtime > 0 or self.dashcooldown > 0 then return end
   local sign        = (self.direction=='right' and 1 or -1)
   local burst       = vec2:new{DASHSPD, 0}*sign*self:get_slowdown()
   self.spd          = burst
   self.dashtime     = DASHTIME
   self.dashcooldown = DASHCOOLDOWN
+  self.sprite:play_animation(self.animationset.dashing)
+  self.sprite:restart_animation()
 end
 
 function avatar:stopdash ()
