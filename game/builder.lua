@@ -191,6 +191,8 @@ function add_keyboard_input(player)
       self:jump()
     elseif button == "x" then
       self:charge()
+    elseif button == 'c' then
+      self:dash()
     elseif button == "up" then
       self:try_interact()
     elseif button == "q" then
