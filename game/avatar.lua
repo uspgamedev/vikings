@@ -118,7 +118,7 @@ function avatar:jump ()
       self.airjumpsleft = 0
     end
     self.spd.y    = jumpspd
-    self.dashtime = 0
+    self:stopdash()
     sound.effect('jump', self.pos)
   end
 end
@@ -148,15 +148,21 @@ function avatar:dash ()
   self.dashcooldown = DASHCOOLDOWN
 end
 
+function avatar:stopdash ()
+  self.dashtime = 0
+end
+
 function avatar:attack ()
   if not self.attacking and self.equipment[1] then
-    local charge_time = math.min(math.max(self.charging, 0), MAXCHARGE)
+    self:stopdash()
+    --local charge_time = math.min(math.max(self.charging, 0), MAXCHARGE)
+    local sign        = (self.direction=='right' and 1 or -1)
     sound.effect('slash', self.pos)
     self.attacking = true
     self.sprite:play_animation(self.animationset.attacking)
     self.sprite:restart_animation()
-    self.charging = -1
-    self.spd = vec2:new{ATKMOVE, 0}
+    --self.charging = -1
+    self:shove(vec2:new{ATKMOVE, 0}*sign)
   end
 end
 
@@ -167,7 +173,6 @@ end
 function avatar:stopattack ()
   self.attacking = false
   self.slash:deactivate()
-  self.dashtime = 0
 end
 
 function avatar:get_equip(slot)

@@ -190,7 +190,8 @@ function add_keyboard_input(player)
     if button == "z" then
       self:jump()
     elseif button == "x" then
-      self:charge()
+      --self:charge()
+      self:attack()
     elseif button == 'c' then
       self:dash()
     elseif button == "up" then
@@ -201,9 +202,9 @@ function add_keyboard_input(player)
   end
   function player:input_released(button, joystick)
     if joystick then return end
-    if button == "x" then
-      self:attack()
-    end
+    --if button == "x" then
+    --  self:attack()
+    --end
   end
 end
 
