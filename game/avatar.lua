@@ -15,6 +15,7 @@ avatar = thing:new {
 
   dmg_delay     = 0,
   charging      = -1,
+  dashcooldown  = 0,
   attacking     = false,
   life          = nil, -- will be set to maxlife if not set
 }
@@ -35,9 +36,10 @@ end
 
 local JUMPSPDY        = -13.64 -- sqrt(3.1 * 2gravity)
 local MINDASH         = 3
+local DASHCOOLDOWN    = 0.5
+local DASHCOEF        = 13
 local DASH_THRESHOLD  = 0.5
 local MAXCHARGE       = 1
-local DASHCOEF        = 13
 local min_equipment_slot = 1
 local max_equipment_slot = 2
 local WEAPON_SLOT   = 1
@@ -93,6 +95,9 @@ function avatar:update (dt, map)
   if self.charging >= 0 then
     self.charging = math.min(self.charging + dt, DASH_THRESHOLD)
   end
+  if self.dashcooldown > 0 then
+    self.dashcooldown = math.max(self.dashcooldown - dt, 0)
+  end
 end
 
 function avatar:jump ()
@@ -121,6 +126,15 @@ function avatar:charge ()
   if self.equipment[1] then
     self.charging = 0
   end
+end
+
+function avatar:dash ()
+  if self.dashing or self.dashcooldown > 0 then return end
+  local sign        = (self.direction=='right' and 1 or -1)
+  local burst       = vec2:new{DASHSPD, 0}*sign*self:get_slowdown()
+  self.spd          = burst
+  self.dashing      = true
+  self.dashcooldown = DASHCOOLDOWN
 end
 
 function avatar:attack ()
