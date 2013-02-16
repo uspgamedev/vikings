@@ -124,7 +124,7 @@ function avatar:jump ()
 end
 
 function avatar:accelerate (dv)
-  if not self.attacking then
+  if not self.attacking and not self:dashing() then
     avatar:__super().accelerate(self, dv*self:get_slowdown())
   end
 end
