@@ -192,7 +192,7 @@ function add_keyboard_input(player)
     elseif button == "x" then
       --self:charge()
       self:attack()
-    elseif button == 'c' then
+    elseif button == 'lshift' then
       self:dash()
     elseif button == "up" then
       self:try_interact()
