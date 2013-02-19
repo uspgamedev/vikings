@@ -219,7 +219,7 @@ end
 
 function avatar:take_damage (amount)
   if self.dmg_delay > 0 then return end
-  amount = amount - self:get_armor()
+  amount = math.max(amount - self:get_armor(), 0)
   --if amount <= 0 then return end
   self.life = math.max(self.life - amount, 0)
   self.dmg_delay = 0.5
