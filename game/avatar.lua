@@ -15,6 +15,8 @@ avatar = thing:new {
 
   dmg_delay     = 0,
   charging      = -1,
+  dashtime      = 0,
+  dashcooldown  = 0,
   attacking     = false,
   life          = nil, -- will be set to maxlife if not set
 }
@@ -34,10 +36,15 @@ function avatar:__init()
 end
 
 local JUMPSPDY        = -13.64 -- sqrt(3.1 * 2gravity)
-local MINDASH         = 3
+
+local DASHSPD         = 16
+local DASHTIME        = 0.3
+local DASHCOOLDOWN    = 0.2
+
+local ATKMOVE         = 3
+
 local DASH_THRESHOLD  = 0.5
 local MAXCHARGE       = 1
-local DASHCOEF        = 13
 local min_equipment_slot = 1
 local max_equipment_slot = 2
 local WEAPON_SLOT   = 1
@@ -54,17 +61,19 @@ function avatar:die ()
 end
 
 function avatar:apply_gravity (dt)
-  if not self.dashing then
+  if not self:dashing() then
     avatar:__super().apply_gravity(self, dt)
   end
 end
 
 function avatar:update_sprite (dt)
   local moving = self.accelerated
-  if not moving and not self.attacking then
+  if not moving and not self.attacking and not self:dashing() then
     self.sprite:play_animation(self.animationset.standing)
   elseif self.attacking then
     self.sprite:play_animation(self.animationset.attacking)
+  elseif self:dashing() then
+    self.sprite:play_animation(self.animationset.dashing)
   else
     self.sprite.speed = math.max(math.abs(self.spd.x)/5, 0.4)
     self.sprite:play_animation(self.animationset.moving)
@@ -93,6 +102,11 @@ function avatar:update (dt, map)
   if self.charging >= 0 then
     self.charging = math.min(self.charging + dt, DASH_THRESHOLD)
   end
+  if self.dashtime > 0 then
+    self.dashtime = math.max(self.dashtime - dt, 0)
+  elseif self.dashcooldown > 0 then
+    self.dashcooldown = math.max(self.dashcooldown - dt, 0)
+  end
 end
 
 function avatar:jump ()
@@ -101,18 +115,18 @@ function avatar:jump ()
       self.airjumpsleft = self.airjumpsleft - 1
     end
     local jumpspd = JUMPSPDY
-    if self.dashing and self.airjumpsleft > 0 then
+    if self:dashing() and self.airjumpsleft > 0 then
       jumpspd = jumpspd*self:get_slowdown()*2^.5
       self.airjumpsleft = 0
     end
     self.spd.y    = jumpspd
-    self.dashing  = false
+    self:stopdash()
     sound.effect('jump', self.pos)
   end
 end
 
 function avatar:accelerate (dv)
-  if not self.attacking then
+  if not self.attacking and not self:dashing() then
     avatar:__super().accelerate(self, dv*self:get_slowdown())
   end
 end
@@ -123,19 +137,36 @@ function avatar:charge ()
   end
 end
 
+function avatar:dashing ()
+  return self.dashtime > 0
+end
+
+function avatar:dash ()
+  if self.attacking or self.dashtime > 0 or self.dashcooldown > 0 then return end
+  local sign        = (self.direction=='right' and 1 or -1)
+  local burst       = vec2:new{DASHSPD, 0}*sign*self:get_slowdown()
+  self.spd          = burst
+  self.dashtime     = DASHTIME
+  self.dashcooldown = DASHCOOLDOWN
+  self.sprite:play_animation(self.animationset.dashing)
+  self.sprite:restart_animation()
+end
+
+function avatar:stopdash ()
+  self.dashtime = 0
+end
+
 function avatar:attack ()
   if not self.attacking and self.equipment[1] then
-    local charge_time = math.min(math.max(self.charging, 0), MAXCHARGE)
+    self:stopdash()
+    --local charge_time = math.min(math.max(self.charging, 0), MAXCHARGE)
+    local sign        = (self.direction=='right' and 1 or -1)
     sound.effect('slash', self.pos)
     self.attacking = true
     self.sprite:play_animation(self.animationset.attacking)
     self.sprite:restart_animation()
-    self.dashing = (charge_time >= DASH_THRESHOLD)
-    self.charging = -1
-    local sign  = (self.direction=='right' and 1 or -1)
-    local dash  = MINDASH+(self.dashing and 1 or 0)*DASHCOEF
-    local burst = vec2:new{dash, 0}*sign*self:get_slowdown()
-    self.spd = burst
+    --self.charging = -1
+    self:shove(vec2:new{ATKMOVE, 0}*sign)
   end
 end
 
@@ -146,7 +177,6 @@ end
 function avatar:stopattack ()
   self.attacking = false
   self.slash:deactivate()
-  self.dashing = false
 end
 
 function avatar:get_equip(slot)
@@ -189,7 +219,7 @@ end
 
 function avatar:take_damage (amount)
   if self.dmg_delay > 0 then return end
-  amount = amount - self:get_armor()
+  amount = math.max(amount - self:get_armor(), 0)
   --if amount <= 0 then return end
   self.life = math.max(self.life - amount, 0)
   self.dmg_delay = 0.5

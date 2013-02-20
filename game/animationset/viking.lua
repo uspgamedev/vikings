@@ -28,6 +28,18 @@ viking.moving = animation:new {
   }
 }
 
+viking.dashing = animation:new {
+  fps     = 30,
+  type    = 'once',
+  frames  = {
+    {i=2, j=2},
+    {i=2, j=3},
+    {i=2, j=4},
+    {i=2, j=5},
+    {i=2, j=6}
+  }
+}
+
 viking.attacking = animation:new {
   fps     = 25,
   type    = 'once',
