@@ -160,35 +160,50 @@ function love.mousereleased (x, y, button)
   end
 end
 
+local function minimap_draw(graphics, map, things)
+  local tilesize = map:get_tilesize()
+  graphics.setColor(0, 0, 0, 127)
+  graphics.rectangle('fill', 0, 0, map.width*tilesize, map.height*tilesize)
+  graphics.setColor(255, 255, 255, 127)
+  graphics.translate(-tilesize, -tilesize)
+  for y,row in ipairs(map.tiles) do
+    for x,tile in ipairs(row) do
+      if tile.img then
+        graphics.rectangle('fill', x * tilesize, y * tilesize, tilesize, tilesize)
+      end
+    end
+  end
+  graphics.setColor(255, 0, 0, 127)
+  for _,thing in pairs(things) do
+    graphics.circle('fill', thing.pos.x * tilesize, thing.pos.y * tilesize, tilesize / 2)
+  end
+  graphics.translate(tilesize, tilesize)
+end
+
 function love.draw ()
   local bg_x = (avatars.player.pos.x / current_map.width)  * (w - background:getWidth() * 2)
   local bg_y = (avatars.player.pos.y / current_map.height) * (h - background:getHeight() * 2)
   love.graphics.draw(background, bg_x, bg_y, 0, 2, 2)
 
-  local camera_pos = screencenter - avatars.player.pos * map.get_tilesize()
-  love.graphics.translate(math.floor(camera_pos.x), math.floor(camera_pos.y))
-  current_map:draw(love.graphics, avatars.player.pos, w, h)
-  for _,av in pairs(avatars) do
-    av:draw(love.graphics)
-  end
-  if debug then
-    hitbox.draw_all(love.graphics)
-  end
+  love.graphics.push()
+    local camera_pos = screencenter - avatars.player.pos * map.get_tilesize()
+    love.graphics.translate(math.floor(camera_pos.x), math.floor(camera_pos.y))
+    current_map:draw(love.graphics, avatars.player.pos, w, h)
+    for _,av in pairs(avatars) do
+      av:draw(love.graphics)
+    end
+    if debug then
+      hitbox.draw_all(love.graphics)
+    end
+  love.graphics.pop()
 
   if love.keyboard.isDown("tab") or love.joystick.isDown(1, 5) then
     love.graphics.push()
-      love.graphics.translate(-math.floor(camera_pos.x), -math.floor(camera_pos.y))
       love.graphics.translate(20, 20)
       love.graphics.scale(0.1, 0.1)
-      love.graphics.setColor(0, 0, 0, 127)
-      love.graphics.rectangle('fill', 0, 0, current_map.width*map.get_tilesize(), current_map.height*map.get_tilesize())
-      love.graphics.setColor(255, 255, 255, 127)
-      current_map:draw(love.graphics)
-      love.graphics.setColor(255, 0, 0, 127)
-      love.graphics.circle('fill', avatars.player.pos.x * map.get_tilesize(), (avatars.player.pos.y - 1) * map.get_tilesize(), map.get_tilesize() / 2)
+      minimap_draw(love.graphics, current_map, debug and avatars or { avatars.player })
     love.graphics.pop()
     love.graphics.push()
-      love.graphics.translate(-math.floor(camera_pos.x), -math.floor(camera_pos.y))
       love.graphics.translate(20, 300)
       love.graphics.scale(2,2)
       love.graphics.setColor(150, 50, 50, 255)
