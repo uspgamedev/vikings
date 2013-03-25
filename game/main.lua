@@ -77,8 +77,8 @@ function love.load (args)
   sound.set_bgm "music/JordanTrudgett-Snodom-ccby3.ogg"
   local map_file, no_joystick = parse_args(args)
   do 
-    local player  = builder.build_player(vec2:new{})
-    local axe     = builder.build_item(vec2:new{}, {3,3}, {3,3})
+    local player  = builder.build_thing("player", vec2:new{})
+    local axe     = builder.build_thing("item",   vec2:new{}, {3,3}, {3,3})
     player:equip(axe.slot, axe)
     if love.joystick.getNumJoysticks() == 0 or no_joystick then
       builder.add_keyboard_input(player)

@@ -27,22 +27,22 @@ local function get_random_position(spots, debug)
 end
 
 local function add_things (things, valid_spots, debug)
-  table.insert(things, builder.build_door  (get_random_position(valid_spots, debug)))
-  table.insert(things, builder.build_npc   (get_random_position(valid_spots, debug)))
-  table.insert(things, builder.build_vendor(get_random_position(valid_spots, debug)))
+  table.insert(things, builder.build_thing("door",   get_random_position(valid_spots, debug)))
+  table.insert(things, builder.build_thing("npc",    get_random_position(valid_spots, debug)))
+  table.insert(things, builder.build_thing("vendor", get_random_position(valid_spots, debug)))
   if debug then
-    table.insert(things, builder.build_enemy (get_random_position(valid_spots, debug)))
+    table.insert(things, builder.build_thing("enemy", get_random_position(valid_spots, debug)))
     for i=1,3 do
-      table.insert(things, builder.build_item  (get_random_position(valid_spots, debug)))
-      table.insert(things, builder.build_armor (get_random_position(valid_spots, debug)))
+      table.insert(things, builder.build_thing("item",  get_random_position(valid_spots, debug)))
+      table.insert(things, builder.build_thing("armor", get_random_position(valid_spots, debug)))
     end
   else
     for i=1,10 do
-      table.insert(things, builder.build_enemy (get_random_position(valid_spots, debug)))
+      table.insert(things, builder.build_thing("enemy", get_random_position(valid_spots, debug)))
     end
     for i=1,5 do
-      table.insert(things, builder.build_item  (get_random_position(valid_spots, debug)))
-      table.insert(things, builder.build_armor (get_random_position(valid_spots, debug)))
+      table.insert(things, builder.build_thing("item",  get_random_position(valid_spots, debug)))
+      table.insert(things, builder.build_thing("armor", get_random_position(valid_spots, debug)))
     end
   end
 end

@@ -137,7 +137,7 @@ function build_bumpbox (type)
   }
 end
 
-function build_player (pos)
+local function build_player (pos)
   local player = avatar:new {
     pos       = pos,
     sprite    = build_sprite(),
@@ -192,7 +192,7 @@ function add_keyboard_input(player)
     elseif button == "x" then
       --self:charge()
       self:attack()
-    elseif button == 'lshift' then
+    elseif button == 'c' then
       self:dash()
     elseif button == "up" then
       self:try_interact()
@@ -268,7 +268,7 @@ function add_joystick_input(player, joystick)
   end
 end
 
-function build_npc (pos)
+local function build_npc (pos)
   local npc = avatar:new {
     pos    = pos,
     sprite = build_sprite(),
@@ -285,7 +285,7 @@ function build_npc (pos)
   return npc
 end
 
-function build_vendor (pos)
+local function build_vendor (pos)
   local npc = avatar:new {
     pos    = pos,
     sprite = build_sprite(),
@@ -310,7 +310,7 @@ function build_vendor (pos)
   return npc
 end
 
-function build_enemy (pos)
+local function build_enemy (pos)
   local enemy = avatar:new {
     maxlife       = 20,
     pos           = pos,
@@ -319,7 +319,7 @@ function build_enemy (pos)
     slashspr      = build_slash(),
     direction     = 'left'
   }
-  enemy:equip(1, build_item())
+  enemy:equip(1, build_thing "item")
   enemy.hitboxes.bump = build_bumpbox 'avatar'
   enemy.slash.hitboxes.helpful.size:set(0.8, 0.8)
   local counter = math.random()*5
@@ -358,7 +358,7 @@ function build_enemy (pos)
   return enemy
 end
 
-function build_item (pos, dmg, wgt)
+local function build_item (pos, dmg, wgt)
   dmg = dmg or {3,20}
   wgt = wgt or {3,7}
   local item = collectable:new {
@@ -372,7 +372,7 @@ function build_item (pos, dmg, wgt)
   return item
 end
 
-function build_armor (pos)
+local function build_armor (pos)
   local item = collectable:new {
     pos       = pos,
     armor     = math.random(3, 7),
@@ -385,7 +385,7 @@ function build_armor (pos)
   return item
 end
 
-function build_door (pos)
+local function build_door (pos)
   local door = thing:new {
     pos       = pos,
     sprite    = build_doorsprite(),
@@ -394,4 +394,21 @@ function build_door (pos)
   door.hitboxes.helpful.class = 'door'
   door.hitboxes.helpful.size = vec2:new{1,2}
   return door
+end
+
+function build_thing(thing, ...)
+  local funcs = {
+    player = build_player,
+    npc = build_npc,
+    vendor = build_vendor,
+    enemy = build_enemy,
+    item = build_item,
+    armor = build_armor,
+    door = build_door
+  }
+  if funcs[thing] then
+    return funcs[thing](...)
+  else
+    error("Unknown thing: " .. thing )
+  end
 end
