@@ -143,6 +143,7 @@ local function build_player (pos)
     sprite    = build_sprite(),
     slashspr  = build_slash(),
     frame     = { i=4, j=1 },
+    name      = "Player",
   }
   player.hitboxes.harmful = hitbox:new {
     size  = vec2:new { 0.8, 0.8 },
@@ -268,11 +269,12 @@ function add_joystick_input(player, joystick)
   end
 end
 
-local function build_npc (pos)
+local function build_npc_cain (pos)
   local npc = avatar:new {
     pos    = pos,
     sprite = build_sprite(),
     slashspr  = build_slash(),
+    name   = "Deckard Cain",
   }
   function npc:interact (player)
     self.sprite.effects.speech = spriteeffect.speech:new {
@@ -290,6 +292,7 @@ local function build_vendor (pos)
     pos    = pos,
     sprite = build_sprite(),
     slashspr  = build_slash(),
+    name   = "Vendor",
   }
   function npc:interact (player)
     local text
@@ -310,16 +313,17 @@ local function build_vendor (pos)
   return npc
 end
 
-local function build_enemy (pos)
+local function build_drillbeast (pos)
   local enemy = avatar:new {
     maxlife       = 20,
     pos           = pos,
     sprite        = build_monster(),
     animationset  = animationset.monster,
     slashspr      = build_slash(),
-    direction     = 'left'
+    direction     = 'left',
+    name          = "Drillbeast"
   }
-  enemy:equip(1, build_thing "item")
+  enemy:equip(1, build_thing "ironaxe")
   enemy.hitboxes.bump = build_bumpbox 'avatar'
   enemy.slash.hitboxes.helpful.size:set(0.8, 0.8)
   local counter = math.random()*5
@@ -358,7 +362,7 @@ local function build_enemy (pos)
   return enemy
 end
 
-local function build_item (pos, dmg, wgt)
+local function build_ironaxe (pos, dmg, wgt)
   dmg = dmg or {3,20}
   wgt = wgt or {3,7}
   local item = collectable:new {
@@ -366,19 +370,21 @@ local function build_item (pos, dmg, wgt)
     damage    = math.random(unpack(dmg)),
     weight    = math.random(unpack(wgt)),
     sprite    = build_axesprite(),
+    name      = "Iron Axe",
   }
   --item.hitboxes.helpful.class = 'weapon'
   item.hitboxes.bump = build_bumpbox 'item'
   return item
 end
 
-local function build_armor (pos)
+local function build_leatherarmor (pos)
   local item = collectable:new {
     pos       = pos,
     armor     = math.random(3, 7),
     weight    = math.random(4, 8),
     sprite    = build_armorsprite(),
     slot      = 2,
+    name      = "Leather Armor",
   }
   --item.hitboxes.helpful.class = 'armor'
   item.hitboxes.bump = build_bumpbox 'item'
@@ -389,7 +395,8 @@ local function build_door (pos)
   local door = thing:new {
     pos       = pos,
     sprite    = build_doorsprite(),
-    direction = 'left'
+    direction = 'left',
+    name      = "Door",
   }
   door.hitboxes.helpful.class = 'door'
   door.hitboxes.helpful.size = vec2:new{1,2}
@@ -399,11 +406,11 @@ end
 function build_thing(thing, ...)
   local funcs = {
     player = build_player,
-    npc = build_npc,
+    npc_cain = build_npc_cain,
     vendor = build_vendor,
-    enemy = build_enemy,
-    item = build_item,
-    armor = build_armor,
+    drillbeast = build_drillbeast,
+    ironaxe = build_ironaxe,
+    leatherarmor = build_leatherarmor,
     door = build_door
   }
   if funcs[thing] then

@@ -10,6 +10,7 @@ thing = lux.object.new {
   sprite    = nil,
   hitbox    = nil,
   air       = 0,
+  name      = "Thing",
 
   direction = 'right',
 }

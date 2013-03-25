@@ -78,7 +78,7 @@ function love.load (args)
   local map_file, no_joystick = parse_args(args)
   do 
     local player  = builder.build_thing("player", vec2:new{})
-    local axe     = builder.build_thing("item",   vec2:new{}, {3,3}, {3,3})
+    local axe     = builder.build_thing("ironaxe",   vec2:new{}, {3,3}, {3,3})
     player:equip(axe.slot, axe)
     if love.joystick.getNumJoysticks() == 0 or no_joystick then
       builder.add_keyboard_input(player)
@@ -194,11 +194,16 @@ function love.draw ()
       love.graphics.setColor(150, 50, 50, 255)
       love.graphics.print("Equipment:", 0, 0)
       for slot,equip in pairs(avatars.player.equipment) do
-        if equip.damage then
-          love.graphics.print("[slot "..slot.."] Axe (atk="..equip.damage.."/wgt="..equip.weight..")", 0, slot*20)
-        else
-          love.graphics.print("[slot "..slot.."] Armor (def="..equip.armor.."/wgt="..equip.weight..")", 0, slot*20)
+        local description = "[slot "..slot.."] "..equip.name.." ("
+        local first = true
+        for _,stat in ipairs{"damage","armor","weight"} do
+          if equip[stat] then
+            if not first then description = description .. '/' end
+            description = description .. stat .. "="..equip[stat]
+            first = false
+          end
         end
+        love.graphics.print(description..")", 0, slot*20)
       end
     love.graphics.pop()
     love.graphics.setColor(255, 255, 255, 255)
