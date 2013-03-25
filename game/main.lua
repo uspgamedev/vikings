@@ -167,7 +167,7 @@ function love.draw ()
 
   local camera_pos = screencenter - avatars.player.pos * map.get_tilesize()
   love.graphics.translate(math.floor(camera_pos.x), math.floor(camera_pos.y))
-  current_map:draw(love.graphics)
+  current_map:draw(love.graphics, avatars.player.pos, w, h)
   for _,av in pairs(avatars) do
     av:draw(love.graphics)
   end

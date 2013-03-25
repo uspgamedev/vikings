@@ -43,11 +43,22 @@ function map:set_tile (i, j, typeid)
   end
 end
 
-function map:draw (graphics)
+function map:draw (graphics, pos, w, h)
   local tilesize = map.get_tilesize()
   graphics.rectangle('line', 0, 0, self.width*tilesize, self.height*tilesize)
-  for y,row in ipairs(self.tiles) do
-    for x,tile in ipairs(row) do
+  local start_y, start_x = 1, 1
+  local end_y, end_x = #self.tiles, #self.tiles[1]
+  if pos then
+    local num_width = (w / tilesize) * 0.5 + 1
+    local num_height = (h / tilesize) * 0.5 + 1
+    start_y = math.max(start_y, math.floor(pos.y - num_width))
+    start_x = math.max(start_x, math.floor(pos.x - num_width))
+    end_y = math.min(end_y, math.floor(pos.y + num_width))
+    end_x = math.min(end_x, math.floor(pos.x + num_width))
+  end
+  for y = start_y, end_y do
+    for x = start_x, end_x do
+      local tile = self.tiles[y][x]
       if tile.img then
         graphics.draw(tile.img, tilesize*(x-1), tilesize*(y-1))
       end
