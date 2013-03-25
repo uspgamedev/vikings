@@ -231,30 +231,41 @@ function avatar:take_damage (amount)
   return true
 end
 
-function avatar:draw (graphics)
-  local debug = message.send [[game]] {'debug'}
-  local font = love.graphics.getFont()
-  local s = self.life .. "/" .. self.maxlife
-  if debug and self.equipment[1] then s = s .. "*" end
+local function shadowed_text(graphics, text, pos, kx, ky)
   graphics.setColor(255, 255, 255)
   graphics.print(
-    s,
-    self.pos.x * map.get_tilesize() + 1,
-    self.pos.y * map.get_tilesize() + 1,
+    text,
+    pos.x + 1, pos.y + 1,
     0, 1, 1,
-    font:getWidth(s),
-    font:getHeight(s) + self.sprite.data.quadsize
+    kx, ky
   )
   graphics.setColor(0, 0, 0)
   graphics.print(
-    s,
-    self.pos.x * map.get_tilesize(),
-    self.pos.y * map.get_tilesize(),
+    text,
+    pos.x, pos.y,
     0, 1, 1,
-    font:getWidth(s),
-    font:getHeight(s) + self.sprite.data.quadsize
+    kx, ky
   )
   graphics.setColor(255, 255, 255)
+end
+
+function avatar:draw (graphics)
+  local debug = message.send [[game]] {'debug'}
+  local font = love.graphics.getFont()
+  local life_bar = self.life .. "/" .. self.maxlife
+  if debug and self.equipment[1] then life_bar = life_bar .. "*" end
+  shadowed_text(graphics, 
+    life_bar,
+    self.pos * map.get_tilesize(),
+    font:getWidth(life_bar),
+    font:getHeight(life_bar) + self.sprite.data.quadsize
+  )
+  shadowed_text(graphics, 
+    self.name,
+    self.pos * map.get_tilesize(),
+    font:getWidth(life_bar),
+    font:getHeight(life_bar) * 2 + self.sprite.data.quadsize
+  )
   if debug and self.equipment[1] then
     local glow = self.charging >= 0 and self.charging/DASH_THRESHOLD or 0
     graphics.setColor(255, 255*(1-glow), 255)
