@@ -16,7 +16,7 @@ local tasks = {}
 local avatars = {}
 local current_map
 
-local function change_map (player)
+local function change_map (player, map_file)
     current_map, avatars = maploader.load(map_file, player, debug)
 end
 
@@ -54,6 +54,18 @@ function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
 end
 
+function parse_args(args)
+  local map_file, no_joystick
+  for _, arg in ipairs(args) do
+    map_file = string.ends(arg, ".vikingmap") and arg or map_file
+    no_joystick = no_joystick or arg == "--no-joystick"
+    if arg == '--debug' then
+      debug = true
+    end
+  end
+  return map_file, no_joystick
+end
+
 function love.load (args)
   sound.load(love.audio)
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
@@ -63,14 +75,7 @@ function love.load (args)
   love.graphics.setFont(love.graphics.newFont(12))
 
   sound.set_bgm "music/JordanTrudgett-Snodom-ccby3.ogg"
-  local map_file, no_joystick
-  for _, arg in ipairs(args) do
-    map_file = string.ends(arg, ".vikingmap") and arg or map_file
-    no_joystick = no_joystick or arg == "--no-joystick"
-    if arg == '--debug' then
-      debug = true
-    end
-  end
+  local map_file, no_joystick = parse_args(args)
   do 
     local player  = builder.build_player(vec2:new{})
     local axe     = builder.build_item(vec2:new{}, {3,3}, {3,3})
@@ -80,7 +85,7 @@ function love.load (args)
     else
       builder.add_joystick_input(player)
     end
-    change_map(player)
+    change_map(player, map_file)
   end
   tasks.check_collisions = hitbox.check_collisions
   tasks.updateavatars = function (dt)
