@@ -62,8 +62,7 @@ function map:__init ()
       for k,v in pairs(self.tilegenerator(j, i)) do
         self.tiles[j][i][k] = v
       end
-      local type = self.tiles[j][i].type
-      self.tiles[j][i].type = self.tileset[type] and type or ' '
+      self.tiles[j][i].type = self.tileset:type(self.tiles[j][i].type).name
     end
   end
   --print(dump(self))

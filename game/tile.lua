@@ -6,9 +6,9 @@ tile = lux.object.new {
 }
 
 function tile:floor(map)
-  return map.tileset[self.type].floor
+  return map.tileset:type(self.type).floor
 end
 
 function tile:img(map)
-  return map.tileset[self.type].img
+  return map.tileset:type(self.type).img
 end
