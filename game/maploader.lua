@@ -1,7 +1,7 @@
 
 module ('maploader', package.seeall)
 
-require 'mapgenerator'
+require 'mapgenerator.map'
 require 'builder'
 require 'hitbox'
 
