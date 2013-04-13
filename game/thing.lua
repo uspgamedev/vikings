@@ -51,7 +51,7 @@ function thing:colliding(map, position)
   local collisions = nil
   for _,p in ipairs(self.sprite.data.collpts) do
     local tile = pos_to_tile(map, position-(self.sprite.data.hotspot-p)/tilesize)
-    if not tile or tile.floor then
+    if not tile or tile:floor(map) then
       collisions = collisions or {}
       table.insert(collisions, tile)
     end

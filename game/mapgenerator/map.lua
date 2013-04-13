@@ -1,20 +1,25 @@
 
 module ('mapgenerator', package.seeall) do
 
+  require 'tileset'
+  require 'tiletype'
   require 'map'
   require 'mapgenerator.grid'
   require 'mapgenerator.procedural.cave'
 
-  local tileset
+  local tilesets = {}
   function get_tileset()
-    tileset = tileset or {
-      [" "] = { img = nil, floor = false },
-      ["I"] = { 
-        img = love.graphics.newImage 'data/tile/ice.png',
-        floor = true
+    if not tilesets.default then
+      tilesets.default = tileset:new {
+        types = {
+          ["I"] = tiletype:new { 
+            imgpath = 'data/tile/ice.png',
+            floor = true
+          }
+        }
       }
-    }
-    return tileset
+    end
+    return tilesets.default
   end
 
   local function generate_map_with_grid(grid)
@@ -22,9 +27,7 @@ module ('mapgenerator', package.seeall) do
       tileset = grid.tileset,
       width   = grid.width,
       height  = grid.height,
-      tilegenerator = function (aj,ai) 
-        return { type = grid[aj][ai] }
-      end
+      tiles   = grid
     }
   end
 
@@ -49,11 +52,21 @@ module ('mapgenerator', package.seeall) do
     return generate_map_with_grid(cavegrid)
   end
 
+  -- A map file is a lua script that should return a table that will be used to construct a map object.
+  -- This lua script is allowed to construct tilesets and tiletypes, and nothing more.
   function from_file(path)
-    local grid = load_grid_from_file(get_tileset(), path)
-    if grid then
-      return generate_map_with_grid(grid)
+    local ok, chunk = pcall(love.filesystem.load, path)
+    if not ok then 
+      print(chunk)
+      return nil, chunk 
     end
+    setfenv(chunk, { tileset = tileset, tiletype = tiletype })
+    local ok, result = pcall(chunk)
+    if not ok then 
+      print(result)
+      return nil, result
+    end
+    return map:new(result)
   end
 
 end
