@@ -5,16 +5,18 @@ module ('mapgenerator', package.seeall) do
   require 'mapgenerator.grid'
   require 'mapgenerator.procedural.cave'
 
-  local tileset
+  local tilesets = {}
   function get_tileset()
-    tileset = tileset or {
-      [" "] = { img = nil, floor = false },
-      ["I"] = { 
-        img = love.graphics.newImage 'data/tile/ice.png',
-        floor = true
+    if not tilesets.default then
+      tilesets.default = {
+        [" "] = { img = nil, floor = false },
+        ["I"] = { 
+          img = love.graphics.newImage 'data/tile/ice.png',
+          floor = true
+        }
       }
-    }
-    return tileset
+    end
+    return tilesets.default
   end
 
   local function generate_map_with_grid(grid)

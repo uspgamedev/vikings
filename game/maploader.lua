@@ -9,9 +9,9 @@ local function find_grounded_open_spots(map)
   local spots = {}
   for j=1,map.height-2 do
     for i=1,map.width-1 do
-      if not map.tiles[j  ][i].floor and not map.tiles[j  ][i+1].floor and
-         not map.tiles[j+1][i].floor and not map.tiles[j+1][i+1].floor and
-             map.tiles[j+2][i].floor and     map.tiles[j+2][i+1].floor then
+      if not map:get_tile_floor(j  ,i) and not map:get_tile_floor(j  ,i+1) and
+         not map:get_tile_floor(j+1,i) and not map:get_tile_floor(j+1,i+1) and
+             map:get_tile_floor(j+2,i) and     map:get_tile_floor(j+2,i+1) then
         table.insert(spots, {j=j,i=i})
       end
     end

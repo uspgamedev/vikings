@@ -1,45 +1,81 @@
 
 require 'lux.object'
 
+require 'tile'
+
 map = lux.object.new {
   width   = 0,
   height  = 0,
 
-  tileset = nil 
+  tileset = nil,
+  locations = nil,
 }
 
 function map.get_tilesize ()
   return 32
 end
 
+local function dump (value, ident)
+  ident = ident or ''
+  local t = type(value)
+  if t == 'string' then
+    return "[["..value.."]]"
+  elseif t == 'table' then
+    local str = (value.__type or "").."{".."\n"
+    for k,v in pairs(value) do
+      if type(k) == 'string' then
+        str = str..ident..'  '..'["'..k..'"] = '..dump(v, ident .. '  ')..",\n"
+      else
+        str = str..ident..'  '.."["..k.."] = "..dump(v, ident .. '  ')..",\n"
+      end
+    end
+    return str..ident.."}"
+  elseif t == 'function' then
+    return '"*FUNCTION*"'
+    --return "[[\n"..string.dump(value).."\n ]]"
+  else
+    return tostring(value)
+  end
+end
+
 function map:__init ()
+  self.locations = self.locations or {}
   self.tiles = {}
   for j=1,self.height do
     self.tiles[j] = {}
     for i=1,self.width do
-      local tile = self.tilegenerator(j, i)
-      tile.type = self.tileset[tile.type] and tile.type or ' '
-      local type = self.tileset[tile.type]
-      tile.i = i
-      tile.j = j
-      tile.img    = tile.img   or type.img
-      tile.floor  = tile.floor or type.floor
-      self.tiles[j][i] = tile
+      self.tiles[j][i] = tile:new {
+        i = i,
+        j = j,
+      }
+      for k,v in pairs(self.tilegenerator(j, i)) do
+        self.tiles[j][i][k] = v
+      end
+      local type = self.tiles[j][i].type
+      self.tiles[j][i].type = self.tileset[type] and type or ' '
     end
   end
+  --print(dump(self))
 end
 
 function map:get_tile (i, j)
   return self.tiles[i] and self.tiles[i][j]
 end
 
+function map:get_tile_floor (i, j)
+  local tile = self:get_tile(i, j)
+  return tile and tile:floor(self)
+end
+
+function map:get_tile_img (i, j)
+  local tile = self:get_tile(i, j)
+  return tile and tile:img(self)
+end
+
 function map:set_tile (i, j, typeid)
   local tile = self:get_tile(i,j)
   if tile then
     tile.type = self.tileset[typeid] and typeid or ' '
-    local type = self.tileset[typeid]
-    tile.img    = type.img
-    tile.floor  = type.floor
   end
 end
 
@@ -58,9 +94,9 @@ function map:draw (graphics, pos, w, h)
   end
   for y = start_y, end_y do
     for x = start_x, end_x do
-      local tile = self.tiles[y][x]
-      if tile.img then
-        graphics.draw(tile.img, tilesize*(x-1), tilesize*(y-1))
+      local img = self:get_tile_img(y,x)
+      if img then
+        graphics.draw(img, tilesize*(x-1), tilesize*(y-1))
       end
     end
   end
@@ -69,11 +105,14 @@ end
 function map:save_to_file(path)
   local file = love.filesystem.newFile(path)
   if not file:open("w") then return end
-  for _,row in ipairs(self.tiles) do
+  local mapdump = lux.object.clone(self)
+  for _,row in ipairs(mapdump.tiles) do
     for _,tile in ipairs(row) do
-      file:write(tile.type)
+      tile.i = nil
+      tile.j = nil
+      tile.map = nil
     end
-    file:write "\n"
   end
+  file:write(dump(mapdump))
   file:close()
 end
