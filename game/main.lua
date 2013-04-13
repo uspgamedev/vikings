@@ -209,16 +209,7 @@ function love.draw ()
       love.graphics.setColor(150, 50, 50, 255)
       love.graphics.print("Equipment:", 0, 0)
       for slot,equip in pairs(avatars.player.equipment) do
-        local description = "[slot "..slot.."] "..equip.name.." ("
-        local first = true
-        for _,stat in ipairs{"damage","armor","weight"} do
-          if equip[stat] then
-            if not first then description = description .. '/' end
-            description = description .. stat .. "="..equip[stat]
-            first = false
-          end
-        end
-        love.graphics.print(description..")", 0, slot*20)
+        love.graphics.print("[slot "..slot.."] " .. equip:get_description(), 0, slot*20)
       end
     love.graphics.pop()
     love.graphics.setColor(255, 255, 255, 255)
