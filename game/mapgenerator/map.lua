@@ -52,9 +52,21 @@ module ('mapgenerator', package.seeall) do
     return generate_map_with_grid(cavegrid)
   end
 
+  -- A map file is a lua script that should return a table that will be used to construct a map object.
+  -- This lua script is allowed to construct tilesets and tiletypes, and nothing more.
   function from_file(path)
-    local chunk = love.filesystem.load(path)
-    return map:new(chunk())
+    local ok, chunk = pcall(love.filesystem.load, path)
+    if not ok then 
+      print(chunk)
+      return nil, chunk 
+    end
+    setfenv(chunk, { tileset = tileset, tiletype = tiletype })
+    local ok, result = pcall(chunk)
+    if not ok then 
+      print(result)
+      return nil, result
+    end
+    return map:new(result)
   end
 
 end
