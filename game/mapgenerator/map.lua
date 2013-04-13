@@ -27,9 +27,7 @@ module ('mapgenerator', package.seeall) do
       tileset = grid.tileset,
       width   = grid.width,
       height  = grid.height,
-      tilegenerator = function (aj,ai) 
-        return { type = grid[aj][ai] }
-      end
+      tiles   = grid
     }
   end
 

@@ -2,6 +2,7 @@
 require 'lux.object'
 
 require 'tile'
+require 'dump'
 
 map = lux.object.new {
   width   = 0,
@@ -15,42 +16,9 @@ function map.get_tilesize ()
   return 32
 end
 
-local dumpdata = {}
-
-local function dump (value, ident)
-  ident = ident or ''
-  local t = type(value)
-  if dumpdata['type'..t] then
-    return dumpdata['type'..t](value, ident)
-  end
-  return tostring(value)
-end
-
-function dumpdata.typestring (value)
-  return "[["..value.."]]"
-end
-function dumpdata.typetable (value, ident)
-  if value['__dumpfunction'] then
-    return value['__dumpfunction'](value, ident)
-  end
-  local str = (value.__type or "").."{".."\n"
-  for k,v in pairs(value) do
-    if type(k) == 'string' then
-      if k[1] ~= '_' then
-        str = str..ident..'  '..'["'..k..'"] = '..dump(v, ident .. '  ')..",\n"
-      end
-    else
-      str = str..ident..'  '.."["..k.."] = "..dump(v, ident .. '  ')..",\n"
-    end
-  end
-  return str..ident.."}"
-end
-function dumpdata.typefunction (value)
-  return '"*FUNCTION*"'
-end
-
 function map:__init ()
   self.locations = self.locations or {}
+  local input_tiles = self.tiles
   self.tiles = {}
   for j=1,self.height do
     self.tiles[j] = {}
@@ -59,8 +27,13 @@ function map:__init ()
         i = i,
         j = j,
       }
-      for k,v in pairs(self.tilegenerator(j, i)) do
-        self.tiles[j][i][k] = v
+      local input = input_tiles[j][i]
+      if type(input) == 'table' then
+        for k,v in pairs(input) do
+          self.tiles[j][i][k] = v
+        end
+      else
+        self.tiles[j][i].type = input
       end
       self.tiles[j][i].type = self.tileset:type(self.tiles[j][i].type).name
     end
