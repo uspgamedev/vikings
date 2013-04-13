@@ -2,6 +2,7 @@
 module ('mapgenerator', package.seeall) do
 
   require 'tileset'
+  require 'tiletype'
   require 'map'
   require 'mapgenerator.grid'
   require 'mapgenerator.procedural.cave'
@@ -11,8 +12,8 @@ module ('mapgenerator', package.seeall) do
     if not tilesets.default then
       tilesets.default = tileset:new {
         types = {
-          ["I"] = { 
-            img = love.graphics.newImage 'data/tile/ice.png',
+          ["I"] = tiletype:new { 
+            imgpath = 'data/tile/ice.png',
             floor = true
           }
         }

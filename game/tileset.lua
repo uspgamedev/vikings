@@ -1,5 +1,6 @@
 
 require 'lux.object'
+require 'tiletype'
 
 tileset = lux.object.new {
   name  = "unnamed",
@@ -9,7 +10,7 @@ tileset = lux.object.new {
 
 function tileset:__init ()
   self.types = self.types or {}
-  self.types[' '] = self.types[' '] or { img = nil, floor = false }
+  self.types[' '] = self.types[' '] or tiletype:new{ imgpath = nil }
 
   for k,v in pairs(self.types) do
     self.types[k].name = k

@@ -10,5 +10,5 @@ function tile:floor(map)
 end
 
 function tile:img(map)
-  return map.tileset:type(self.type).img
+  return map.tileset:type(self.type):img()
 end
