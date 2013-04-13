@@ -14,7 +14,7 @@ require 'spriteeffect.speech'
 local butler
 function build_sprite ()
   butler = butler or spritedata:new {
-    img       = love.graphics.newImage "sprite/viking_male_spritesheet.png",
+    img       = love.graphics.newImage "data/sprite/viking_male_spritesheet.png",
     maxframe  = { i=13, j=9 },
     quadsize  = 64,
     hotspot   = vec2:new{ 32, 40 },
@@ -33,7 +33,7 @@ end
 local monster
 function build_monster ()
   monster = monster or spritedata:new {
-    img       = love.graphics.newImage "sprite/hornbeast.png",
+    img       = love.graphics.newImage "data/sprite/hornbeast.png",
     maxframe  = { i=2, j=7 },
     quadsize  = 64,
     hotspot   = vec2:new{ 32, 32 },
@@ -54,7 +54,7 @@ end
 local slash
 function build_slash ()
   slash = slash or spritedata:new {
-    img       = love.graphics.newImage "sprite/slash.png",
+    img       = love.graphics.newImage "data/sprite/slash.png",
     maxframe  = { i=3, j=1 },
     quadsize  = 64,
     hotspot   = vec2:new{ 32, 32 },
@@ -71,7 +71,7 @@ end
 local axe
 function build_axesprite ()
   axe = axe or spritedata:new {
-    img       = love.graphics.newImage "sprite/battle-axe-v02.png",
+    img       = love.graphics.newImage "data/sprite/battle-axe-v02.png",
     maxframe  = { i=1, j=1 },
     quadsize  = 32,
     hotspot   = vec2:new{ 16, 16 },
@@ -89,7 +89,7 @@ end
 local armor
 function build_armorsprite ()
   armor = armor or spritedata:new {
-    img       = love.graphics.newImage "sprite/mail-shirt.png",
+    img       = love.graphics.newImage "data/sprite/mail-shirt.png",
     maxframe  = { i=1, j=1 },
     quadsize  = 32,
     hotspot   = vec2:new{ 16, 16 },
@@ -107,7 +107,7 @@ end
 local doorsprite
 function build_doorsprite ()
   doorsprite = doorsprite or spritedata:new {
-    img       = love.graphics.newImage 'sprite/door.png',
+    img       = love.graphics.newImage 'data/sprite/door.png',
     quadsize  = 64,
     maxframe  = { i=1, j=1 },
     hotspot   = vec2:new {32, 32},

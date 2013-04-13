@@ -5,12 +5,12 @@ local music
 local sounds = {}
 
 function sound.load (audio)
-  sounds.hit    = audio.newSource('sound/hit10.mp3.ogg', 'static')
-  sounds.bounce = audio.newSource('sound/clang2.wav', 'static')
-  sounds.slash  = audio.newSource('sound/swosh-01.ogg', 'static')
-  sounds.pick   = audio.newSource('sound/itempick2.wav', 'static')
-  sounds.jump   = audio.newSource('sound/jump.wav', 'static')
-  sounds.land   = audio.newSource('sound/land.wav', 'static')
+  sounds.hit    = audio.newSource('data/sound/hit10.mp3.ogg', 'static')
+  sounds.bounce = audio.newSource('data/sound/clang2.wav', 'static')
+  sounds.slash  = audio.newSource('data/sound/swosh-01.ogg', 'static')
+  sounds.pick   = audio.newSource('data/sound/itempick2.wav', 'static')
+  sounds.jump   = audio.newSource('data/sound/jump.wav', 'static')
+  sounds.land   = audio.newSource('data/sound/land.wav', 'static')
 end
 
 function sound.effect (id, pos)

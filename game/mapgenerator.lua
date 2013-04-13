@@ -38,7 +38,7 @@ function get_tileset()
   tileset = tileset or {
     [" "] = { img = nil, floor = false },
     ["I"] = { 
-      img = love.graphics.newImage 'tile/ice.png',
+      img = love.graphics.newImage 'data/tile/ice.png',
       floor = true
     }
   }
@@ -46,7 +46,6 @@ function get_tileset()
 end
 
 function default_map()
-  local img = love.graphics.newImage 'tile/ice.png'
   return map:new {
     width   = 25,
     height  = 18,

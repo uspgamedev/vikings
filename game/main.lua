@@ -69,12 +69,12 @@ end
 function love.load (args)
   sound.load(love.audio)
   w,h = love.graphics.getWidth(), love.graphics.getHeight()
-  background = love.graphics.newImage "background/Ardentryst-Background_SnowCave_Backing.png"
+  background = love.graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png"
   screencenter = vec2:new{w,h} * 0.5
   camera_pos = vec2:new{ w/2, h/2 }
   love.graphics.setFont(love.graphics.newFont(12))
 
-  sound.set_bgm "music/JordanTrudgett-Snodom-ccby3.ogg"
+  sound.set_bgm "data/music/JordanTrudgett-Snodom-ccby3.ogg"
   local map_file, no_joystick = parse_args(args)
   do 
     local player  = builder.build_thing("player", vec2:new{})
