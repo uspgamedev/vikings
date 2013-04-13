@@ -96,6 +96,6 @@ function map:save_to_file(path)
       tile.map = nil
     end
   end
-  file:write(dump(mapdump))
+  file:write('return ' .. dump(mapdump))
   file:close()
 end

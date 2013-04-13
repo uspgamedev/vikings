@@ -53,10 +53,8 @@ module ('mapgenerator', package.seeall) do
   end
 
   function from_file(path)
-    local grid = load_grid_from_file(get_tileset(), path)
-    if grid then
-      return generate_map_with_grid(grid)
-    end
+    local chunk = love.filesystem.load(path)
+    return map:new(chunk())
   end
 
 end

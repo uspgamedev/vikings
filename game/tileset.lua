@@ -1,6 +1,7 @@
 
 require 'lux.object'
 require 'tiletype'
+require 'dump'
 
 tileset = lux.object.new {
   name  = "unnamed",
@@ -19,4 +20,11 @@ end
 
 function tileset:type(t)
   return self.types[t] or self.types[' ']
+end
+
+function tileset:__dumpfunction(ident)
+  return "tileset:new {\n" 
+          .. ident .. '  name = [[' .. self.name .. "]],\n" 
+          .. ident .. '  types = ' .. dump(self.types, ident .. '  ') .. "\n"
+          .. ident .. "}"
 end
