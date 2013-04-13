@@ -168,7 +168,7 @@ local function minimap_draw(graphics, map, things)
   graphics.translate(-tilesize, -tilesize)
   for y,row in ipairs(map.tiles) do
     for x,tile in ipairs(row) do
-      if tile:img() then
+      if tile:img(map) then
         graphics.rectangle('fill', x * tilesize, y * tilesize, tilesize, tilesize)
       end
     end
