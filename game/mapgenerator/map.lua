@@ -31,7 +31,28 @@ module ('mapgenerator', package.seeall) do
     }
   end
 
-  function random_map()
+  local function find_grounded_open_spots(map)
+    local spots = {}
+    for j=1,map.height-2 do
+      for i=1,map.width-1 do
+        if not map:get_tile_floor(j  ,i) and not map:get_tile_floor(j  ,i+1) and
+           not map:get_tile_floor(j+1,i) and not map:get_tile_floor(j+1,i+1) and
+               map:get_tile_floor(j+2,i) and     map:get_tile_floor(j+2,i+1) then
+          table.insert(spots, {j=j,i=i})
+        end
+      end
+    end
+    return spots
+  end
+
+  local function get_random_position(spots, debug)
+    local i = (debug and 1) or math.random(#spots)
+    local result = spots[i]
+    table.remove(spots, i)
+    return {result.i+1, result.j+1}
+  end
+
+  function random_map(debug)
     local blocks = {
       width  = 4,
       height = 4,
@@ -46,10 +67,22 @@ module ('mapgenerator', package.seeall) do
       blocks.total_rarity = blocks.total_rarity + block.rarity
     end
     local blocks_grid = random_grid_from_blocks(26, 18, blocks)
-
     local cavegrid = mapgenerator.generate_cave_from_grid(blocks_grid)
+    local m = generate_map_with_grid(cavegrid)
 
-    return generate_map_with_grid(cavegrid)
+    local valid_spots = find_grounded_open_spots(m)
+    m.locations.playerstart = get_random_position(valid_spots, debug)
+    table.insert(m.things, { type = "door",       position = get_random_position(valid_spots, debug) })
+    table.insert(m.things, { type = "npc_cain",   position = get_random_position(valid_spots, debug) })
+    table.insert(m.things, { type = "vendor",     position = get_random_position(valid_spots, debug) })
+    for i=1,(debug and 1 or 10) do
+      table.insert(m.things, { type = "drillbeast", position = get_random_position(valid_spots, debug) })
+    end
+    for i=1,5 do
+      table.insert(m.things, { type = "ironaxe",      position = get_random_position(valid_spots, debug) })
+      table.insert(m.things, { type = "leatherarmor", position = get_random_position(valid_spots, debug) })
+    end
+    return m
   end
 
   -- A map file is a lua script that should return a table that will be used to construct a map object.

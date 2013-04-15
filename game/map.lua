@@ -10,6 +10,7 @@ map = lux.object.new {
 
   tileset = nil,
   locations = nil,
+  things = nil,
 }
 
 function map.get_tilesize ()
@@ -18,6 +19,7 @@ end
 
 function map:__init ()
   self.locations = self.locations or {}
+  self.things = self.thing or {}
   local input_tiles = self.tiles
   self.tiles = {}
   for j=1,self.height do

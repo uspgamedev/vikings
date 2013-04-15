@@ -6,6 +6,7 @@ require 'builder'
 require 'message'
 require 'maploader'
 require 'sound'
+require 'hitbox'
 
 local debug = false
 local w,h
@@ -17,7 +18,8 @@ local avatars = {}
 local current_map
 
 local function change_map (player, map_file)
-    current_map, avatars = maploader.load(map_file, player, debug)
+  hitbox.unregister()
+  current_map, avatars = maploader.load(map_file, player, debug)
 end
 
 local game_message_commands = {
