@@ -1,6 +1,6 @@
 
 require 'lux.object'
-require 'map'
+require 'map.map'
 
 spritedata = lux.object.new {
   img           = nil,

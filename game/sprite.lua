@@ -1,7 +1,7 @@
 
 require 'lux.object'
 require 'vec2'
-require 'map'
+require 'map.map'
 require 'animation'
 
 sprite = lux.object.new {
@@ -58,7 +58,7 @@ function sprite:draw_data (graphics)
 end
 
 function sprite:draw (graphics, pos)
-  local tilesize = map.get_tilesize()
+  local tilesize = map.get_tilesize() -- TODO: just no...
   graphics.push()
   graphics.translate((tilesize*(pos-vec2:new{1,1})):get())
   self:draw_data(graphics)

@@ -1,6 +1,6 @@
 
 require 'lux.object'
-require 'tiletype'
+require 'map.tiletype'
 require 'dump'
 
 tileset = lux.object.new {

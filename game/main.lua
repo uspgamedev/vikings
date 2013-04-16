@@ -1,10 +1,10 @@
 
 require 'vec2'
-require 'map'
+require 'map.map'
 require 'things.avatar'
 require 'builder'
 require 'message'
-require 'maploader'
+require 'map.maploader'
 require 'sound'
 require 'hitbox'
 

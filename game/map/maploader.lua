@@ -1,7 +1,7 @@
 
 module ('maploader', package.seeall)
 
-require 'mapgenerator.map'
+require 'map.generator.map'
 
 local function create_things (newmap, debug)
   local things = {}

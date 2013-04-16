@@ -1,7 +1,7 @@
 
 module ('mapgenerator', package.seeall) do
 
-  require 'mapgenerator.utility'
+  require 'map.generator.utility'
 
   function generate_cave_from_grid(grid)
     local width, height = grid.width, grid.height

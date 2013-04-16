@@ -1,6 +1,6 @@
 
 require 'lux.object'
-require 'map'
+require 'map.map'
 
 hitbox = lux.object.new {
   pos         = nil,  -- vec2

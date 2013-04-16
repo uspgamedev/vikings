@@ -1,7 +1,7 @@
 
 require 'lux.object'
 
-require 'tile'
+require 'map.tile'
 require 'dump'
 
 map = lux.object.new {

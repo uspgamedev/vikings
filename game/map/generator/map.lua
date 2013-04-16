@@ -1,11 +1,11 @@
 
 module ('mapgenerator', package.seeall) do
 
-  require 'tileset'
-  require 'tiletype'
-  require 'map'
-  require 'mapgenerator.grid'
-  require 'mapgenerator.procedural.cave'
+  require 'map.tileset'
+  require 'map.tiletype'
+  require 'map.map'
+  require 'map.generator.grid'
+  require 'map.generator.procedural.cave'
 
   local tilesets = {}
   function get_tileset()
