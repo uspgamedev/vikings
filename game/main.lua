@@ -187,6 +187,10 @@ function love.draw ()
   local bg_y = (avatars.player.pos.y / current_map.height) * (h - background:getHeight() * 2)
   love.graphics.draw(background, bg_x, bg_y, 0, 2, 2)
 
+  function love.graphics.get_tilesize() 
+    return current_map:get_tilesize()
+  end
+
   love.graphics.push()
     local camera_pos = screencenter - avatars.player.pos * map.get_tilesize()
     love.graphics.translate(math.floor(camera_pos.x), math.floor(camera_pos.y))

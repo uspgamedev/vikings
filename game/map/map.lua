@@ -65,7 +65,7 @@ function map:set_tile (i, j, typeid)
 end
 
 function map:draw (graphics, pos, w, h)
-  local tilesize = map.get_tilesize()
+  local tilesize = graphics.get_tilesize()
   graphics.rectangle('line', 0, 0, self.width*tilesize, self.height*tilesize)
   local start_y, start_x = 1, 1
   local end_y, end_x = #self.tiles, #self.tiles[1]

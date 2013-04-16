@@ -25,7 +25,7 @@ function spritedata:__init ()
 end
 
 function spritedata:draw (graphics, frame, mirror)
-  local tilesize  = map.get_tilesize()
+  local tilesize  = graphics.get_tilesize()
   self.quads[frame.i][frame.j]:flip(unpack(mirror))
   graphics.drawq(
     self.img,

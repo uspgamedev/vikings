@@ -89,7 +89,7 @@ function hitbox:get_collisions (target)
 end
 
 local function draw (graphics, box)
-  local tilesize = map.get_tilesize()
+  local tilesize = graphics.get_tilesize()
   graphics.setColor(0, 0, 200, 50)
   graphics.rectangle(
     'fill',
