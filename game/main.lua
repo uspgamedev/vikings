@@ -1,7 +1,7 @@
 
 require 'vec2'
 require 'map'
-require 'avatar'
+require 'things.avatar'
 require 'builder'
 require 'message'
 require 'maploader'

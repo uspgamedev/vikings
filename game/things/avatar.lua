@@ -1,6 +1,6 @@
 
-require 'thing'
-require 'slash'
+require 'things.thing'
+require 'things.slash'
 require 'vec2'
 require 'hitbox'
 require 'message'

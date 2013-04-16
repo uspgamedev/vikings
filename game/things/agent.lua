@@ -1,5 +1,5 @@
 
-require 'thing'
+require 'things.thing'
 require 'vec2'
 require 'sprite'
 require 'spritedata'

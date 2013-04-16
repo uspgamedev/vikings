@@ -91,6 +91,7 @@ function map:save_to_file(path)
   local file = love.filesystem.newFile(path)
   if not file:open("w") then return end
   local mapdump = lux.object.clone(self)
+  mapdump.things = lux.object.clone(self.things)
   for _,row in ipairs(mapdump.tiles) do
     for _,tile in ipairs(row) do
       tile.i = nil

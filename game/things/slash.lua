@@ -1,9 +1,9 @@
 
-require 'things.thing'
-require 'sound'
 require 'vec2'
+require 'things.thing'
+require 'things.agent'
+require 'sound'
 require 'animationset.slash'
-require 'agent'
 require 'spriteeffect.splash'
 require 'message'
 

@@ -2,8 +2,8 @@
 module ('builder', package.seeall)
 
 require 'vec2'
-require 'avatar'
-require 'collectable'
+require 'things.avatar'
+require 'things.collectable'
 require 'sprite'
 require 'spritedata'
 require 'message'
