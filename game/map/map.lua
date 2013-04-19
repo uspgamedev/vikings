@@ -19,7 +19,7 @@ end
 
 function map:__init ()
   self.locations = self.locations or {}
-  self.things = self.thing or {}
+  self.things = self.things or {}
   local input_tiles = self.tiles
   self.tiles = {}
   for j=1,self.height do
@@ -90,8 +90,7 @@ end
 function map:save_to_file(path)
   local file = love.filesystem.newFile(path)
   if not file:open("w") then return end
-  local mapdump = lux.object.clone(self)
-  mapdump.things = lux.object.clone(self.things)
+  local mapdump = self:clone()
   for _,row in ipairs(mapdump.tiles) do
     for _,tile in ipairs(row) do
       tile.i = nil
