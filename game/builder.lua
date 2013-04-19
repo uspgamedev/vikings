@@ -191,7 +191,6 @@ function add_keyboard_input(player)
     if button == "z" then
       self:jump()
     elseif button == "x" then
-      --self:charge()
       self:attack()
     elseif button == 'c' then
       self:dash()
@@ -203,9 +202,6 @@ function add_keyboard_input(player)
   end
   function player:input_released(button, joystick)
     if joystick then return end
-    --if button == "x" then
-    --  self:attack()
-    --end
   end
 end
 
@@ -215,6 +211,7 @@ function add_joystick_input(player, joystick)
     ["Twin USB Joystick"] = {
       jump = 3,
       attack = 4,
+      dash = 8,
       direction = function(dir)
         return love.joystick.getHat(joystick,1):find(dir, 1, true) ~= nil
       end
@@ -222,6 +219,7 @@ function add_joystick_input(player, joystick)
     {
       jump = 1,
       attack = 2,
+      dash = 3,
       direction = function(dir)
         if dir == "l" then
           return love.joystick.getAxis(joystick,1) < -0.2
@@ -259,6 +257,8 @@ function add_joystick_input(player, joystick)
       self:jump()
     elseif button == joy.attack then
       self:charge()
+    elseif button == joy.dash then
+      self:dash()
     end
   end
   function player:input_released(button, joystick)
