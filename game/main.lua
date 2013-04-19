@@ -16,6 +16,7 @@ local camera_pos
 local tasks = {}
 local avatars = {}
 local current_map
+local graphics
 
 local function change_map (player, map_file)
   hitbox.unregister()
@@ -69,12 +70,21 @@ function parse_args(args)
 end
 
 function love.load (args)
+  graphics = {}
+  setmetatable(graphics, {
+    __index = love.graphics
+  })
+  function graphics.get_tilesize() 
+    return current_map:get_tilesize()
+  end
+
   sound.load(love.audio)
-  w,h = love.graphics.getWidth(), love.graphics.getHeight()
-  background = love.graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png"
+  w,h = graphics.getWidth(), graphics.getHeight()
+  background = graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png"
   screencenter = vec2:new{w,h} * 0.5
   camera_pos = vec2:new{ w/2, h/2 }
-  love.graphics.setFont(love.graphics.newFont(12))
+
+  graphics.setFont(graphics.newFont(12))
 
   sound.set_bgm "data/music/JordanTrudgett-Snodom-ccby3.ogg"
   local map_file, no_joystick = parse_args(args)
@@ -185,40 +195,37 @@ end
 function love.draw ()
   local bg_x = (avatars.player.pos.x / current_map.width)  * (w - background:getWidth() * 2)
   local bg_y = (avatars.player.pos.y / current_map.height) * (h - background:getHeight() * 2)
-  love.graphics.draw(background, bg_x, bg_y, 0, 2, 2)
+  graphics.draw(background, bg_x, bg_y, 0, 2, 2)
 
-  function love.graphics.get_tilesize() 
-    return current_map:get_tilesize()
-  end
 
-  love.graphics.push()
+  graphics.push()
     local camera_pos = screencenter - avatars.player.pos * map.get_tilesize()
-    love.graphics.translate(math.floor(camera_pos.x), math.floor(camera_pos.y))
-    current_map:draw(love.graphics, avatars.player.pos, w, h)
+    graphics.translate(math.floor(camera_pos.x), math.floor(camera_pos.y))
+    current_map:draw(graphics, avatars.player.pos, w, h)
     for _,av in pairs(avatars) do
-      av:draw(love.graphics)
+      av:draw(graphics)
     end
     if debug then
-      hitbox.draw_all(love.graphics)
+      hitbox.draw_all(graphics)
     end
-  love.graphics.pop()
+  graphics.pop()
 
   if love.keyboard.isDown("tab") or love.joystick.isDown(1, 5) then
-    love.graphics.push()
-      love.graphics.translate(20, 20)
-      love.graphics.scale(0.1, 0.1)
-      minimap_draw(love.graphics, current_map, debug and avatars or { avatars.player })
-    love.graphics.pop()
-    love.graphics.push()
-      love.graphics.translate(20, 300)
-      love.graphics.scale(2,2)
-      love.graphics.setColor(150, 50, 50, 255)
-      love.graphics.print("Equipment:", 0, 0)
+    graphics.push()
+      graphics.translate(20, 20)
+      graphics.scale(0.1, 0.1)
+      minimap_draw(graphics, current_map, debug and avatars or { avatars.player })
+    graphics.pop()
+    graphics.push()
+      graphics.translate(20, 300)
+      graphics.scale(2,2)
+      graphics.setColor(150, 50, 50, 255)
+      graphics.print("Equipment:", 0, 0)
       for slot,equip in pairs(avatars.player.equipment) do
-        love.graphics.print("[slot "..slot.."] " .. equip:get_description(), 0, slot*20)
+        graphics.print("[slot "..slot.."] " .. equip:get_description(), 0, slot*20)
       end
-    love.graphics.pop()
-    love.graphics.setColor(255, 255, 255, 255)
+    graphics.pop()
+    graphics.setColor(255, 255, 255, 255)
   end
 end
 

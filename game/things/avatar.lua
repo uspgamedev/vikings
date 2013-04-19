@@ -256,13 +256,13 @@ function avatar:draw (graphics)
   if debug and self.equipment[1] then life_bar = life_bar .. "*" end
   shadowed_text(graphics, 
     life_bar,
-    self.pos * love.graphics.get_tilesize(),
+    self.pos * graphics.get_tilesize(),
     font:getWidth(life_bar),
     font:getHeight(life_bar) + self.sprite.data.quadsize
   )
   shadowed_text(graphics, 
     self.name,
-    self.pos * love.graphics.get_tilesize(),
+    self.pos * graphics.get_tilesize(),
     font:getWidth(life_bar),
     font:getHeight(life_bar) * 2 + self.sprite.data.quadsize
   )
