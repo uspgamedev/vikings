@@ -17,7 +17,9 @@ local graphics
 
 local function change_map (player, map_file)
   hitbox.unregister()
-  current_map, avatars = maploader.load(map_file, player, debug)
+  current_map, avatars = maploader.load(map_file, debug)
+  avatars.player = player
+  player.pos    = vec2:new(current_map.locations.playerstart)
 end
 
 local game_message_commands = {
@@ -84,13 +86,13 @@ function love.load (args)
   function graphics.get_tilesize() 
     return current_map:get_tilesize()
   end
-
-  sound.load(love.audio)
-  background = graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png"
-
   graphics.setFont(graphics.newFont(12))
 
+  sound.load(love.audio)
   sound.set_bgm "data/music/JordanTrudgett-Snodom-ccby3.ogg"
+
+  background = graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png"
+
   local map_file, no_joystick = parse_args(args)
   change_map(create_player(not no_joystick and love.joystick.getNumJoysticks() > 0), map_file)
   tasks.check_collisions = hitbox.check_collisions
