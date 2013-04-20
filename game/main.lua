@@ -7,6 +7,7 @@ require 'message'
 require 'map.maploader'
 require 'sound'
 require 'hitbox'
+require 'gamescene'
 
 local debug = false
 local background
@@ -14,6 +15,7 @@ local tasks = {}
 local avatars = {}
 local current_map
 local graphics
+local current_scene
 
 local function change_map (player, map_file)
   hitbox.unregister()
@@ -91,53 +93,47 @@ function love.load (args)
   sound.load(love.audio)
   sound.set_bgm "data/music/JordanTrudgett-Snodom-ccby3.ogg"
 
-  background = graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png"
-
   local map_file, no_joystick = parse_args(args)
-  change_map(create_player(not no_joystick and love.joystick.getNumJoysticks() > 0), map_file)
-  tasks.check_collisions = hitbox.check_collisions
-  tasks.updateavatars = function (dt)
-    for _,av in pairs(avatars) do av:update(dt, current_map) end
-  end
 
-  message.add_receiver('game', function (cmd, ...) return game_message_commands[cmd](...) end)
+  current_scene = gamescene:new{
+    map = maploader.load(map_file, debug),
+    background = graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
+    players = { create_player(not no_joystick and love.joystick.getNumJoysticks() > 0) },
+  }
+  
+  message.add_receiver('game', function (cmd, ...) return current_scene:handle_message(cmd, ...) end)
 end
 
 
 function love.update (dt)
-  for k,v in pairs(tasks) do
-    v(dt)
-  end
+  current_scene:update(dt)
 end
 
 function love.keypressed (button)
   if button == "p" then
-    if current_map then current_map:save_to_file(os.date "%Y-%m-%d_%H-%M-%S.vikingmap") end
+    if current_scene and current_scene.map then 
+      current_scene.map:save_to_file(os.date "%Y-%m-%d_%H-%M-%S.vikingmap")
+    end
   elseif button == "escape" then
     love.event.push("quit")
-  elseif avatars.player.input_pressed then
-    avatars.player:input_pressed(button)
+  else
+    current_scene:input_pressed(button)
   end
 end
 
 function love.keyreleased (button)
-  if avatars.player.input_released then
-    avatars.player:input_released(button)
-  end
+  current_scene:input_released(button)
 end
 
 function love.joystickpressed(joystick, button)
-  if avatars.player.input_pressed then
-    avatars.player:input_pressed(button, joystick)
-  end
+  current_scene:input_pressed(button, joystick)
 end
 
 function love.joystickreleased(joystick, button)
-  if avatars.player.input_pressed then
-    avatars.player:input_released(button, joystick)
-  end
+  current_scene:input_released(button, joystick)
 end
 
+--[[
 local function mousetotile ()
   local x,y          = love.mouse.getPosition()
   local screencenter = vec2:new{love.graphics.getWidth(), love.graphics.getHeight()} * 0.5
@@ -168,8 +164,10 @@ function love.mousereleased (x, y, button)
     tasks.removetile = nil
   end
 end
+]]
 
 local function minimap_draw(graphics, map, things)
+  --[[
   local tilesize = map:get_tilesize()
   graphics.setColor(0, 0, 0, 127)
   graphics.rectangle('fill', 0, 0, map.width*tilesize, map.height*tilesize)
@@ -224,5 +222,6 @@ function love.draw ()
     graphics.pop()
     graphics.setColor(255, 255, 255, 255)
   end
+  ]]
 end
 

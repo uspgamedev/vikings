@@ -3,7 +3,7 @@ module ('maploader', package.seeall)
 
 require 'map.generator.map'
 
-local function create_things (newmap, debug)
+function create_things (newmap, debug)
   local things = {}
   for name, t in pairs(newmap.things) do
     things[name] = builder.build_thing(t.type, vec2:new(t.position), t.data)
@@ -11,11 +11,8 @@ local function create_things (newmap, debug)
   return things
 end
 
-function load (map_file, debug)
-  local newmap      = map_file and mapgenerator.from_file(map_file) or mapgenerator.random_map(debug)
-  local things      = create_things(newmap, debug)
-
-  return newmap, things
+function load (map_file)
+  return map_file and mapgenerator.from_file(map_file) or mapgenerator.random_map(debug)
 end
 
 
