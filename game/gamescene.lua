@@ -31,7 +31,7 @@ end
 
 function gamescene.message_handlers.add(self, ...)
   for _,thing in ipairs{...} do
-    table.insert(self.things, avatar)
+    table.insert(self.things, thing)
   end
 end
 
