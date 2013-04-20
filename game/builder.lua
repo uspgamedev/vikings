@@ -397,7 +397,7 @@ local function build_door (pos)
     sprite    = build_doorsprite(),
     direction = 'left',
     name      = "Door",
-  }
+  ''}
   door.hitboxes.helpful.class = 'door'
   door.hitboxes.helpful.size = vec2:new{1,2}
   return door

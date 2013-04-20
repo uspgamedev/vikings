@@ -250,7 +250,7 @@ local function shadowed_text(graphics, text, pos, kx, ky)
 end
 
 function avatar:draw (graphics)
-  local debug = message.send [[game]] {'debug'}
+  local debug = message.send [[debug]] {}
   local font = love.graphics.getFont()
   local life_bar = self.life .. "/" .. self.maxlife
   if debug and self.equipment[1] then life_bar = life_bar .. "*" end
