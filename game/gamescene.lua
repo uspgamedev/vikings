@@ -31,21 +31,14 @@ end
 
 function gamescene.message_handlers.add(self, ...)
   for _,thing in ipairs{...} do
-    table.insert(self.things, thing)
+    self:add_thing(thing)
   end
 end
+gamescene.message_handlers.put = gamescene.message_handlers.add
 
 function gamescene.message_handlers.kill(self, thing)
-  for i,check in ipairs(self.things) do
-    if thing == check then
-      thing:die()
-      table.remove(self.things, i)
-    end
-  end
-end
-
-function gamescene.message_handlers.put(self, thing)
-  table.insert(self.things, thing)
+  thing:die()
+  self:remove_thing(thing)
 end
 
 function gamescene.message_handlers.position(self, thing_type, thing_id)
@@ -64,7 +57,7 @@ function gamescene.message_handlers.position(self, thing_type, thing_id)
 end
 
 function gamescene.message_handlers.changemap(self, map_file)
-  self:change_map(map_file)
+  self:change_map(maploader.load(map_file))
 end
 
 function gamescene:handle_message(cmd, ...)
@@ -72,6 +65,21 @@ function gamescene:handle_message(cmd, ...)
     error("Unknown command: " .. cmd)
   end
   return self.message_handlers[cmd](self, ...)
+end
+
+function gamescene:remove_thing(thing)
+  for i, check in ipairs(self.things) do
+    if thing == check then
+      table.remove(self.things, i)
+      break
+    end
+  end
+  for i, check in ipairs(self.players) do
+    if thing == check then
+      table.remove(self.players, i)
+      break
+    end
+  end
 end
 
 function gamescene:add_thing(thing)
@@ -88,6 +96,7 @@ function gamescene:add_player(player, id)
 end
 
 function gamescene:change_map(map)
+  hitbox.unregister()
   self.map = map
   self.things = maploader.create_things(map)
   for id, player in ipairs(self.players) do

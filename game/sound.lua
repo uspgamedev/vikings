@@ -17,6 +17,7 @@ function sound.effect (id, pos)
   local effect = sounds[id]
   if not effect then return end
   local playerpos = message.send [[game]] {'position', 'player'}
+  if not playerpos then return end
   pos = pos or playerpos
   if (playerpos - pos):norm1() > 20 then return end
   effect:stop()
