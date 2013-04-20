@@ -64,14 +64,14 @@ function map:set_tile (i, j, typeid)
   end
 end
 
-function map:draw (graphics, pos, w, h)
+function map:draw (graphics, pos)
   local tilesize = graphics.get_tilesize()
   graphics.rectangle('line', 0, 0, self.width*tilesize, self.height*tilesize)
   local start_y, start_x = 1, 1
   local end_y, end_x = #self.tiles, #self.tiles[1]
   if pos then
-    local num_width = (w / tilesize) * 0.5 + 1
-    local num_height = (h / tilesize) * 0.5 + 1
+    local num_width = (graphics.getWidth() / tilesize) * 0.5 + 1
+    local num_height = (graphics.getHeight() / tilesize) * 0.5 + 1
     start_y = math.max(start_y, math.floor(pos.y - num_width))
     start_x = math.max(start_x, math.floor(pos.x - num_width))
     end_y = math.min(end_y, math.floor(pos.y + num_width))

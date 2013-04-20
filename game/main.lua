@@ -9,10 +9,7 @@ require 'sound'
 require 'hitbox'
 
 local debug = false
-local w,h
-local screencenter
 local background
-local camera_pos
 local tasks = {}
 local avatars = {}
 local current_map
@@ -79,10 +76,7 @@ function love.load (args)
   end
 
   sound.load(love.audio)
-  w,h = graphics.getWidth(), graphics.getHeight()
   background = graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png"
-  screencenter = vec2:new{w,h} * 0.5
-  camera_pos = vec2:new{ w/2, h/2 }
 
   graphics.setFont(graphics.newFont(12))
 
@@ -143,8 +137,9 @@ function love.joystickreleased(joystick, button)
 end
 
 local function mousetotile ()
-  local x,y       = love.mouse.getPosition()
-  local tilesize  = map.get_tilesize()
+  local x,y          = love.mouse.getPosition()
+  local screencenter = vec2:new{love.graphics.getWidth(), love.graphics.getHeight()} * 0.5
+  local tilesize     = map.get_tilesize()
   return math.floor((y - screencenter.y)/tilesize + avatars.player.pos.y) + 1, 
          math.floor((x - screencenter.x)/tilesize + avatars.player.pos.x) + 1
 end
@@ -193,15 +188,15 @@ local function minimap_draw(graphics, map, things)
 end
 
 function love.draw ()
-  local bg_x = (avatars.player.pos.x / current_map.width)  * (w - background:getWidth() * 2)
-  local bg_y = (avatars.player.pos.y / current_map.height) * (h - background:getHeight() * 2)
+  local bg_x = (avatars.player.pos.x / current_map.width)  * (graphics.getWidth() - background:getWidth() * 2)
+  local bg_y = (avatars.player.pos.y / current_map.height) * (graphics.getHeight() - background:getHeight() * 2)
   graphics.draw(background, bg_x, bg_y, 0, 2, 2)
 
 
   graphics.push()
-    local camera_pos = screencenter - avatars.player.pos * map.get_tilesize()
+    local camera_pos = vec2:new{graphics.getWidth(), graphics.getHeight()} * 0.5 - avatars.player.pos * map.get_tilesize()
     graphics.translate(math.floor(camera_pos.x), math.floor(camera_pos.y))
-    current_map:draw(graphics, avatars.player.pos, w, h)
+    current_map:draw(graphics, avatars.player.pos)
     for _,av in pairs(avatars) do
       av:draw(graphics)
     end
