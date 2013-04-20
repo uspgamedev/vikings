@@ -66,11 +66,21 @@ function parse_args(args)
   return map_file, no_joystick
 end
 
+local function create_player( joystick )
+  local player  = builder.build_thing("player",  vec2:new{})
+  local axe     = builder.build_thing("ironaxe", vec2:new{}, {3,3}, {3,3})
+  player:equip(axe.slot, axe)
+  if joystick then
+    builder.add_joystick_input(player)
+  else
+    builder.add_keyboard_input(player)
+  end
+  return player
+end
+
 function love.load (args)
   graphics = {}
-  setmetatable(graphics, {
-    __index = love.graphics
-  })
+  setmetatable(graphics, { __index = love.graphics })
   function graphics.get_tilesize() 
     return current_map:get_tilesize()
   end
@@ -82,17 +92,7 @@ function love.load (args)
 
   sound.set_bgm "data/music/JordanTrudgett-Snodom-ccby3.ogg"
   local map_file, no_joystick = parse_args(args)
-  do 
-    local player  = builder.build_thing("player", vec2:new{})
-    local axe     = builder.build_thing("ironaxe",   vec2:new{}, {3,3}, {3,3})
-    player:equip(axe.slot, axe)
-    if love.joystick.getNumJoysticks() == 0 or no_joystick then
-      builder.add_keyboard_input(player)
-    else
-      builder.add_joystick_input(player)
-    end
-    change_map(player, map_file)
-  end
+  change_map(create_player(not no_joystick and love.joystick.getNumJoysticks() > 0), map_file)
   tasks.check_collisions = hitbox.check_collisions
   tasks.updateavatars = function (dt)
     for _,av in pairs(avatars) do av:update(dt, current_map) end
