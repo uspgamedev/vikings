@@ -27,7 +27,6 @@ function gamescene:__init()
       av:update(dt, self.map)
     end
   end
-
   self.camera_pos = vec2:new{0, 0}
 
   self:change_map(self.map)
@@ -49,15 +48,8 @@ function gamescene.message_handlers.position(self, thing_type, thing_id)
   thing_type = thing_type or 'player'
   thing_id   = thing_id   or 1
 
-  local check_table
-  if thing_type == 'thing' then
-    check_table = self.things
-  elseif thing_type == 'player' then
-    check_table = self.players
-  else
-    error "Unknown thing type."
-  end
-  return check_table[thing_id] and check_table[thing_id].pos
+  local thing = self:get_thing(thing_type, thing_id)
+  return thing and thing.pos
 end
 
 function gamescene.message_handlers.changemap(self, map_file)
@@ -69,6 +61,18 @@ function gamescene:handle_message(cmd, ...)
     error("Unknown command: " .. cmd)
   end
   return self.message_handlers[cmd](self, ...)
+end
+
+function gamescene:get_thing(thing_type, thing_id)
+  local check_table
+  if thing_type == 'thing' then
+    check_table = self.things
+  elseif thing_type == 'player' then
+    check_table = self.players
+  else
+    error "Unknown thing type."
+  end
+  return check_table[thing_id]
 end
 
 function gamescene:remove_thing(thing)

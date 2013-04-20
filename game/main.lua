@@ -129,28 +129,7 @@ function love.mousereleased (x, y, button)
 end
 ]]
 
-
-
 function love.draw ()
   current_scene:draw(graphics)
-  --[[
-  if love.keyboard.isDown("tab") or love.joystick.isDown(1, 5) then
-    graphics.push()
-      graphics.translate(20, 20)
-      graphics.scale(0.1, 0.1)
-      minimap_draw(graphics, current_map, debug and avatars or { avatars.player })
-    graphics.pop()
-    graphics.push()
-      graphics.translate(20, 300)
-      graphics.scale(2,2)
-      graphics.setColor(150, 50, 50, 255)
-      graphics.print("Equipment:", 0, 0)
-      for slot,equip in pairs(avatars.player.equipment) do
-        graphics.print("[slot "..slot.."] " .. equip:get_description(), 0, slot*20)
-      end
-    graphics.pop()
-    graphics.setColor(255, 255, 255, 255)
-  end
-  ]]
 end
 
