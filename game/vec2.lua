@@ -57,6 +57,9 @@ function vec2:get ()
 end
 
 function vec2:set (x, y)
+  if type(x) == 'table' then
+    x, y = x[1], x[2]
+  end
   self[1] = x
   self[2] = y
 end

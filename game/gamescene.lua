@@ -9,10 +9,12 @@ gamescene = lux.object.new {
   background = nil,
 
   tasks = nil,
-  message_handlers = {},
   players = nil,
+  camera_pos = nil,
 
   things = nil, -- This field is overwritten by change_map, which is called even with the first map.
+  
+  message_handlers = {}, -- Shared by all gamescenes
 }
 
 function gamescene:__init()
@@ -25,6 +27,8 @@ function gamescene:__init()
       av:update(dt, self.map)
     end
   end
+
+  self.camera_pos = vec2:new{0, 0}
 
   self:change_map(self.map)
 end
@@ -91,7 +95,7 @@ function gamescene:add_player(player, id)
   self:add_thing(player)
   self.players[id] = player
   if self.map then
-    player.pos:set(unpack(self.map.locations.playerstart))
+    player.pos:set(self.map.locations.playerstart)
   end
 end
 
@@ -102,6 +106,7 @@ function gamescene:change_map(map)
   for id, player in ipairs(self.players) do
     self:add_player(player, id)
   end
+  self.camera_pos:set(self.map.locations.playerstart)
 end
 
 function gamescene:update(dt)
@@ -122,18 +127,68 @@ function gamescene:input_released(...)
   end
 end
 
+local function minimap_draw(graphics, map, things)
+  local tilesize = graphics:get_tilesize()
+  graphics.setColor(0, 0, 0, 127)
+  graphics.rectangle('fill', 0, 0, map.width*tilesize, map.height*tilesize)
+  graphics.setColor(255, 255, 255, 127)
+  graphics.translate(-tilesize, -tilesize)
+  for y,row in ipairs(map.tiles) do
+    for x,tile in ipairs(row) do
+      if tile:img(map) then
+        graphics.rectangle('fill', x * tilesize, y * tilesize, tilesize, tilesize)
+      end
+    end
+  end
+  graphics.setColor(255, 0, 0, 127)
+  for _,thing in pairs(things) do
+    graphics.circle('fill', thing.pos.x * tilesize, thing.pos.y * tilesize, tilesize / 2)
+  end
+  graphics.translate(tilesize, tilesize)
+end
+
 function gamescene:draw(graphics)
+  if self.players[1] then
+    self.camera_pos = self.players[1].pos:clone()
+  end
+
+  -- Drawing the background
+  if self.map and self.background then
+    local bg_x = (self.camera_pos.x / self.map.width)  * (graphics.getWidth()  - self.background:getWidth() * 2)
+    local bg_y = (self.camera_pos.y / self.map.height) * (graphics.getHeight() - self.background:getHeight() * 2)
+    graphics.draw(self.background, bg_x, bg_y, 0, 2, 2)
+  end
 
   -- Drawing the map
   graphics.push()
-    local camera_pos = vec2:new{graphics.getWidth(), graphics.getHeight()} * 0.5
-    if self.players[1] then
-      camera_pos = camera_pos - self.players[1].pos * graphics:get_tilesize()
-    end
-    graphics.translate(math.floor(camera_pos.x), math.floor(camera_pos.y))
+    local screen_position = graphics:get_screensize() * 0.5 - self.camera_pos * graphics:get_tilesize()
+    graphics.translate(math.floor(screen_position.x), math.floor(screen_position.y))
     self.map:draw(graphics, self.players[1] and self.players[1].pos)
     for _,thing in pairs(self.things) do
       thing:draw(graphics)
     end
   graphics.pop()
+
+  -- Drawing the hud
+  if love.keyboard.isDown("tab") or love.joystick.isDown(1, 5) then
+    -- Drawing the minimap
+    graphics.push()
+      graphics.translate(20, 20)
+      graphics.scale(0.1, 0.1)
+      minimap_draw(graphics, self.map, self.things)
+    graphics.pop()
+    -- Drawing the inventory
+    if self.players[1] then
+      graphics.push()
+      graphics.translate(20, 300)
+      graphics.scale(2,2)
+      graphics.setColor(150, 50, 50, 255)
+      graphics.print("Equipment:", 0, 0)
+      for slot,equip in pairs(self.players[1].equipment) do
+        graphics.print("[slot "..slot.."] " .. equip:get_description(), 0, slot*20)
+      end
+      graphics.pop()
+    end
+    graphics.setColor(255, 255, 255, 255)
+  end
 end

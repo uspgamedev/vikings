@@ -44,8 +44,11 @@ end
 function love.load (args)
   graphics = {}
   setmetatable(graphics, { __index = love.graphics })
-  function graphics.get_tilesize() 
+  function graphics:get_tilesize() 
     return current_scene.map:get_tilesize()
+  end
+  function graphics:get_screensize()
+    return vec2:new{self.getWidth(), self.getHeight()}
   end
   graphics.setFont(graphics.newFont(12))
 
@@ -126,35 +129,11 @@ function love.mousereleased (x, y, button)
 end
 ]]
 
-local function minimap_draw(graphics, map, things)
-  --[[
-  local tilesize = map:get_tilesize()
-  graphics.setColor(0, 0, 0, 127)
-  graphics.rectangle('fill', 0, 0, map.width*tilesize, map.height*tilesize)
-  graphics.setColor(255, 255, 255, 127)
-  graphics.translate(-tilesize, -tilesize)
-  for y,row in ipairs(map.tiles) do
-    for x,tile in ipairs(row) do
-      if tile:img(map) then
-        graphics.rectangle('fill', x * tilesize, y * tilesize, tilesize, tilesize)
-      end
-    end
-  end
-  graphics.setColor(255, 0, 0, 127)
-  for _,thing in pairs(things) do
-    graphics.circle('fill', thing.pos.x * tilesize, thing.pos.y * tilesize, tilesize / 2)
-  end
-  graphics.translate(tilesize, tilesize)
-  --]]
-end
+
 
 function love.draw ()
   current_scene:draw(graphics)
   --[[
-  local bg_x = (avatars.player.pos.x / current_map.width)  * (graphics.getWidth() - background:getWidth() * 2)
-  local bg_y = (avatars.player.pos.y / current_map.height) * (graphics.getHeight() - background:getHeight() * 2)
-  graphics.draw(background, bg_x, bg_y, 0, 2, 2)
-
   if love.keyboard.isDown("tab") or love.joystick.isDown(1, 5) then
     graphics.push()
       graphics.translate(20, 20)
