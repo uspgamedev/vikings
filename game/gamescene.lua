@@ -114,4 +114,17 @@ function gamescene:input_released(...)
 end
 
 function gamescene:draw(graphics)
+
+  -- Drawing the map
+  graphics.push()
+    local camera_pos = vec2:new{graphics.getWidth(), graphics.getHeight()} * 0.5
+    if self.players[1] then
+      camera_pos = camera_pos - self.players[1].pos * graphics:get_tilesize()
+    end
+    graphics.translate(math.floor(camera_pos.x), math.floor(camera_pos.y))
+    self.map:draw(graphics, self.players[1] and self.players[1].pos)
+    for _,thing in pairs(self.things) do
+      thing:draw(graphics)
+    end
+  graphics.pop()
 end

@@ -10,49 +10,8 @@ require 'hitbox'
 require 'gamescene'
 
 local debug = false
-local background
-local tasks = {}
-local avatars = {}
-local current_map
 local graphics
 local current_scene
-
-local function change_map (player, map_file)
-  hitbox.unregister()
-  current_map, avatars = maploader.load(map_file, debug)
-  avatars.player = player
-  player.pos    = vec2:new(current_map.locations.playerstart)
-end
-
-local game_message_commands = {
-  add = function ( ... )
-    for _,avatar in ipairs{...} do
-      table.insert(avatars, avatar)
-    end
-  end,
-  kill = function ( ... )
-    for _,avatar in ipairs{...} do
-      for i,check in ipairs(avatars) do
-        if avatar == check then
-          avatar:die()
-          table.remove(avatars, i)
-        end
-      end
-    end
-  end,
-  put = function (thing)
-    table.insert(avatars, thing)
-  end,
-  position = function (thing_id)
-    return avatars[thing_id] and avatars[thing_id].pos
-  end,
-  changemap = function ()
-    change_map(avatars.player)
-  end,
-  debug = function ()
-    return debug
-  end
-}
 
 function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
@@ -86,7 +45,7 @@ function love.load (args)
   graphics = {}
   setmetatable(graphics, { __index = love.graphics })
   function graphics.get_tilesize() 
-    return current_map:get_tilesize()
+    return current_scene.map:get_tilesize()
   end
   graphics.setFont(graphics.newFont(12))
 
@@ -102,6 +61,7 @@ function love.load (args)
   }
   
   message.add_receiver('game', function (cmd, ...) return current_scene:handle_message(cmd, ...) end)
+  message.add_receiver('debug', function (...) return debug end)
 end
 
 
@@ -185,25 +145,15 @@ local function minimap_draw(graphics, map, things)
     graphics.circle('fill', thing.pos.x * tilesize, thing.pos.y * tilesize, tilesize / 2)
   end
   graphics.translate(tilesize, tilesize)
+  --]]
 end
 
 function love.draw ()
+  current_scene:draw(graphics)
+  --[[
   local bg_x = (avatars.player.pos.x / current_map.width)  * (graphics.getWidth() - background:getWidth() * 2)
   local bg_y = (avatars.player.pos.y / current_map.height) * (graphics.getHeight() - background:getHeight() * 2)
   graphics.draw(background, bg_x, bg_y, 0, 2, 2)
-
-
-  graphics.push()
-    local camera_pos = vec2:new{graphics.getWidth(), graphics.getHeight()} * 0.5 - avatars.player.pos * map.get_tilesize()
-    graphics.translate(math.floor(camera_pos.x), math.floor(camera_pos.y))
-    current_map:draw(graphics, avatars.player.pos)
-    for _,av in pairs(avatars) do
-      av:draw(graphics)
-    end
-    if debug then
-      hitbox.draw_all(graphics)
-    end
-  graphics.pop()
 
   if love.keyboard.isDown("tab") or love.joystick.isDown(1, 5) then
     graphics.push()
