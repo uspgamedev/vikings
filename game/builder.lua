@@ -186,8 +186,8 @@ function add_keyboard_input(player)
       self:accelerate(speedhack.right)
     end
   end
-  function player:input_pressed(button, joystick)
-    if joystick then return end
+  function player:input_pressed(button, joystick, mouse)
+    if joystick or mouse then return end
     if button == "z" then
       self:jump()
     elseif button == "x" then
@@ -200,8 +200,8 @@ function add_keyboard_input(player)
       message.send [[game]] {'add', build_item(self.pos:clone()) }
     end
   end
-  function player:input_released(button, joystick)
-    if joystick then return end
+  function player:input_released(button, joystick, mouse)
+    if joystick or mouse then return end
   end
 end
 
@@ -251,7 +251,7 @@ function add_joystick_input(player, joystick)
       up_pressed = false
     end
   end
-  function player:input_pressed(button, joystick)
+  function player:input_pressed(button, joystick, mouse)
     if not joystick then return end
     if button == joy.jump then
       self:jump()
@@ -261,7 +261,7 @@ function add_joystick_input(player, joystick)
       self:dash()
     end
   end
-  function player:input_released(button, joystick)
+  function player:input_released(button, joystick, mouse)
     if not joystick then return end
     if button == joy.attack then
       self:attack()

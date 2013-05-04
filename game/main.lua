@@ -73,6 +73,7 @@ function love.load (args)
 
   newscene = gamescene:new {
     map = maploader.load(map_file, debug),
+    music = "data/music/JordanTrudgett-Snodom-ccby3.ogg",
     background = graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
     players = { create_player(not no_joystick and love.joystick.getNumJoysticks() > 0) },
   }
@@ -106,6 +107,14 @@ end
 
 function love.joystickreleased(joystick, button)
   current_scene:input_released(button, joystick)
+end
+
+function love.mousepressed (x, y, button)
+  current_scene:input_pressed(button, nil, { x = x, y = y })
+end
+
+function love.mousepressed (x, y, button)
+  current_scene:input_released(button, nil, { x = x, y = y })
 end
 
 --[[

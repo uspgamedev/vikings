@@ -9,6 +9,7 @@ require 'sound'
 gamescene = scene:new {
   map = nil,
   background = nil,
+  music = nil,
 
   tasks = nil,
   players = nil,
@@ -34,7 +35,9 @@ function gamescene:__init()
 end
 
 function gamescene:focus()
-  sound.set_bgm "data/music/JordanTrudgett-Snodom-ccby3.ogg"
+  if self.music then
+    sound.set_bgm(self.music)
+  end
   message.add_receiver('game', function (cmd, ...) return self:handle_message(cmd, ...) end)
 end
 
