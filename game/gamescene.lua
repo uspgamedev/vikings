@@ -119,9 +119,14 @@ function gamescene:update(dt)
   end
 end
 
-function gamescene:input_pressed(...)
+function gamescene:input_pressed(button, ...)
   for _, player in ipairs(self.players) do
-    player:input_pressed(...)
+    player:input_pressed(button, ...)
+  end
+
+  if button == 'p' and self.map then
+    love.filesystem.mkdir "maps"
+    self.map:save_to_file(os.date "maps/dump-%Y-%m-%d_%H-%M-%S.lua")
   end
 end
 

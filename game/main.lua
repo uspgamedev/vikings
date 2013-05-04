@@ -6,7 +6,6 @@ require 'builder'
 require 'message'
 require 'map.maploader'
 require 'sound'
-require 'hitbox'
 require 'gamescene'
 
 local debug = false
@@ -45,7 +44,7 @@ function love.load (args)
   graphics = {}
   setmetatable(graphics, { __index = love.graphics })
   function graphics:get_tilesize() 
-    return current_scene.map:get_tilesize()
+    return map.get_tilesize()
   end
   function graphics:get_screensize()
     return vec2:new{self.getWidth(), self.getHeight()}
@@ -73,11 +72,7 @@ function love.update (dt)
 end
 
 function love.keypressed (button)
-  if button == "p" then
-    if current_scene and current_scene.map then 
-      current_scene.map:save_to_file(os.date "%Y-%m-%d_%H-%M-%S.vikingmap")
-    end
-  elseif button == "escape" then
+  if button == "escape" then
     love.event.push("quit")
   else
     current_scene:input_pressed(button)
