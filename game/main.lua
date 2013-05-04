@@ -57,7 +57,7 @@ function love.load (args)
   local map_file, no_joystick = parse_args(args)
 
   current_scene = gamescene:new{
-    map = maploader.load(map_file),
+    map = maploader.load(map_file, debug),
     background = graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
     players = { create_player(not no_joystick and love.joystick.getNumJoysticks() > 0) },
   }

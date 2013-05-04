@@ -11,7 +11,7 @@ function create_things (newmap, debug)
   return things
 end
 
-function load (map_file)
+function load (map_file, debug)
   return map_file and mapgenerator.from_file(map_file) or mapgenerator.random_map(debug)
 end
 
