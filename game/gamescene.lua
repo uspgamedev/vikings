@@ -1,10 +1,12 @@
 
-require 'lux.object'
+require 'scene'
 
 require 'hitbox'
 require 'map.maploader'
+require 'message'
+require 'sound'
 
-gamescene = lux.object.new {
+gamescene = scene:new {
   map = nil,
   background = nil,
 
@@ -28,8 +30,16 @@ function gamescene:__init()
     end
   end
   self.camera_pos = vec2:new{0, 0}
-
   self:change_map(self.map)
+end
+
+function gamescene:focus()
+  sound.set_bgm "data/music/JordanTrudgett-Snodom-ccby3.ogg"
+  message.add_receiver('game', function (cmd, ...) return self:handle_message(cmd, ...) end)
+end
+
+function gamescene:unfocus()
+  message.remove_receiver('game')
 end
 
 function gamescene.message_handlers.add(self, ...)

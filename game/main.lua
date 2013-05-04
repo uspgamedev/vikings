@@ -7,10 +7,23 @@ require 'message'
 require 'map.maploader'
 require 'sound'
 require 'gamescene'
+require 'menuscene'
 
 local debug = false
 local graphics
 local current_scene
+local main_message_handler = {}
+
+function main_message_handler.change_scene(newscene)
+  if current_scene then
+    current_scene:unfocus()
+  end
+  if not newscene then
+    love.event.push("quit")
+  end
+  current_scene = newscene
+  current_scene:focus()
+end
 
 function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
@@ -52,18 +65,22 @@ function love.load (args)
   graphics.setFont(graphics.newFont(12))
 
   sound.load(love.audio)
-  sound.set_bgm "data/music/JordanTrudgett-Snodom-ccby3.ogg"
 
   local map_file, no_joystick = parse_args(args)
 
-  current_scene = gamescene:new{
+  local newscene
+  --newscene = menuscene:new{}
+
+  newscene = gamescene:new {
     map = maploader.load(map_file, debug),
     background = graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
     players = { create_player(not no_joystick and love.joystick.getNumJoysticks() > 0) },
   }
-  
-  message.add_receiver('game', function (cmd, ...) return current_scene:handle_message(cmd, ...) end)
+
   message.add_receiver('debug', function (...) return debug end)
+  message.add_receiver('main', main_message_handler)
+
+  message.send [[main]] {'change_scene', newscene}
 end
 
 
