@@ -4,7 +4,16 @@ module ('message', package.seeall)
 local receivers = {}
 
 function add_receiver (id, handler)
-  receivers[id] = handler
+  if type(handler) == 'table' then
+    receivers[id] = function (cmd, ...)
+      if not handler[cmd] then
+        error("Unknown command: " .. cmd)
+      end
+      return handler[cmd](...)
+    end
+  else
+    receivers[id] = handler
+  end
 end
 
 function remove_receiver (id)
