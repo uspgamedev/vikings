@@ -6,8 +6,7 @@ require 'builder'
 require 'message'
 require 'map.maploader'
 require 'sound'
-require 'gamescene'
-require 'menuscene'
+require 'ui.menubuilder'
 
 local debug = false
 local graphics
@@ -68,7 +67,7 @@ function love.load (args)
   message.add_receiver('main', main_message_handler)
 
   -- Initial scene
-  message.send [[main]] {'change_scene', menuscene:new{}}
+  message.send [[main]] {'change_scene', ui.mainmenu()}
 end
 
 
