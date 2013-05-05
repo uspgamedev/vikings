@@ -34,19 +34,23 @@ module ('ui', package.seeall) do
   end
 
   function menuscene:input_pressed(button, joystick, mouse)
-    for _, button in ipairs(self.buttons) do
-      if button:inside(mouse, vec2:new{x,y}) then
-        self.clicking = button
-        break
+    if mouse then
+      for _, button in ipairs(self.buttons) do
+        if button:inside(mouse) then
+          self.clicking = button
+          break
+        end
       end
     end
   end
 
   function menuscene:input_released(button, joystick, mouse)
-    if self.clicking and self.clicking:inside(mouse) then
-      self.clicking:onclick(mouse)
+    if mouse then
+      if self.clicking and self.clicking:inside(mouse) then
+        self.clicking:onclick(mouse)
+      end
+      self.clicking = nil
     end
-    self.clicking = nil
   end
 
   function menuscene:draw(graphics)
