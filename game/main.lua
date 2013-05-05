@@ -12,6 +12,7 @@ require 'menuscene'
 local debug = false
 local graphics
 local current_scene
+local cli_args
 local main_message_handler = {}
 
 function main_message_handler.change_scene(newscene)
@@ -25,35 +26,30 @@ function main_message_handler.change_scene(newscene)
   current_scene:focus()
 end
 
+function main_message_handler.get_cliargs()
+  return cli_args
+end
+
 function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
 end
 
 function parse_args(args)
-  local map_file, no_joystick
+  local map_file, no_joystick, debug = false
   for _, arg in ipairs(args) do
-    map_file = string.ends(arg, ".vikingmap") and arg or map_file
-    no_joystick = no_joystick or arg == "--no-joystick"
+    map_file = string.ends(arg, ".lua") and arg or map_file
+    no_joystick = no_joystick or (arg == "--no-joystick")
     if arg == '--debug' then
       debug = true
     end
   end
-  return map_file, no_joystick
-end
-
-local function create_player( joystick )
-  local player  = builder.build_thing("player",  vec2:new{})
-  local axe     = builder.build_thing("ironaxe", vec2:new{}, {3,3}, {3,3})
-  player:equip(axe.slot, axe)
-  if joystick then
-    builder.add_joystick_input(player)
-  else
-    builder.add_keyboard_input(player)
-  end
-  return player
+  cli_args = { map_file = map_file, joystick = not no_joystick, debug = debug }
 end
 
 function love.load (args)
+  parse_args(args)
+
+  -- Setup graphics
   graphics = {}
   setmetatable(graphics, { __index = love.graphics })
   function graphics:get_tilesize() 
@@ -64,24 +60,15 @@ function love.load (args)
   end
   graphics.setFont(graphics.newFont(12))
 
+  -- Setup sound
   sound.load(love.audio)
 
-  local map_file, no_joystick = parse_args(args)
-
-  local newscene
-  --newscene = menuscene:new{}
-
-  newscene = gamescene:new {
-    map = maploader.load(map_file, debug),
-    music = "data/music/JordanTrudgett-Snodom-ccby3.ogg",
-    background = graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
-    players = { create_player(not no_joystick and love.joystick.getNumJoysticks() > 0) },
-  }
-
+  -- Setup message handler
   message.add_receiver('debug', function (...) return debug end)
   message.add_receiver('main', main_message_handler)
 
-  message.send [[main]] {'change_scene', newscene}
+  -- Initial scene
+  message.send [[main]] {'change_scene', menuscene:new{}}
 end
 
 
@@ -110,11 +97,11 @@ function love.joystickreleased(joystick, button)
 end
 
 function love.mousepressed (x, y, button)
-  current_scene:input_pressed(button, nil, { x = x, y = y })
+  current_scene:input_pressed(button, nil, vec2:new{ x, y })
 end
 
-function love.mousepressed (x, y, button)
-  current_scene:input_released(button, nil, { x = x, y = y })
+function love.mousereleased (x, y, button)
+  current_scene:input_released(button, nil, vec2:new{ x, y })
 end
 
 --[[

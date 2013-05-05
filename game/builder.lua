@@ -137,7 +137,7 @@ function build_bumpbox (type)
   }
 end
 
-local function build_player (pos)
+local function build_player (pos, joystick)
   local player = avatar:new {
     pos       = pos,
     sprite    = build_sprite(),
@@ -174,6 +174,15 @@ local function build_player (pos)
       message.send [[game]] {'changemap'}
     end
   end
+
+  local axe = build_thing("ironaxe", vec2:new{}, {3,3}, {3,3})
+  player:equip(axe.slot, axe)
+  if joystick then
+    add_joystick_input(player, joystick)
+  else
+    add_keyboard_input(player)
+  end
+
   return player
 end
 
