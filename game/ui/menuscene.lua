@@ -14,7 +14,7 @@ module ('ui', package.seeall) do
     border = 20,
 
     buttons = nil,
-    mousepos = nil,
+    selected_button = 1,
   }
 
   function menuscene:__init()
@@ -33,13 +33,23 @@ module ('ui', package.seeall) do
   function menuscene:update(dt)
   end
 
-  function menuscene:input_pressed(button, joystick, mouse)
+  function menuscene:input_pressed(key, joystick, mouse)
     if mouse then
       for _, button in ipairs(self.buttons) do
         if button:inside(mouse) then
           self.clicking = button
           break
         end
+      end
+    else
+      if key == 'down' then
+        self.selected_button = (self.selected_button % #self.buttons) + 1
+      elseif key == 'up' then
+        self.selected_button = self.selected_button - 1
+        if self.selected_button < 1 then self.selected_button = self.selected_button + #self.buttons end
+      elseif key == 'return' then
+        local button = self.buttons[self.selected_button]
+        if button then button:onclick() end
       end
     end
   end
@@ -54,9 +64,12 @@ module ('ui', package.seeall) do
   end
 
   function menuscene:draw(graphics)
-    for _, button in ipairs(self.buttons) do
+    for id, button in ipairs(self.buttons) do
       local isinside = button:inside(vec2:new{love.mouse.getPosition()})
-      button:draw(graphics, isinside and (button == self.clicking and 'clicking' or 'hover'))
+      button:draw(graphics, 
+        isinside 
+          and (button == self.clicking and 'clicking' or 'hover')
+          or  (id == self.selected_button and 'selected'))
     end
   end
 

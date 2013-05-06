@@ -29,7 +29,7 @@ module ('ui', package.seeall) do
         text_color = { 240, 240, 240 },
       },
       hover = theme:new {
-        background_color = { 80, 80, 196 },
+        background_color = { 80, 80, 150 },
         border_color = { 160, 160, 255 },
         text_color = { 255, 255, 255 },
       },
@@ -37,6 +37,11 @@ module ('ui', package.seeall) do
         background_color = { 40, 40, 98 },
         border_color = { 120, 120, 192 },
         text_color = { 255, 255, 255 },
+      },
+      selected = theme:new {
+        background_color = { 96, 96, 110 },
+        border_color = { 140, 140, 255 },
+        text_color = { 240, 240, 240 },
       },
     }
 
@@ -46,6 +51,9 @@ module ('ui', package.seeall) do
       border = 20,
       buttons = {
         button:new{ text = "Play", onclick = startgame, themes = themes },
+        button:new{ text = "Quit", onclick = quitgame, themes = themes },
+        button:new{ text = "Quit", onclick = quitgame, themes = themes },
+        button:new{ text = "Quit", onclick = quitgame, themes = themes },
         button:new{ text = "Quit", onclick = quitgame, themes = themes },
       }
     }
