@@ -35,8 +35,9 @@ module ('ui', package.seeall) do
 
   function menuscene:input_pressed(key, joystick, mouse)
     if mouse then
-      for _, button in ipairs(self.buttons) do
+      for id, button in ipairs(self.buttons) do
         if button:inside(mouse) then
+          self.selected_button = id
           self.clicking = button
           break
         end

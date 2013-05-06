@@ -52,9 +52,6 @@ module ('ui', package.seeall) do
       buttons = {
         button:new{ text = "Play", onclick = startgame, themes = themes },
         button:new{ text = "Quit", onclick = quitgame, themes = themes },
-        button:new{ text = "Quit", onclick = quitgame, themes = themes },
-        button:new{ text = "Quit", onclick = quitgame, themes = themes },
-        button:new{ text = "Quit", onclick = quitgame, themes = themes },
       }
     }
   end
