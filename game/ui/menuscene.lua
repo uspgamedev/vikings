@@ -56,7 +56,7 @@ module ('ui', package.seeall) do
   function menuscene:draw(graphics)
     for _, button in ipairs(self.buttons) do
       local isinside = button:inside(vec2:new{love.mouse.getPosition()})
-      button:draw(graphics, (button == self.clicking and 'clicking') or (isinside and 'hover'))
+      button:draw(graphics, isinside and (button == self.clicking and 'clicking' or 'hover'))
     end
   end
 
