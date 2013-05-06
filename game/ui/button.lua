@@ -21,6 +21,7 @@ module ('ui', package.seeall) do
     height = 50,
     width  = 300,
     position = nil,
+    themes = nil,
     default_theme = nil,
     hover_theme = nil,
     clicking_theme = nil,
@@ -32,21 +33,9 @@ module ('ui', package.seeall) do
   button.__init = {
     position = vec2:new{},
 
-    default_theme = theme:new {
-      background_color = { 96, 96, 96 },
-      border_color = { 160, 160, 160 },
-      text_color = { 240, 240, 240 },
-    },
-    hover_theme = theme:new {
-      background_color = { 80, 80, 196 },
-      border_color = { 160, 160, 255 },
-      text_color = { 255, 255, 255 },
-    },
-    clicking_theme = theme:new {
-      background_color = { 40, 40, 98 },
-      border_color = { 120, 120, 192 },
-      text_color = { 255, 255, 255 },
-    },
+    themes = {
+      default = theme:new{}
+    }
   }
 
   function button:inside(querypos)
@@ -55,18 +44,12 @@ module ('ui', package.seeall) do
   end
 
   function button:get_theme(status)
-    if status == 'hover' then
-      return self.hover_theme
-    elseif status == 'clicking' then
-      return self.clicking_theme
-    else
-      return self.default_theme
-    end
+    return self.themes[status] or self.themes.default
   end
 
   function button:draw(graphics, status)
     local x, y = self.position:get()
-    local theme = self:get_theme(status or 'normal')
+    local theme = self:get_theme(status)
     status = status or 'normal'
     graphics.setColor(unpack(theme.border_color))
     graphics.rectangle('fill', x, y, self.width, self.height)
