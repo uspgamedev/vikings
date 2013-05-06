@@ -72,7 +72,7 @@ end
 
 
 function love.update (dt)
-  current_scene:update(dt)
+  current_scene:update(dt < 0.1 and dt or 0.1)
 end
 
 function love.keypressed (button)
