@@ -24,7 +24,6 @@ function main_message_handler.change_scene(newscene, stack)
   end
   newscene = newscene or table.remove(scene_stack)
   if newscene == nil then
-    error "ASDFASDF"
     return love.event.push("quit")
   end
   current_scene = newscene

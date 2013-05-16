@@ -42,14 +42,20 @@ module ('ui', package.seeall) do
         end
       end
     else
-      if key == 'down' then
-        self.selected_button = (self.selected_button % #self.buttons) + 1
-      elseif key == 'up' then
-        self.selected_button = self.selected_button - 1
-        if self.selected_button < 1 then self.selected_button = self.selected_button + #self.buttons end
-      elseif key == 'return' then
-        local button = self.buttons[self.selected_button]
-        if button then button:onclick() end
+      if #self.buttons > 0 then
+        if key == 'down' then
+          repeat
+            self.selected_button = (self.selected_button % #self.buttons) + 1
+          until self.buttons[self.selected_button].onclick ~= nil
+        elseif key == 'up' then
+          repeat
+            self.selected_button = self.selected_button - 1
+            if self.selected_button < 1 then self.selected_button = self.selected_button + #self.buttons end
+          until self.buttons[self.selected_button].onclick ~= nil
+        elseif key == 'return' then
+          local button = self.buttons[self.selected_button]
+          if button then button:onclick() end
+        end
       end
     end
   end

@@ -91,7 +91,7 @@ module ('mapgenerator', package.seeall) do
     local ok, chunk = pcall(love.filesystem.load, path)
     if not ok then 
       print(chunk)
-      return nil, chunk 
+      return nil, chunk
     end
     setfenv(chunk, { tileset = tileset, tiletype = tiletype })
     local ok, result = pcall(chunk)

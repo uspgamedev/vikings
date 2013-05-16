@@ -2,6 +2,7 @@
 module ('ui', package.seeall) do
 
   require 'ui.menuscene'
+  require 'network.maplist'
   require 'message'
   require 'gamescene'
 
@@ -27,16 +28,60 @@ module ('ui', package.seeall) do
       text_color = { 240, 240, 240 },
     },
   }
+  local function closemenu()
+    message.send [[main]] {'change_scene', nil}
+  end
 
-  function multiplayermenu()
-    function closemenu( ... )
-      message.send [[main]] {'change_scene', nil}
+  function maplistmenu()
+    function load_map(map)
+      local args = message.send [[main]] {'get_cliargs'}
+
+      local newscene = gamescene:new {
+        map = maploader.load(network.download_map(map), args.debug),
+        music = "data/music/JordanTrudgett-Snodom-ccby3.ogg",
+        background = love.graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
+        players = { builder.build_thing("player", vec2:new{}, 
+                    not args.no_joystick and love.joystick.getNumJoysticks() > 0 and 1) },
+      }
+      
+      message.send [[main]] {'change_scene', newscene}
+    end
+
+    local maps = network.fetch_all()
+    local menu = menuscene:new {
+      xcenter = love.graphics.getWidth() / 2,
+      ystart = 100,
+      border = 20,
+    }
+
+    for _, mappath in pairs(maps) do
+      table.insert(menu.buttons, button:new {
+        text = mappath,
+        themes = themes,
+        width = 500,
+        height = 30,
+        onclick = function() load_map(mappath) end
+      })
+    end
+
+    table.insert(menu.buttons, { width = 100, height = 50 })
+    table.insert(menu.buttons, button:new{ text = "Back", onclick = closemenu, themes = themes })
+
+    menu:position_buttons()
+
+    return menu
+  end
+
+  function internetmenu()
+    function makemaplistmenu()
+      message.send [[main]] {'change_scene', maplistmenu(), true}
     end
     return menuscene:new {
       xcenter = love.graphics.getWidth() / 2,
       ystart = 100,
       border = 20,
       buttons = {
+        button:new{ text = "Map List", onclick = makemaplistmenu, themes = themes },
         { width = 100, height = 50 },
         button:new{ text = "Back", onclick = closemenu, themes = themes },
       }
@@ -57,11 +102,8 @@ module ('ui', package.seeall) do
 
       message.send [[main]] {'change_scene', newscene}
     end
-    function makemuiltiplayer_menu()
-      message.send [[main]] {'change_scene', multiplayermenu(), true}
-    end
-    function quitgame()
-      love.event.push("quit")
+    function makeinternetmenu()
+      message.send [[main]] {'change_scene', internetmenu(), true}
     end
 
     return menuscene:new {
@@ -70,8 +112,8 @@ module ('ui', package.seeall) do
       border = 20,
       buttons = {
         button:new{ text = "Play", onclick = startgame, themes = themes },
-        button:new{ text = "Multiplayer", onclick = makemuiltiplayer_menu, themes = themes },
-        button:new{ text = "Quit", onclick = quitgame, themes = themes },
+        button:new{ text = "Internet", onclick = makeinternetmenu, themes = themes },
+        button:new{ text = "Quit", onclick = closemenu, themes = themes },
       }
     }
   end
