@@ -11,15 +11,21 @@ require 'ui.menubuilder'
 local debug = false
 local graphics
 local current_scene
+local scene_stack = {}
 local cli_args
 local main_message_handler = {}
 
-function main_message_handler.change_scene(newscene)
+function main_message_handler.change_scene(newscene, stack)
   if current_scene then
     current_scene:unfocus()
   end
-  if not newscene then
-    love.event.push("quit")
+  if stack then
+    table.insert(scene_stack, current_scene)
+  end
+  newscene = newscene or table.remove(scene_stack)
+  if newscene == nil then
+    error "ASDFASDF"
+    return love.event.push("quit")
   end
   current_scene = newscene
   current_scene:focus()

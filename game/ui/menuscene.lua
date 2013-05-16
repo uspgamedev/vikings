@@ -1,4 +1,3 @@
-
 module ('ui', package.seeall) do
 
   require 'scene'
@@ -36,7 +35,7 @@ module ('ui', package.seeall) do
   function menuscene:input_pressed(key, joystick, mouse)
     if mouse then
       for id, button in ipairs(self.buttons) do
-        if button:inside(mouse) then
+        if button.inside and button:inside(mouse) then
           self.selected_button = id
           self.clicking = button
           break
@@ -66,10 +65,12 @@ module ('ui', package.seeall) do
 
   function menuscene:draw(graphics)
     for id, button in ipairs(self.buttons) do
-      if button:inside(vec2:new{love.mouse.getPosition()}) then
-        button:draw(graphics, button == self.clicking and 'clicking' or 'hover')
-      else
-        button:draw(graphics, id == self.selected_button and 'selected')
+      if button.draw then
+        if button.inside and button:inside(vec2:new{love.mouse.getPosition()}) then
+          button:draw(graphics, button == self.clicking and 'clicking' or 'hover')
+        else
+          button:draw(graphics, id == self.selected_button and 'selected')
+        end
       end
     end
   end
