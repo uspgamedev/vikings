@@ -1,4 +1,3 @@
-
 require 'vec2'
 require 'map.map'
 require 'things.avatar'
@@ -7,6 +6,8 @@ require 'message'
 require 'map.maploader'
 require 'sound'
 require 'ui.menubuilder'
+require 'database'
+
 
 local debug = false
 local graphics
@@ -66,6 +67,9 @@ function love.load (args)
 
   -- Setup sound
   sound.load(love.audio)
+
+  -- Setup database
+  database.init()
 
   -- Setup message handler
   message.add_receiver('debug', function (...) return debug end)
@@ -145,3 +149,6 @@ function love.draw ()
   current_scene:draw(graphics)
 end
 
+function love.quit()
+  database.save()
+end

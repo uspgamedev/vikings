@@ -5,6 +5,7 @@ module ('ui', package.seeall) do
   require 'network.maplist'
   require 'message'
   require 'gamescene'
+  require 'database'
 
   local themes = {
     default = theme:new {
@@ -36,8 +37,10 @@ module ('ui', package.seeall) do
     function load_map(map)
       local args = message.send [[main]] {'get_cliargs'}
 
+      database.fetch_content(map)
+
       local newscene = gamescene:new {
-        map = maploader.load(network.download_map(map), args.debug),
+        map = maploader.load(map.file_path, args.debug),
         music = "data/music/JordanTrudgett-Snodom-ccby3.ogg",
         background = love.graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
         players = { builder.build_thing("player", vec2:new{}, 
@@ -47,13 +50,15 @@ module ('ui', package.seeall) do
       message.send [[main]] {'change_scene', newscene}
     end
 
-    local maps = network.fetch_all()
+    network.fetch_all()
+    local maps = database.get_all_maps()
     local menu = menuscene:new {
       xcenter = love.graphics.getWidth() / 2,
       ystart = 100,
       border = 20,
     }
 
+    -- Add a button for each map
     for _, map in pairs(maps) do
       table.insert(menu.buttons, button:new {
         text = map.name,
