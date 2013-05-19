@@ -54,13 +54,13 @@ module ('ui', package.seeall) do
       border = 20,
     }
 
-    for _, mappath in pairs(maps) do
+    for _, map in pairs(maps) do
       table.insert(menu.buttons, button:new {
-        text = mappath,
+        text = map.name,
         themes = themes,
         width = 500,
         height = 30,
-        onclick = function() load_map(mappath) end
+        onclick = function() load_map(map) end
       })
     end
 

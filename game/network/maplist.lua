@@ -31,27 +31,29 @@ module ('network', package.seeall) do
       local chunk, err = loadstring('return ' .. result)
       if chunk then
         setfenv(chunk, {})
-        for _, mappath in pairs(chunk()) do
-          table.insert(maps, mappath)
+        for _, map in pairs(chunk()) do
+          table.insert(maps, map)
         end
+      else
+        print(result)
+        error(err)
       end
     end
     return maps
   end
 
-  function download_map(path)
+  function download_map(map)
     love.filesystem.mkdir "downloads"
 
-    local name = split(path, "/")
-    name = name[#name]
-    local result, status = http.request(path)
+    local result, status = http.request(map.url)
+    local local_path = "downloads/" .. map.hash .. "-" .. map.name .. ".lua"
 
-    local file = love.filesystem.newFile("downloads/" .. name)
+    local file = love.filesystem.newFile(local_path)
     file:open("w")
     file:write(result)
     file:close()
 
-    return "downloads/" .. name
+    return local_path
   end
 
 end
