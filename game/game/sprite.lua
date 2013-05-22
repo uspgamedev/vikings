@@ -1,7 +1,7 @@
 
 require 'lux.object'
-require 'vec2'
-require 'animation'
+require 'game.vec2'
+require 'game.animation'
 
 sprite = lux.object.new {
   data          = nil,

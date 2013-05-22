@@ -1,8 +1,8 @@
 
 require 'things.thing'
-require 'vec2'
-require 'hitbox'
-require 'message'
+require 'game.vec2'
+require 'game.hitbox'
+require 'game.message'
 
 collectable = thing:new {
   pick_delay = 0,

@@ -3,8 +3,8 @@ module ('ui', package.seeall) do
 
   require 'ui.menuscene'
   require 'network.maplist'
-  require 'message'
-  require 'gamescene'
+  require 'game.message'
+  require 'game.gamescene'
   require 'database'
 
   local themes = {

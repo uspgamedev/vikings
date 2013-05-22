@@ -1,11 +1,11 @@
 
 require 'things.thing'
 require 'things.slash'
-require 'vec2'
-require 'hitbox'
-require 'message'
-require 'sound'
-require 'animationset.viking'
+require 'game.vec2'
+require 'game.hitbox'
+require 'game.message'
+require 'game.sound'
+require 'data.animationset.viking'
 require 'spriteeffect.blink'
 
 avatar = thing:new {

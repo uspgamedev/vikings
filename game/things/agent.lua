@@ -1,8 +1,8 @@
 
 require 'things.thing'
-require 'vec2'
-require 'sprite'
-require 'spritedata'
+require 'game.vec2'
+require 'game.sprite'
+require 'game.spritedata'
 
 agent = thing:new {}
 

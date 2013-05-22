@@ -1,11 +1,11 @@
 
-require 'vec2'
+require 'game.vec2'
 require 'things.thing'
 require 'things.agent'
-require 'sound'
-require 'animationset.slash'
+require 'game.sound'
+require 'data.animationset.slash'
 require 'spriteeffect.splash'
-require 'message'
+require 'game.message'
 
 slash = thing:new {
   source = nil,
