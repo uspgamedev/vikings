@@ -8,7 +8,7 @@ require 'game.sprite'
 require 'game.spritedata'
 require 'game.message'
 require 'game.sound'
-require 'animationset.monster'
+require 'data.animationset.monster'
 require 'spriteeffect.speech'
 
 local butler

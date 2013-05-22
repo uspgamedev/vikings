@@ -3,7 +3,7 @@ require 'game.vec2'
 require 'things.thing'
 require 'things.agent'
 require 'game.sound'
-require 'animationset.slash'
+require 'data.animationset.slash'
 require 'spriteeffect.splash'
 require 'game.message'
 

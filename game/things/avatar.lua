@@ -5,7 +5,7 @@ require 'game.vec2'
 require 'game.hitbox'
 require 'game.message'
 require 'game.sound'
-require 'animationset.viking'
+require 'data.animationset.viking'
 require 'spriteeffect.blink'
 
 avatar = thing:new {
