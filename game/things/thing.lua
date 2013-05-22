@@ -1,7 +1,7 @@
 
 require 'lux.object'
-require 'vec2'
-require 'hitbox'
+require 'game.vec2'
+require 'game.hitbox'
 
 thing = lux.object.new {
   pos       = nil,

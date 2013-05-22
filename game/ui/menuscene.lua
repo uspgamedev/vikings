@@ -1,11 +1,11 @@
 module ('ui', package.seeall) do
 
-  require 'scene'
+  require 'game.scene'
   require 'ui.button'
-  require 'gamescene'
+  require 'game.gamescene'
   require 'map.maploader'
-  require 'message'
-  require 'builder'
+  require 'game.message'
+  require 'game.builder'
 
   menuscene = scene:new{
     xcenter = 400,

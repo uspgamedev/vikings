@@ -1,13 +1,13 @@
 
 module ('builder', package.seeall)
 
-require 'vec2'
+require 'game.vec2'
 require 'things.avatar'
 require 'things.collectable'
-require 'sprite'
-require 'spritedata'
-require 'message'
-require 'sound'
+require 'game.sprite'
+require 'game.spritedata'
+require 'game.message'
+require 'game.sound'
 require 'animationset.monster'
 require 'spriteeffect.speech'
 

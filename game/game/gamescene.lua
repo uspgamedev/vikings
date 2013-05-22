@@ -1,10 +1,10 @@
 
-require 'scene'
+require 'game.scene'
 
-require 'hitbox'
+require 'game.hitbox'
 require 'map.maploader'
-require 'message'
-require 'sound'
+require 'game.message'
+require 'game.sound'
 
 gamescene = scene:new {
   map = nil,

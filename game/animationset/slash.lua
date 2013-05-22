@@ -1,5 +1,5 @@
 
-require 'animation'
+require 'game.animation'
 
 module ('animationset', package.seeall)
 

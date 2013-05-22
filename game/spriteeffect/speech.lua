@@ -1,6 +1,6 @@
 
 require 'lux.object'
-require 'vec2'
+require 'game.vec2'
 
 module ('spriteeffect', package.seeall)
 
