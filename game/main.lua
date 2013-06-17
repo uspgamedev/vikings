@@ -80,12 +80,18 @@ function love.load (args)
   -- Setup database
   database.init()
 
-  -- Setup network
-  network.node.init()
-
   -- Setup message handler
   message.add_receiver('debug', function (...) return debug end)
   message.add_receiver('main', main_message_handler)
+
+  -- Setup network
+  if cli_args.servermode then
+    network.node.init_foreground()
+    love.event.push "quit"
+    return
+  else
+    network.node.init_background()
+  end
 
   -- Initial scene
   message.send [[main]] {'change_scene', ui.mainmenu()}
