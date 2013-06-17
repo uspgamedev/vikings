@@ -6,28 +6,31 @@ local known_peers = {
   { "localhost", 12345 }
 }
 
+local quit = false
+
+function handle_client(message, ip, port)
+  return "OK!"
+end
+
 function main()
-  local server = assert(socket.bind("*", 0))
+  local server = socket.udp()
+  server:setsockname("*", 0)
+
   local ip, port = server:getsockname()
-  print("Please telnet to localhost on port " .. port)
-  for i = 1,5 do
-    -- wait for a connection from any client
-    local client = server:accept()
+  print("Listening on ip '" .. ip .. "' port '" .. port .. "'")
 
-    print "WE GOT SOMEONE"
+  repeat
+    -- wait for a message from any client
+    local data, cli_ip, cli_port = server:receivefrom()
 
-    -- make sure we don't block waiting for this client's line
-    client:settimeout(10)
-    -- receive the line
-    local line, err = client:receive()
-    -- if there was no error, send it back to the client
-    if not err then 
-      client:send(line .. "\n")
-      print(line)
-    end
-    -- done with client, close the object
-    client:close()
-  end
+    print("Received message: '" .. data .. "' from '" .. cli_ip .. ":" .. cli_port)
+    server:sendto(handle_client(data, cli_ip, cli_port), cli_ip, cli_port)
+  
+  until (quit == true)
+
+  server:close()
+
+  print "Quit networking!"
 end
 
 
