@@ -67,7 +67,9 @@ function main()
     local client = server:accept()
 
     -- Handle this new client (in this threat or in another)
-    handle_client(client)  
+    handle_client(client)
+
+    quit = true
   until (quit == true)
 
   server:close()
