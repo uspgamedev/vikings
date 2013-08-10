@@ -10,10 +10,12 @@ local quit = false
 
 local commands = {}
 function commands.inform_client(client, arguments)
-  return 'OK!'
+  client:send('OK!')
+  return false
 end
 function commands.request_clients(client, arguments)
-  return 'DENIED'
+  client:send('DENIED')
+  return true
 end
 
 function split_message(message)
@@ -25,31 +27,41 @@ end
 
 function run_command(client, command, arguments)
   if not commands[command] then
-    return nil, "invalid command '" .. command .. "'"
+    return false, "invalid command '" .. command .. "'"
   else
     return commands[command](client, arguments)
   end
 end
 
+
 function handle_client(client)
   local cli_ip, cli_port = client:getpeername()
   local cli_name = "[" .. cli_ip .. "]:" .. cli_port
-  print("New connection from " .. cli_name)
+  local print = function(...) print("{" .. cli_name .. "}", ...) end
 
+  print("New connection")
+  client:settimeout(0)
+
+  local quit = false
   repeat
-    local data = client:receive()
-    if data == nil or data == '' then
+    while not socket.select({client}, nil, 0.01)[client] do
+      coroutine.yield()
+    end
+    local data, err = client:receive()
+    if err == 'closed' then
+      print("Aborting connection:", data, err)
       break
     end
 
-    print("{" .. cli_name .. "} Received message: '" .. data .. "'")
-    local response, err = run_command(client, split_message(data))
-    if response == nil then
-      print("{" .. cli_name .. "} Error: " .. err)
-      response = "ERROR: " .. err
+    print("Received message: '" .. data .. "'")
+    quit, err = run_command(client, split_message(data))
+    if err ~= nil then
+      print("Error: " .. err)
+      client:send("ERROR: " .. err)
     end
-    client:send(response)
-  until false
+  until quit
+
+  print("Closing connection")
   client:close()
 end
 
@@ -61,15 +73,27 @@ function main()
   print("Listening on ip '" .. ip .. "' port '" .. port .. "'")
 
   server:listen()
+  server:settimeout(0)
+
+  local connected_clients = {}
 
   repeat
-    -- Receive a client
-    local client = server:accept()
+    -- Receive all clients
+    repeat
+      local client = server:accept()
+      if client then
+        connected_clients[client] = coroutine.create(handle_client)
+      end
+    until client == nil
 
-    -- Handle this new client (in this threat or in another)
-    handle_client(client)
+    for client, routine in pairs(connected_clients) do
+      coroutine.resume(routine, client)
+      if coroutine.status(routine) == 'dead' then
+        connected_clients[client] = nil
+      end
+    end
 
-    quit = true
+    quit = false
   until (quit == true)
 
   server:close()
