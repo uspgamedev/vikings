@@ -3,14 +3,36 @@ local socket = require("socket")
 
 local known_peers = {
   -- Bootstrap nodes! Currently we have none =(
-  { ip = "localhost", port = 12345 }
+  ["127.0.0.1"] = { ["56969"] = true }
 }
 
 local quit = false
 
+function yieldreceive(client)
+  while not socket.select({client}, nil, 0.01)[client] do
+    coroutine.yield()
+  end
+  return client:receive()
+end
+
+function yieldsend(client, data)
+  while not select(2, socket.select(nil, {client}, 0.01))[client] do
+    coroutine.yield()
+  end
+  return client:send(data .. '\n')
+end
+
 local commands = {}
-function commands.inform_client(client, arguments)
-  client:send('OK!')
+function commands.announce_self(client, arguments)
+  local cli_ip = client:getpeername()
+  local cli_port = arguments
+  if known_peers[cli_ip] and known_peers[cli_ip][cli_port] then
+    yieldsend(client, 'KNOWN')
+  else
+    yieldsend(client, 'WELCOME')
+    print("== new client!", cli_ip, cli_port)
+    known_peers[cli_ip][cli_port] = true
+  end
   return false
 end
 function commands.request_clients(client, arguments)
@@ -37,17 +59,14 @@ end
 function handle_client(client)
   local cli_ip, cli_port = client:getpeername()
   local cli_name = "[" .. cli_ip .. "]:" .. cli_port
-  local print = function(...) print("{" .. cli_name .. "}", ...) end
+  local print = function(...) print("{CLI - " .. cli_name .. "}", ...) end
 
   print("New connection")
   client:settimeout(0)
 
   local quit = false
   repeat
-    while not socket.select({client}, nil, 0.01)[client] do
-      coroutine.yield()
-    end
-    local data, err = client:receive()
+    local data, err = yieldreceive(client)
     if err == 'closed' then
       print("Aborting connection:", data, err)
       break
@@ -65,22 +84,50 @@ function handle_client(client)
   client:close()
 end
 
-function main()
-  local server = socket.tcp()
-  server:bind("*", 0)
+function handle_remote(remote_data)
+  local remote_ip, remote_port = unpack(remote_data)
+  local remote_name = "[" .. remote_ip .. "]:" .. remote_port
+  local print = function(...) print("{REM - " .. remote_name .. "}", ...) end
 
-  local ip, port = server:getsockname()
+  local remote = socket.tcp()
+  remote:settimeout(0)
+
+  remote:connect(remote_ip, remote_port)
+  print("New connection")
+  yieldsend(remote, "announce_self:"..(select(2, thisserver:getsockname())))
+  print("announced!")
+
+  local data, err = yieldreceive(remote)
+  print("Server sent " .. data)
+
+  yieldsend(remote, "request_clients")
+
+  print("Closing connection")
+  remote:close()
+end
+
+function main()
+  thisserver = socket.tcp()
+  thisserver:bind("*", 0)
+
+  local ip, port = thisserver:getsockname()
   print("Listening on ip '" .. ip .. "' port '" .. port .. "'")
 
-  server:listen()
-  server:settimeout(0)
+  thisserver:listen()
+  thisserver:settimeout(0)
 
   local connected_clients = {}
+
+  for ip, ports in pairs(known_peers) do
+    for port, _ in pairs(ports) do
+      connected_clients[{ip, port}] = coroutine.create(handle_remote)
+    end
+  end
 
   repeat
     -- Receive all clients
     repeat
-      local client = server:accept()
+      local client = thisserver:accept()
       if client then
         connected_clients[client] = coroutine.create(handle_client)
       end
@@ -96,7 +143,7 @@ function main()
     quit = false
   until (quit == true)
 
-  server:close()
+  thisserver:close()
 
   print "Quit networking!"
 end
