@@ -7,6 +7,7 @@ require 'map.maploader'
 require 'game.sound'
 require 'ui.menubuilder'
 require 'database'
+require 'network.node'
 
 
 local debug = false
@@ -78,6 +79,9 @@ function love.load (args)
 
   -- Setup database
   database.init()
+
+  -- Setup network
+  network.node.init()
 
   -- Setup message handler
   message.add_receiver('debug', function (...) return debug end)
