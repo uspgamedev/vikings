@@ -40,19 +40,27 @@ function string.ends(String,End)
 end
 
 function parse_args(args)
-  local map_file, no_joystick, debug = false
+  local position_args, option_args = {}, {}
   for _, arg in ipairs(args) do
-    map_file = string.ends(arg, ".lua") and arg or map_file
-    no_joystick = no_joystick or (arg == "--no-joystick")
-    if arg == '--debug' then
-      debug = true
+    if arg:sub(1, 2) == '--' then
+      option_args[arg:sub(3)] = true
+    elseif arg:sub(1, 1) == '-' then
+      option_args[arg:sub(2)] = true
+    else
+      table.insert(position_args, arg)
     end
   end
-  cli_args = { map_file = map_file, joystick = not no_joystick, debug = debug }
+  return position_args, option_args
 end
 
 function love.load (args)
-  parse_args(args)
+  position_args, option_args = parse_args(args)
+  cli_args = { 
+    map_file = (#position_args >= 2) and position_args[2]:ends(".lua") and position_args[2],
+    joystick = option_args["no-joystick"] == nil,
+    debug = option_args["debug"] ~= nil,
+    servermode = option_args["server-mode"] ~= nil,
+  }
 
   -- Setup graphics
   graphics = {}
