@@ -99,6 +99,7 @@ end
 
 
 function love.update (dt)
+  network.node.check_error()
   current_scene:update(dt < 0.1 and dt or 0.1)
 end
 
