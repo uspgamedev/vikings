@@ -8,6 +8,15 @@ local known_peers = {
 
 local quit = false
 
+function is_peer_known(ip, port)
+  return known_peers[ip] and known_peers[ip][port]
+end
+
+function add_peer(ip, port)
+  print("== new client!", ip, port)
+  known_peers[ip][port] = true
+end
+
 function yieldreceive(client)
   while not socket.select({client}, nil, 0.01)[client] do
     coroutine.yield()
@@ -26,17 +35,23 @@ local commands = {}
 function commands.announce_self(client, arguments)
   local cli_ip = client:getpeername()
   local cli_port = arguments
-  if known_peers[cli_ip] and known_peers[cli_ip][cli_port] then
+  if is_peer_known(cli_ip, cli_port) then
     yieldsend(client, 'KNOWN')
   else
     yieldsend(client, 'WELCOME')
-    print("== new client!", cli_ip, cli_port)
-    known_peers[cli_ip][cli_port] = true
+    add_peer(cli_ip, cli_port)
   end
   return false
 end
 function commands.request_clients(client, arguments)
-  client:send('DENIED')
+  for ip, ports in pairs(known_peers) do
+    for port, data in pairs(ports) do
+      if data then
+        yieldsend(client, ip .. ' ' .. port)
+      end
+    end
+  end
+  yieldsend(client, '')
   return true
 end
 
@@ -100,7 +115,21 @@ function handle_remote(remote_data)
   local data, err = yieldreceive(remote)
   print("Server sent " .. data)
 
+  print("Requesting clients.")
   yieldsend(remote, "request_clients")
+  while true do
+    local newpeer = yieldreceive(remote)
+    if newpeer == '' then
+      print("Server sent linebreak, we are done.")
+      break
+    end
+    local ip, port = newpeer:match("^(%S+) (%d+)$")
+    if not ip then
+      print("Server sent invalid client string: '" .. newpeer .. "'")
+    else
+      add_peer(ip, port)
+    end
+  end
 
   print("Closing connection")
   remote:close()
