@@ -2,6 +2,9 @@
 module ('gamenet', package.seeall) do
 
   local socket = require("socket")
+  local uuid4 = require("uuid4")
+
+  require 'yieldsocket'
 
   local known_peers = {
     -- Bootstrap nodes! Currently we have none =(
@@ -9,62 +12,64 @@ module ('gamenet', package.seeall) do
 
   local quit = false
 
-  function is_peer_known(ip, port)
-    return known_peers[ip] and known_peers[ip][tostring(port)]
+  function count_peers()
+    local resp = 0
+    for _, _ in pairs(known_peers) do
+      resp = resp + 1
+    end
+    return resp
   end
 
-  function add_peer(ip, port)
+
+  function create_node()
+    local sock = socket.tcp()
+    sock:bind("*", 0)
+    return {
+      uuid = uuid4.getUUID(),
+      socket = sock
+    }
+  end
+
+  function add_peer(uuid, ip, port)
     print("== new client!", ip, port)
-    known_peers[ip] = known_peers[ip] or {}
-    known_peers[ip][tostring(port)] = true
-  end
-
-  function yieldreceive(client)
-    while not socket.select({client}, nil, 0.01)[client] do
-      coroutine.yield()
-    end
-    return client:receive()
-  end
-
-  function yieldsend(client, data)
-    while not select(2, socket.select(nil, {client}, 0.01))[client] do
-      coroutine.yield()
-    end
-    return client:send(data .. '\n')
+    known_peers[uuid] = { uuid = uuid, ip = ip, port = port }
   end
 
   local commands = {}
   function commands.announce_self(client, arguments)
+    print "hai"
     local cli_ip = client:getpeername()
-    local cli_port = arguments
-    if is_peer_known(cli_ip, cli_port) then
-      yieldsend(client, 'KNOWN')
-    else
-      yieldsend(client, 'WELCOME')
-      add_peer(cli_ip, cli_port)
+    local cli_uuid, cli_port = arguments:match("^([^ ]+) ([^ ]+)$")
+
+    if not (cli_uuid and cli_port) then
+      -- TODO: invalid input.
+      print("invalid input! '" .. arguments .. "': " .. cli_uuid .. " --- " .. cli_port)
+      return false
+    end
+    print "stuff"
+    add_peer(cli_uuid, cli_ip, cli_port)
+    return false
+  end
+
+  function commands.request_node_list(client)
+    local size = count_peers()
+    yieldsend(client, 'NODE_LIST ' .. size)
+
+    for uuid, node in pairs(known_peers) do
+      if node.ip and node.port then
+        yieldsend(client, "NODE_INFO " .. uuid .. " " .. node.ip .. " " .. node.port)
+      end
     end
     return false
   end
-  function commands.request_clients(client, arguments)
-    for ip, ports in pairs(known_peers) do
-      for port, data in pairs(ports) do
-        if data then
-          yieldsend(client, ip .. ' ' .. port)
-        end
-      end
-    end
-    yieldsend(client, '')
-    return true
-  end
 
-  function split_message(message)
-    local first_split = message:find(":", 1, true)
-    local command = message:sub(1, (first_split or 0) - 1):lower()
-    local arguments = first_split and message:sub(first_split + 1)
-    return command, arguments
+  function commands.request_known_protocols(client)
+    yieldsend(client, 'KNOWN_PROTOCOLS ')
+    return false
   end
 
   function run_command(client, command, arguments)
+    print("command: '" .. command .. "'") 
     if not commands[command] then
       return false, "invalid command '" .. command .. "'"
     else
@@ -72,6 +77,12 @@ module ('gamenet', package.seeall) do
     end
   end
 
+  function split_message(message)
+    local first_split = message:find(" ", 1, true)
+    local command = message:sub(1, (first_split or 0) - 1):lower()
+    local arguments = first_split and message:sub(first_split + 1)
+    return command, arguments
+  end
 
   function handle_client(client)
     local cli_ip, cli_port = client:getpeername()
@@ -111,7 +122,7 @@ module ('gamenet', package.seeall) do
 
     remote:connect(remote_ip, remote_port)
     print("New connection")
-    yieldsend(remote, "announce_self:"..(select(2, thisserver:getsockname())))
+    yieldsend(remote, "ANNOUNCE_SELF "..(select(2, thisserver:getsockname())))
     print("announced!")
 
     local data, err = yieldreceive(remote)
