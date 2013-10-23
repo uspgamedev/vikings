@@ -48,13 +48,18 @@ module ('gamenet', package.seeall) do
     return false
   end
 
-  function commands.request_known_protocols(client)
-    yieldsend(client, 'KNOWN_PROTOCOLS ')
+  function commands.request_known_services(client)
+    yieldsend(client, 'KNOWN_SERVICES ')
     return false
+  end
+
+  function invalid_command(client)
+    -- body
   end
 
   function run_command(client, message)
     local command_name, arguments = split_first(message)
-    -- body
+    local callback = commands[command_name] or invalid_command
+    invalid_command(client, split(arguments))
   end
 end
