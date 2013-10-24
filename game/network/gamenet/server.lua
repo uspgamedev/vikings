@@ -11,44 +11,72 @@ module ('gamenet', package.seeall) do
 
     -- methods
     step = nil,
+    start = nil,
     add_client = nil,
     remove_client = nil,
 
     -- attributes
-    socket = nil,
+    sock = nil,
     clients_socks = nil,
     connected_clients = nil,
+    timeout = nil,
+    port = 0,
   }
+  server.__index = server
 
-  function server.create(timeout)
-    local newserver = {}
+  function server.create(timeout, port)
+    local newserver = { 
+      sock    = socket.tcp(),
+      timeout = timeout,
+      port = port or 0,
+
+      clients_socks = {},
+      connected_clients = {},
+    }
     setmetatable(newserver, server)
 
-    newserver.sock = socket.tcp()
-    newserver.sock:bind("*", 0)
-    newserver.sock:settimeout(timeout)
     return newserver
   end
 
+  function server:start()
+    self.sock:bind("*", self.port)
+    self.sock:settimeout(self.timeout, 't')
+    self.sock:listen(3)
+    self.ip, self.port = self.sock:getsockname()
+
+    self:debug_message("Server Start with timeout " .. self.timeout)
+  end
+
   function server:step()
+    self:debug_message "Accept"
+
     local client_sock = self.sock:accept()
     if client_sock then
       self:add_client(client.create(client_sock))
     end
 
-    local read = socket.select(self.clients_socks, nil, timeout)
+    self:debug_message("Select")
+    local read = socket.select(self.clients_socks, nil, self.timeout)
     for _, sock in ipairs(read) do
       self.connected_clients[sock]:continue()
     end
   end
 
+  function server:close()
+    self.sock:close()
+  end
+
   function server:add_client(client)
+    self:debug_message "Add Client"
+
     table.insert(self.clients_socks, client.socket)
     self.connected_clients[client.socket] = client
     client.server = self
   end
 
   function server:remove_client(client)
+    self:debug_message "Remove Client"
+
     assert(client.server == self)
     client.server = nil
     for i, sock in ipairs(self.clients_socks) do
@@ -58,5 +86,9 @@ module ('gamenet', package.seeall) do
       end
     end
     self.connected_clients[client.socket] = nil
+  end
+
+  function server:debug_message(str)
+    print("[Server @ " .. self.ip .. " -- " .. self.port .. "] " .. str)
   end
 end

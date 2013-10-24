@@ -1,8 +1,5 @@
 module ('gamenet', package.seeall) do
 
-  local socket = require("socket")
-  local uuid4 = require("uuid4")
-
   function split_first(s)
     local head, tail = s:match("^([^ ]+) (.*)$")
     if not head then
@@ -23,43 +20,37 @@ module ('gamenet', package.seeall) do
 
   commands = {}
   function commands.announce_self(client, cli_uuid, cli_port)
-    local cli_ip = client:getpeername()
-    local cli_uuid, cli_port = arguments:match("^([^ ]+) ([^ ]+)$")
-
-    if not (cli_uuid and cli_port) then
-      -- TODO: invalid input.
-      print("invalid input! '" .. arguments .. "': " .. cli_uuid .. " --- " .. cli_port)
-      return false
+    local cli_ip = client.ip
+    if (cli_ip and cli_uuid and cli_port) then
+      add_node{ uuid = cli_uuid, ip = cli_ip, port = cli_port}
+    else
+      self:debug_message("invalid input! '" .. arguments .. "': " .. cli_uuid .. " --- " .. cli_port)
     end
-    print "stuff"
-    add_peer(cli_uuid, cli_ip, cli_port)
-    return false
   end
 
   function commands.request_node_list(client)
-    local size = count_peers()
-    yieldsend(client, 'NODE_LIST ' .. size)
-
     for uuid, node in pairs(known_peers) do
       if node.ip and node.port then
-        yieldsend(client, "NODE_INFO " .. uuid .. " " .. node.ip .. " " .. node.port)
+        client:send("NODE_INFO " .. uuid .. " " .. node.ip .. " " .. node.port)
       end
     end
-    return false
   end
 
   function commands.request_known_services(client)
-    yieldsend(client, 'KNOWN_SERVICES ')
-    return false
+    client:send('KNOWN_SERVICES ')
   end
 
-  function invalid_command(client)
-    -- body
+  function invalid_command(client, command)
+    client:debug_message("Invalid command: '" .. command .. "'")
+  end
+
+  function make_invalid_command_callback(command)
+    return function(client, ...) return invalid_command(client, command, ...) end
   end
 
   function run_command(client, message)
     local command_name, arguments = split_first(message)
-    local callback = commands[command_name] or invalid_command
-    invalid_command(client, split(arguments))
+    local callback = commands[command_name] or make_invalid_command_callback(command_name)
+    callback(client, split(arguments))
   end
 end
