@@ -6,7 +6,6 @@ module ('gamenet', package.seeall) do
   require 'database'
   require 'server'
 
-
   function handle_remote(remote_data)
     local remote_ip, remote_port = unpack(remote_data)
     local remote_name = "[" .. remote_ip .. "]:" .. remote_port
@@ -43,13 +42,31 @@ module ('gamenet', package.seeall) do
     remote:close()
   end
 
+  function remote_processing_func()
+    local remote_socks = {}
+    for uuid, node in pairs(known_nodes) do
+      if node.ip and node.port then
+        local s = socket.tcp()
+        s:connect(node.ip, node.port)
+        table.insert(remote_socks, s)
+      end
+    end
+    while true do
+      local can_read, can_write = socket.select(remote_socks, remote_socks, 0.1)
+      for _, remote in ipairs(can_write) do
+
+      end
+      coroutine.yield()
+    end
+  end
+
   function run()
     local serv = server.create(1, 9001)
-    add_node{ uuid = uuid4.getUUID() }
-
+    remote_processing = coroutine.create(remote_processing_func)
     serv:start()
     while true do
       serv:step()
+      coroutine.resume(remote_processing)
     end
     serv:close()
   end

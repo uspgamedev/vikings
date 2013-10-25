@@ -50,6 +50,7 @@ module ('gamenet', package.seeall) do
 
   function run_command(client, message)
     local command_name, arguments = split_first(message)
+    command_name = command_name:lower()
     local callback = commands[command_name] or make_invalid_command_callback(command_name)
     callback(client, split(arguments))
   end

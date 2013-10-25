@@ -26,8 +26,7 @@ module ('gamenet', package.seeall) do
 
   function server.create(timeout, port)
     local newserver = { 
-      sock    = socket.tcp(),
-      timeout = timeout,
+      timeout = timeout and timeout * 0.5 or nil,
       port = port or 0,
 
       clients_socks = {},
@@ -39,7 +38,11 @@ module ('gamenet', package.seeall) do
   end
 
   function server:start()
-    self.sock:bind("*", self.port)
+    self.sock = socket.tcp()
+    if not self.sock:bind("*", self.port) then
+      self.sock = socket.tcp()
+      assert(self.sock:bind("*", 0))
+    end
     self.sock:settimeout(self.timeout, 't')
     self.sock:listen(3)
     self.ip, self.port = self.sock:getsockname()
