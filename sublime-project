@@ -18,8 +18,8 @@
     [
         {
             "name": "Love2D",
-			"working_dir": "${project_path}",
-            "cmd": ["love", "game", "--no-joystick", "--debug"]
+			"working_dir": "${project_path}/game",
+            "cmd": ["love", ".", "--no-joystick", "--debug"]
         }
     ]
 }
