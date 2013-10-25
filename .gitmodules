@@ -1,0 +1,3 @@
+[submodule "game/etherclan"]
+	path = game/etherclan
+	url = git://github.com/henriquegemignani/etherclan.git
