@@ -1,5 +1,9 @@
-require 'etherclan.etherclan'
 require 'etherclan.database'
+require 'etherclan.server'
 
-etherclan.add_node("????","127.0.0.1", 9001)
-return etherclan.run()
+local serv = etherclan.server.create(nil, 1, 9001)
+serv:start()
+while true do
+  serv:step()
+end
+serv:close()
