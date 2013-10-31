@@ -1,23 +1,22 @@
 
 module ('network.node', package.seeall) do
 
-  local thread
-  function init_background()
-    thread = love.thread.newThread("network.node", "network/node_thread.lua")
-    thread:start()
+  require 'etherclan.database'
+
+  local db = etherclan.database.create()
+  local routine
+  local last_search
+  local search_cooldown = 15.0
+
+  function init()
+    routine = coroutine.create(love.filesystem.load "network/node_thread.lua")
+    assert(coroutine.resume(routine, db))
+    last_search = love.timer.getTime()
   end
 
-  function init_foreground()
-    local chunk = love.filesystem.load "network/node_thread.lua"
-    return chunk()
+  function step()
+    local search = (love.timer.getTime() - last_search)
+    if search > search_cooldown then last_search = love.timer.getTime() end
+    assert(coroutine.resume(routine, search > search_cooldown))
   end
-
-  -- Throws an error if there's any error.
-  function check_error()
-    local err = thread:get 'error'
-    if err then
-      error(err)
-    end
-  end
-
 end

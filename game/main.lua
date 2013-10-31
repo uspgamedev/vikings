@@ -85,13 +85,7 @@ function love.load (args)
   message.add_receiver('main', main_message_handler)
 
   -- Setup network
-  if cli_args.servermode then
-    network.node.init_foreground()
-    love.event.push "quit"
-    return
-  else
-    network.node.init_background()
-  end
+  network.node.init()
 
   -- Initial scene
   message.send [[main]] {'change_scene', ui.mainmenu()}
@@ -99,7 +93,7 @@ end
 
 
 function love.update (dt)
-  network.node.check_error()
+  network.node.step()
   current_scene:update(dt < 0.1 and dt or 0.1)
 end
 
