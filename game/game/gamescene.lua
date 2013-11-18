@@ -8,8 +8,6 @@ require 'game.sound'
 
 gamescene = scene:new {
   map = nil,
-  background = nil,
-  music = nil,
 
   tasks = nil,
   players = nil,
@@ -35,14 +33,16 @@ function gamescene:__init()
 end
 
 function gamescene:focus()
-  if self.music then
-    sound.set_bgm(self.music)
+  if self.map.music then
+    sound.set_bgm("data/" .. self.map.music)
   end
   message.add_receiver('game', function (cmd, ...) return self:handle_message(cmd, ...) end)
+  self.focused = true
 end
 
 function gamescene:unfocus()
   message.remove_receiver('game')
+  self.focused = nil
 end
 
 function gamescene.message_handlers.add(self, ...)
@@ -118,12 +118,16 @@ end
 
 function gamescene:change_map(map)
   hitbox.unregister()
+  map.background_image = map.background and love.graphics.newImage("data/" .. map.background)
   self.map = map
   self.things = maploader.create_things(map)
   for id, player in ipairs(self.players) do
     self:add_player(player, id)
   end
   self.camera_pos:set(self.map.locations.playerstart)
+  if self.focused and self.map.music then
+    sound.set_bgm("data/" .. self.map.music)
+  end
 end
 
 function gamescene:update(dt)
@@ -175,10 +179,10 @@ function gamescene:draw(graphics)
   end
 
   -- Drawing the background
-  if self.map and self.background then
-    local bg_x = (self.camera_pos.x / self.map.width)  * (graphics.getWidth()  - self.background:getWidth() * 2)
-    local bg_y = (self.camera_pos.y / self.map.height) * (graphics.getHeight() - self.background:getHeight() * 2)
-    graphics.draw(self.background, bg_x, bg_y, 0, 2, 2)
+  if self.map and self.map.background_image then
+    local bg_x = (self.camera_pos.x / self.map.width)  * (graphics.getWidth()  - self.map.background_image:getWidth() * 2)
+    local bg_y = (self.camera_pos.y / self.map.height) * (graphics.getHeight() - self.map.background_image:getHeight() * 2)
+    graphics.draw(self.map.background_image, bg_x, bg_y, 0, 2, 2)
   end
 
   -- Drawing the map

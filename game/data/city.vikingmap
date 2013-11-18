@@ -1,0 +1,50 @@
+function multiple(val, times)
+  local result = {}
+  for i = 1,times do
+    result[i] = val
+  end
+  return result
+end
+local width = 32
+return {
+  ["music"] = "music/happyland.ogg",
+  ["background"] = "background/Q_x-winter_village.png",
+  ["things"] = {
+    [1] = {
+      ["type"] = [[door]],
+      ["position"] = {
+        [1] = 30,
+        [2] = 9,
+      },
+    },
+  },
+  ["locations"] = {
+    ["playerstart"] = {
+      [1] = 12,
+      [2] = 9,
+    },
+  },
+  ["tileset"] = tileset:new {
+    name = [[city]],
+    types = {
+      ["I"] = tiletype:new { floor = true, imgpath = [[data/tile/ice.png]] },
+      [" "] = tiletype:new { floor = false, imgpath = nil },
+    }
+  },
+  ["height"] = 12,
+  ["width"] = width,
+  ["tiles"] = {
+    multiple({ type = ' ' }, width),
+    multiple({ type = ' ' }, width),
+    multiple({ type = ' ' }, width),
+    multiple({ type = ' ' }, width),
+    multiple({ type = ' ' }, width),
+    multiple({ type = ' ' }, width),
+    multiple({ type = ' ' }, width),
+    multiple({ type = ' ' }, width),
+    multiple({ type = ' ' }, width),
+    multiple({ type = 'I' }, width),
+    multiple({ type = 'I' }, width),
+    multiple({ type = 'I' }, width),
+  },
+}

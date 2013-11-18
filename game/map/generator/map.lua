@@ -69,6 +69,8 @@ module ('mapgenerator', package.seeall) do
     local blocks_grid = random_grid_from_blocks(26, 18, blocks)
     local cavegrid = mapgenerator.generate_cave_from_grid(blocks_grid)
     local m = generate_map_with_grid(cavegrid)
+    m.music = "music/JordanTrudgett-Snodom-ccby3.ogg"
+    m.background = "background/Ardentryst-Background_SnowCave_Backing.png"
 
     local valid_spots = find_grounded_open_spots(m)
     m.locations.playerstart = get_random_position(valid_spots, debug)

@@ -6,6 +6,11 @@ if hostname then
 end
 
 local serv = etherclan.server.create(db, 0.001, 9001)
+
+function serv.node.services.vikings(self, msg)
+  print("YEAHHHHHH:", msg)
+end
+
 serv:start()
 while true do
   local search = coroutine.yield()

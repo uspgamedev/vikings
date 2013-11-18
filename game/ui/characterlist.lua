@@ -62,9 +62,7 @@ module ('ui', package.seeall) do
       end
 
       local newscene = gamescene:new {
-        map = maploader.load(args.map_file, args.debug),
-        music = "data/music/JordanTrudgett-Snodom-ccby3.ogg",
-        background = love.graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
+        map = maploader.load("data/city.vikingmap", args.debug),
         players = { player },
       }
 

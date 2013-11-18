@@ -78,7 +78,7 @@ end
 
 function hitbox:get_collisions (target)
   targetclass = classes[target or self.targetclass]
-  if not targetclass then return end
+  if not targetclass then return {} end
   local collisions = {}
   for another,check in pairs(targetclass) do
     if check and self:colliding(another) then

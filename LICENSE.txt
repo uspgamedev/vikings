@@ -24,44 +24,56 @@ freely, subject to the following restrictions:
 ===  License for specific files
 ==================================================
 
-game/sprite/male_spritesheet.png
+game/data/sprite/male_spritesheet.png
 Source: [LPC] 2 Characters - http://opengameart.org/content/lpc-2-characters
 By: pennomi, laetissima and makrohn. Also LPC base sprite artists, since this is
     a derivative work of those as well.
 License: CC3.0-BY-SA
 
-game/sound/hit10.mp3.ogg
+game/data/sound/hit10.mp3.ogg
 Source: 37 Hits/Punches - http://opengameart.org/content/37-hitpunches
 By: Independent.nu.
 License: CC0
 
-game/sound/swosh-01.ogg
+game/data/sound/swosh-01.ogg
 Source: Swish, Bamboo Stick Weapon Shwoshes -
         http://opengameart.org/content/swish-bamboo-stick-weapon-swhoshes
 By: Iwan Gabovitch
 License: CC0
 
-game/sound/itempick2.wav
-game/sound/jump.wav
-game/sound/land.wav
+game/data/sound/itempick2.wav
+game/data/sound/jump.wav
+game/data/sound/land.wav
 Source: 3 Item Sounds - http://opengameart.org/content/3-item-sounds
 By: Michel Baradari
 License: CC3.0-BY
 
-game/sound/clang2.wav
+game/data/sound/clang2.wav
 Source: 33 metal clang sounds from cast iron pans -
         http://opengameart.org/content/33-metal-clang-sounds-cast-iron-pans
 By: bart
 License: CC0
 
-game/music/JordanTrudgett-Snodom-ccby3.ogg
+game/data/music/happyland.ogg
+Source: Music Content #20 – Happy Land [Loops] - 
+        http://wrathgames.com/blog/2012/01/25/music-content-20-happy-land-loops/
+By: WrathGames Studio
+License: Free to use in any commercial or non-commercial project!
+
+game/data/music/JordanTrudgett-Snodom-ccby3.ogg
 Source: Fantasy Action RPG Soundtrack [14 tracks for Ardentryst by Jordan Trudgett] -
         http://opengameart.org/content/fantasy-action-rpg-soundtrack-14-tracks-for-ardentryst-by-jordan-trudgett
 By: Jordan Trudgett
 License: CC3.0-BY
 
-game/background/Ardentryst-Background_SnowCave_Backing.png
+game/data/background/Ardentryst-Background_SnowCave_Backing.png
 Source: Backdrops for story and level [for Ardentryst by Jordan Trudgett] -
         http://opengameart.org/content/backdrops-for-story-and-level-for-ardentryst-by-jordan-trudgett
 By: Jordan Trudgett
 License: CC3.0-BY
+
+game/data/background/Q_x-winter_village.png
+Source: Autumn and Winter Village drawings (BW) -
+        http://opengameart.org/content/autumn-and-winter-village-drawings-bw
+By: Q_x
+License: CC-BY-SA 3.0
