@@ -9,6 +9,7 @@ thing = lux.object.new {
   accel     = nil,
   sprite    = nil,
   hitbox    = nil,
+  color     = nil,
   air       = 0,
   name      = "Thing",
 
@@ -19,6 +20,7 @@ thing.__init = {
   pos       = vec2:new{ 0, 0 },
   spd       = vec2:new{ 0, 0 },
   accel     = vec2:new{ 0, 0 },
+  color     = { 255, 255, 255 },
   tasks     = {},
   drawtasks = {},
   hitboxes  = {
@@ -154,7 +156,9 @@ function thing:shove (dv)
 end
 
 function thing:draw (graphics)
+  graphics.setColor(unpack(self.color))
   self.sprite:draw(graphics, self.pos)
+  graphics.setColor(255, 255, 255)
   for _, task in pairs(self.drawtasks) do
     task(self, graphics)
   end

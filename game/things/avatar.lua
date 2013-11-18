@@ -266,10 +266,12 @@ function avatar:draw (graphics)
     font:getWidth(life_bar),
     font:getHeight(life_bar) * 2 + self.sprite.data.quadsize
   )
+  local composed_color = { unpack(self.color) }
   if debug and self.equipment[1] then
     local glow = self.charging >= 0 and self.charging/DASH_THRESHOLD or 0
-    graphics.setColor(255, 255*(1-glow), 255)
+    composed_color[2] = composed_color[2] * (1-glow)
   end
+  graphics.setColor(unpack(composed_color))
   self.sprite:draw(graphics, self.pos)
   graphics.setColor(255, 255, 255)
   if self.slash and self.attacking and self.slash.activated then

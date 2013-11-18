@@ -56,6 +56,7 @@ end
 
 function love.load (args)
   position_args, option_args = parse_args(args)
+
   cli_args = { 
     map_file = (#position_args >= 2) and position_args[2]:ends(".lua") and position_args[2],
     joystick = option_args["no-joystick"] == nil,
@@ -81,7 +82,7 @@ function love.load (args)
   database.init()
 
   -- Setup message handler
-  message.add_receiver('debug', function (...) return debug end)
+  message.add_receiver('debug', function (...) return cli_args.debug end)
   message.add_receiver('main', main_message_handler)
 
   -- Setup network

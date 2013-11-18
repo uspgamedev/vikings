@@ -58,9 +58,11 @@ module ('ui', package.seeall) do
                                y + theme.border, 
                                self.width - theme.border * 2,
                                self.height - theme.border * 2)
-    graphics.setColor(unpack(theme.text_color))
-    local fontheight = graphics.getFont() and graphics.getFont():getHeight() or 10
-    graphics.printf(self.text, x, y + (self.height - fontheight) * 0.5, self.width, 'center')
+    if self.text and #self.text > 0 then
+      graphics.setColor(unpack(theme.text_color))
+      local fontheight = graphics.getFont() and graphics.getFont():getHeight() or 10
+      graphics.printf(self.text, x, y + (self.height - fontheight) * 0.5, self.width, 'center')
+    end
   end
 
 end

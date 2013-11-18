@@ -21,10 +21,10 @@ end
 
 function animation:step (last, observer)
   local next = self['step_'..self.type] (self, last)
-  if self.frames[next].event then
+  if observer and self.frames[next].event then
     self.frames[next].event(observer)
   end
-  if last == #self.frames and self.finishevent then
+  if last == #self.frames and observer and self.finishevent then
     self.finishevent(observer)
   end
   return next

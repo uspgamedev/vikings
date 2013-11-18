@@ -144,6 +144,7 @@ local function build_player (pos, joystick)
     slashspr  = build_slash(),
     frame     = { i=4, j=1 },
     name      = "Player",
+    color     = { math.random(0, 255), math.random(0, 255), math.random(0, 255) },
   }
   player.hitboxes.harmful = hitbox:new {
     size  = vec2:new { 0.8, 0.8 },

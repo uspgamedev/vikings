@@ -30,6 +30,11 @@ module ('ui', package.seeall) do
   end
 
   function menuscene:update(dt)
+    for _, button in ipairs(self.buttons) do
+      if button.update then
+        button:update(dt)
+      end
+    end
   end
 
   function menuscene:input_pressed(key, joystick, mouse)

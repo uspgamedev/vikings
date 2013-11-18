@@ -2,6 +2,7 @@
 module ('ui', package.seeall) do
 
   require 'ui.menuscene'
+  require 'ui.characterlist'
   require 'network.maplist'
   require 'game.message'
   require 'game.gamescene'
@@ -94,18 +95,8 @@ module ('ui', package.seeall) do
   end
 
   function mainmenu()
-    function startgame()
-      local args = message.send [[main]] {'get_cliargs'}
-
-      local newscene = gamescene:new {
-        map = maploader.load(args.map_file, args.debug),
-        music = "data/music/JordanTrudgett-Snodom-ccby3.ogg",
-        background = love.graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
-        players = { builder.build_thing("player", vec2:new{}, 
-                    not args.no_joystick and love.joystick.getNumJoysticks() > 0 and 1) },
-      }
-
-      message.send [[main]] {'change_scene', newscene}
+    function makecharselectmenu()
+      message.send [[main]] {'change_scene', charselectmenu(themes), true}
     end
     function makeinternetmenu()
       message.send [[main]] {'change_scene', internetmenu(), true}
@@ -116,7 +107,7 @@ module ('ui', package.seeall) do
       ystart = 100,
       border = 20,
       buttons = {
-        button:new{ text = "Play", onclick = startgame, themes = themes },
+        button:new{ text = "Play", onclick = makecharselectmenu, themes = themes },
         button:new{ text = "Internet", onclick = makeinternetmenu, themes = themes },
         button:new{ text = "Quit", onclick = closemenu, themes = themes },
       }
