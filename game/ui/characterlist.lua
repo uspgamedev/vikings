@@ -15,6 +15,8 @@ module ('ui', package.seeall) do
   function characterbutton:draw(graphics, status)
     characterbutton:__super().draw(self, graphics, status)
 
+    local theme = self:get_theme(status)
+    local x, y  = self.position:get()
     if status then
       self.character.sprite:play_animation(self.character.animationset.moving)
     else
@@ -22,6 +24,22 @@ module ('ui', package.seeall) do
     end
     graphics.setColor(unpack(self.character.color))
     self.character.sprite:draw(graphics, (self.position + vec2:new{70, 70}) * 1/(graphics.get_tilesize()))
+
+    graphics.setColor(unpack(theme.text_color))
+    graphics.print(self.character.name, x + 80, y + 12)
+
+    for i, equip in pairs(self.character.equipment) do
+      graphics.setColor(255, 255, 255)
+      equip.sprite:draw(graphics, (self.position + vec2:new{40 + 72*i, 77}) * 1/(graphics.get_tilesize()))
+
+      graphics.setColor(unpack(theme.text_color))
+      if equip.damage then
+        graphics.print("D: " .. equip.damage, x + 27 + 72*i, y + 33)
+      elseif equip.armor then
+        graphics.print("A: " .. equip.armor, x + 27 + 72*i, y + 33)
+      end
+      graphics.print("W: " .. equip.weight, x + 25 + 72*i, y + 47)
+    end
   end
 
   function characterbutton:update(dt)
@@ -36,12 +54,18 @@ module ('ui', package.seeall) do
     function startgame(button)
       local args = message.send [[main]] {'get_cliargs'}
 
+      local player = button.character or builder.build_thing("player")
+      if not args.no_joystick and love.joystick.getNumJoysticks() > 0 then
+        builder.add_joystick_input(player, 1)
+      else
+        builder.add_keyboard_input(player)
+      end
+
       local newscene = gamescene:new {
         map = maploader.load(args.map_file, args.debug),
         music = "data/music/JordanTrudgett-Snodom-ccby3.ogg",
         background = love.graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
-        players = { builder.build_thing("player", vec2:new{}, 
-                    not args.no_joystick and love.joystick.getNumJoysticks() > 0 and 1) },
+        players = { player },
       }
 
       message.send [[main]] {'change_scene', newscene}

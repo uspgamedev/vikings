@@ -137,7 +137,7 @@ function build_bumpbox (type)
   }
 end
 
-local function build_player (pos, joystick)
+local function build_player (pos)
   local player = avatar:new {
     pos       = pos,
     sprite    = build_sprite(),
@@ -176,14 +176,11 @@ local function build_player (pos, joystick)
     end
   end
 
-  local axe = build_thing("ironaxe", vec2:new{}, {3,3}, {3,3})
+  local axe = build_thing("ironaxe", vec2:new{}, {2,5}, {3,4})
   player:equip(axe.slot, axe)
-  if joystick then
-    add_joystick_input(player, joystick)
-  else
-    add_keyboard_input(player)
-  end
 
+  local armor = build_thing("leatherarmor", vec2:new{}, {2,4}, {1,3})
+  player:equip(armor.slot, armor)
   return player
 end
 
@@ -387,11 +384,13 @@ local function build_ironaxe (pos, dmg, wgt)
   return item
 end
 
-local function build_leatherarmor (pos)
+local function build_leatherarmor (pos, armor, wgt)
+  armor = armor or {3,10}
+  wgt = wgt or {3,8}
   local item = collectable:new {
     pos       = pos,
-    armor     = math.random(3, 7),
-    weight    = math.random(4, 8),
+    armor     = math.random(unpack(armor)),
+    weight    = math.random(unpack(wgt)),
     sprite    = build_armorsprite(),
     slot      = 2,
     name      = "Leather Armor",
