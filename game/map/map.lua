@@ -11,6 +11,7 @@ map = lux.object.new {
   tileset = nil,
   locations = nil,
   things = nil,
+  camera_offset = 1,
 }
 
 function map.get_tilesize ()

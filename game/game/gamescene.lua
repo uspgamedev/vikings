@@ -176,6 +176,7 @@ end
 function gamescene:draw(graphics)
   if self.players[1] then
     self.camera_pos = self.players[1].pos:clone()
+    self.camera_pos.y = self.camera_pos.y - self.map.camera_offset
   end
 
   -- Drawing the background
