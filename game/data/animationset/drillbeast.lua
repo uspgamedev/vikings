@@ -3,9 +3,9 @@ require 'game.animation'
 
 module ('animationset', package.seeall)
 
-monster = {}
+drillbeast = {}
 
-monster.standing = animation:new {
+drillbeast.standing = animation:new {
   fps     = 1,
   type    = 'once',
   frames  = {
@@ -13,7 +13,7 @@ monster.standing = animation:new {
   }
 }
 
-monster.moving = animation:new {
+drillbeast.moving = animation:new {
   fps     = 25,
   type    = 'loop',
   frames  = {
@@ -26,7 +26,7 @@ monster.moving = animation:new {
   }
 }
 
-monster.attacking = animation:new {
+drillbeast.attacking = animation:new {
   fps     = 30,
   type    = 'once',
   frames  = {
@@ -40,10 +40,10 @@ monster.attacking = animation:new {
   }
 }
 
-monster.attacking.frames[3].event = function (observer)
+drillbeast.attacking.frames[3].event = function (observer)
   observer.slash:activate()
 end
 
-function monster.attacking.finishevent (observer)
+function drillbeast.attacking.finishevent (observer)
   observer:stopattack()
 end

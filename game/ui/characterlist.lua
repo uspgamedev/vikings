@@ -54,7 +54,7 @@ module ('ui', package.seeall) do
     function startgame(button)
       local args = message.send [[main]] {'get_cliargs'}
 
-      local player = button.character or builder.build_thing("player")
+      local player = button.character or builder.thing "player"
       if not args.no_joystick and love.joystick.getNumJoysticks() > 0 then
         builder.add_joystick_input(player, 1)
       else
@@ -70,8 +70,8 @@ module ('ui', package.seeall) do
     end
 
     local characters = {
-      builder.build_thing("player"),
-      builder.build_thing("player"),
+      builder.thing "player",
+      builder.thing "player",
     }
 
     local buttons = {}

@@ -76,7 +76,7 @@ module ('mapgenerator', package.seeall) do
     m.locations.playerstart = get_random_position(valid_spots, debug)
     table.insert(m.things, { type = "door",       position = get_random_position(valid_spots, debug) })
     table.insert(m.things, { type = "npc_cain",   position = get_random_position(valid_spots, debug) })
-    table.insert(m.things, { type = "vendor",     position = get_random_position(valid_spots, debug) })
+    table.insert(m.things, { type = "npc_vendor", position = get_random_position(valid_spots, debug) })
     for i=1,(debug and 1 or 10) do
       table.insert(m.things, { type = "drillbeast", position = get_random_position(valid_spots, debug) })
     end

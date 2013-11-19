@@ -40,12 +40,18 @@ module ('ui', package.seeall) do
 
       database.fetch_content(map)
 
+      local player = builder.thing "player"
+      if not args.no_joystick and love.joystick.getNumJoysticks() > 0 then
+        builder.add_joystick_input(player, 1)
+      else
+        builder.add_keyboard_input(player)
+      end
+
       local newscene = gamescene:new {
         map = maploader.load(map.file_path, args.debug),
         music = "data/music/JordanTrudgett-Snodom-ccby3.ogg",
         background = love.graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
-        players = { builder.build_thing("player", vec2:new{}, 
-                    not args.no_joystick and love.joystick.getNumJoysticks() > 0 and 1) },
+        players = { player },
       }
       
       message.send [[main]] {'change_scene', newscene}

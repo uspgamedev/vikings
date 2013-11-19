@@ -6,7 +6,7 @@ require 'map.generator.map'
 function create_things (newmap, debug)
   local things = {}
   for name, t in pairs(newmap.things) do
-    things[name] = builder.build_thing(t.type, vec2:new(t.position), t.data)
+    things[name] = builder.thing(t.type, vec2:new(t.position), t.data)
   end
   return things
 end
