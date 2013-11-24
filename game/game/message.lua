@@ -21,12 +21,12 @@ function remove_receiver (id)
 end
 
 function send (receiver_id, msg)
-  if not receivers[receiver_id] then return end
   if not msg then
     return function (msg)
       return send(receiver_id, msg)
     end
   end
+  if not receivers[receiver_id] then return end
   if type(msg) == 'table' then
     return receivers[receiver_id] (unpack(msg))
   else

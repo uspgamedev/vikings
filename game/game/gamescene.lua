@@ -45,6 +45,14 @@ function gamescene:unfocus()
   self.focused = nil
 end
 
+function gamescene.message_handlers.joinable(self, ...)
+  return self.map.joinable
+end
+
+function gamescene.message_handlers.map_as_string(self, ...)
+  return self.map:to_string()
+end
+
 function gamescene.message_handlers.add(self, ...)
   for _,thing in ipairs{...} do
     self:add_thing(thing)
@@ -66,7 +74,13 @@ function gamescene.message_handlers.position(self, thing_type, thing_id)
 end
 
 function gamescene.message_handlers.changemap(self, map_file)
-  self:change_map(maploader.load(map_file))
+  local m
+  if not map_file or type(map_file) == 'string' then
+    m = maploader.load(map_file)
+  else
+    m = map_file
+  end
+  self:change_map(m)
 end
 
 function gamescene:handle_message(cmd, ...)

@@ -12,6 +12,7 @@ map = lux.object.new {
   locations = nil,
   things = nil,
   camera_offset = 1,
+  joinable = true,
 }
 
 function map.get_tilesize ()
@@ -88,9 +89,7 @@ function map:draw (graphics, pos)
   end
 end
 
-function map:save_to_file(path)
-  local file = love.filesystem.newFile(path)
-  if not file:open("w") then return end
+function map:to_string()
   local mapdump = self:clone()
   for _,row in ipairs(mapdump.tiles) do
     for _,tile in ipairs(row) do
@@ -99,6 +98,12 @@ function map:save_to_file(path)
       tile.map = nil
     end
   end
-  file:write('return ' .. dump(mapdump))
+  return 'return ' .. dump(mapdump)
+end
+
+function map:save_to_file(path)
+  local file = love.filesystem.newFile(path)
+  if not file:open("w") then return end
+  file:write(self:to_string())
   file:close()
 end

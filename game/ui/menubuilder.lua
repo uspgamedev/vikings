@@ -108,6 +108,24 @@ module ('ui', package.seeall) do
       message.send [[main]] {'change_scene', internetmenu(), true}
     end
 
+    local extra_button
+    local args = message.send [[main]] {'get_cliargs'}
+    if args.map_file then
+      extra_button = button:new{ text = "CLI Map Instaplay", themes = themes, 
+        onclick = function()
+          local player = builder.thing "player"
+          builder.add_keyboard_input(player)
+
+          message.send [[main]] {'change_scene', 
+            gamescene:new {
+              map = maploader.load(args.map_file, args.debug),
+              players = { player },
+            }
+          }
+        end
+      }
+    end
+
     return menuscene:new {
       xcenter = love.graphics.getWidth() / 2,
       ystart = 100,
@@ -116,6 +134,7 @@ module ('ui', package.seeall) do
         button:new{ text = "Play", onclick = makecharselectmenu, themes = themes },
         button:new{ text = "Internet", onclick = makeinternetmenu, themes = themes },
         button:new{ text = "Quit", onclick = closemenu, themes = themes },
+        extra_button
       }
     }
   end

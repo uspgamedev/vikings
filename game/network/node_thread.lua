@@ -1,4 +1,5 @@
 require 'etherclan.server'
+require 'game.message'
 
 local db, hostname = ...
 if hostname then
@@ -16,11 +17,13 @@ function serv.node.services.vikings(self, msg)
 
   local first, second = msg:match("^([^ ]+) (.*)$")
   first = first or msg
-
+  
   if first == "HAS_JOINABLE_GAME" then
-    self:send("NO")
+    local joinable = message.send [[game]] {'joinable'}
+    self:send(joinable and "YES" or "NO")
 
   elseif first == "JOIN_GAME" then
+    self:send((message.send [[game]] {'map_as_string'}):gsub("\n", ""))
 
   else
     print("oi?", msg)
