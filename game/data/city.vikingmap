@@ -11,12 +11,13 @@ return {
   ["background"] = "background/Q_x-winter_village.png",
   ["camera_offset"] = 3,
   ["things"] = {
-    [1] = {
+    {
       ["type"] = [[door]],
-      ["position"] = {
-        [1] = 30,
-        [2] = 18,
-      },
+      ["position"] = { 30, 18 },
+    },
+    {
+      ["type"] = [[signpost]],
+      ["position"] = { 8, 18 },
     },
   },
   ["locations"] = {
