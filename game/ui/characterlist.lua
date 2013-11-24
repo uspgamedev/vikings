@@ -55,7 +55,7 @@ module ('ui', package.seeall) do
       local args = message.send [[main]] {'get_cliargs'}
 
       local player = button.character or builder.thing "player"
-      if not args.no_joystick and love.joystick.getNumJoysticks() > 0 then
+      if args.joystick and love.joystick.getNumJoysticks() > 0 then
         builder.add_joystick_input(player, 1)
       else
         builder.add_keyboard_input(player)
