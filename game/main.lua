@@ -59,7 +59,7 @@ function love.load (args)
 
   cli_args = { 
     map_file = (#position_args >= 2) and position_args[2]:ends(".lua") and position_args[2],
-    joystick = option_args["no-joystick"] == nil,
+    joystick = false, --option_args["no-joystick"] == nil,
     debug = option_args["debug"] ~= nil,
     servermode = option_args["server-mode"] ~= nil,
   }

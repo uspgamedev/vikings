@@ -21,6 +21,14 @@ return function(pos)
   }
   player.hitboxes.bump = builder.bumpbox 'avatar'
   player.slash.hitboxes.helpful.size:set(1.2, 1.2)
+
+  function player:collect(item)
+    if item.pick_delay == 0 and self:equip(item.slot, item) then
+      sound.effect 'pick'
+      message.send [[game]] {'kill', item}
+    end
+  end
+
   function player:try_interact()
     local collisions = self.hitboxes.helpful:get_collisions 'avatar'
     for _,target in pairs(collisions) do
@@ -32,16 +40,15 @@ return function(pos)
     collisions = self.hitboxes.helpful:get_collisions 'collectable'
     if #collisions > 0 then
       for _,itemhit in pairs(collisions) do
-        local item = itemhit.owner
-        if item.pick_delay == 0 and self:equip(item.slot, item) then
-          sound.effect 'pick'
-          message.send [[game]] {'kill', item}
-        end
+        self:collect(itemhit.owner)
       end
     else
-      collisions = self.hitboxes.helpful:get_collisions 'door'
-      if #collisions <= 0 then return end
-      message.send [[game]] {'changemap'}
+      collisions = self.hitboxes.helpful:get_collisions 'interactable'
+      for _, obj in pairs(collisions) do
+        if obj.owner.interact then
+          obj.owner:interact(self)
+        end
+      end
     end
   end
 
