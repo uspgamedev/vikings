@@ -335,7 +335,7 @@ local function build_drillbeast (pos)
   enemy:equip(1, build_thing "ironaxe")
   enemy.hitboxes.bump = build_bumpbox 'avatar'
   enemy.slash.hitboxes.helpful.size:set(0.8, 0.8)
-  local counter = math.random()*5
+  local counter = love.math.random()*5
   local change  = 0
   function enemy.tasks.attack (self, dt)
     counter = counter + dt
@@ -349,9 +349,9 @@ local function build_drillbeast (pos)
         local dir = vec2:new{((playerpos.x > self.pos.x) and 1 or -1), 0}
         self:accelerate(8*dir)
       elseif change <= 0 then
-        local dir = vec2:new{math.random() < .5 and 1 or -1, 0}
+        local dir = vec2:new{love.math.random() < .5 and 1 or -1, 0}
         self:accelerate(5*dir)
-        change = 1+math.random()*5
+        change = 1+love.math.random()*5
       else
         local dir = vec2:new{(self.direction=='right' and 1 or -1), 0}
         self:accelerate(5*dir)
@@ -376,8 +376,8 @@ local function build_ironaxe (pos, dmg, wgt)
   wgt = wgt or {3,7}
   local item = collectable:new {
     pos       = pos,
-    damage    = math.random(unpack(dmg)),
-    weight    = math.random(unpack(wgt)),
+    damage    = love.math.random(unpack(dmg)),
+    weight    = love.math.random(unpack(wgt)),
     sprite    = build_axesprite(),
     name      = "Iron Axe",
   }
@@ -389,8 +389,8 @@ end
 local function build_leatherarmor (pos)
   local item = collectable:new {
     pos       = pos,
-    armor     = math.random(3, 7),
-    weight    = math.random(4, 8),
+    armor     = love.math.random(3, 7),
+    weight    = love.math.random(4, 8),
     sprite    = build_armorsprite(),
     slot      = 2,
     name      = "Leather Armor",

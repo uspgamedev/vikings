@@ -41,7 +41,7 @@ module ('mapgenerator', package.seeall) do
     for j=1,num_blocks_y do
       blocks_grid[j] = {}
       for i=1,num_blocks_x do
-        rarity = math.random() * blocks.total_rarity
+        rarity = love.math.random() * blocks.total_rarity
         for _, block in ipairs(blocks) do
           if rarity < block.rarity then
             blocks_grid[j][i] = block
@@ -84,7 +84,7 @@ module ('mapgenerator', package.seeall) do
     for j=1,height do
       grid[j] = {}
       for i=1,width do
-        grid[j][i] = math.random() < chance and 'I' or ' '
+        grid[j][i] = love.math.random() < chance and 'I' or ' '
       end
     end
     return grid

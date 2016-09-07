@@ -12,7 +12,7 @@ module ('mapgenerator', package.seeall) do
     if not tilesets.default then
       tilesets.default = tileset:new {
         types = {
-          ["I"] = tiletype:new { 
+          ["I"] = tiletype:new {
             imgpath = 'data/tile/ice.png',
             floor = true
           }
@@ -46,7 +46,7 @@ module ('mapgenerator', package.seeall) do
   end
 
   local function get_random_position(spots, debug)
-    local i = (debug and 1) or math.random(#spots)
+    local i = (debug and 1) or love.math.random(#spots)
     local result = spots[i]
     table.remove(spots, i)
     return {result.i+1, result.j+1}
@@ -89,13 +89,13 @@ module ('mapgenerator', package.seeall) do
   -- This lua script is allowed to construct tilesets and tiletypes, and nothing more.
   function from_file(path)
     local ok, chunk = pcall(love.filesystem.load, path)
-    if not ok then 
+    if not ok then
       print(chunk)
       return nil, chunk
     end
     setfenv(chunk, { tileset = tileset, tiletype = tiletype })
     local ok, result = pcall(chunk)
-    if not ok then 
+    if not ok then
       print(result)
       return nil, result
     end

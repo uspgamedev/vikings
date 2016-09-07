@@ -54,7 +54,7 @@ function avatar:die ()
   avatar:__super().die(self)
   self.slash:die()
   for _,slot in pairs{WEAPON_SLOT, ARMOR_SLOT} do
-    if self.equipment[slot] and math.random() > .5 then
+    if self.equipment[slot] and love.math.random() > .5 then
       self:drop(slot)
     end
   end
@@ -254,13 +254,13 @@ function avatar:draw (graphics)
   local font = love.graphics.getFont()
   local life_bar = self.life .. "/" .. self.maxlife
   if debug and self.equipment[1] then life_bar = life_bar .. "*" end
-  shadowed_text(graphics, 
+  shadowed_text(graphics,
     life_bar,
     self.pos * graphics.get_tilesize(),
     font:getWidth(life_bar),
     font:getHeight(life_bar) + self.sprite.data.quadsize
   )
-  shadowed_text(graphics, 
+  shadowed_text(graphics,
     self.name,
     self.pos * graphics.get_tilesize(),
     font:getWidth(life_bar),
