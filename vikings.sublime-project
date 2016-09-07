@@ -1,0 +1,28 @@
+{
+  "build_systems": [
+    {
+      "cmd": [
+        "love",
+        "game",
+        "--no-joystick",
+        "--debug"
+      ],
+      "shell": true,
+      "name": "Love2D",
+      "working_dir": "${project_path}"
+    }
+  ],
+  "folders": [
+    {
+      "name": "vikings",
+      "path": "game"
+    }
+  ],
+  "settings": {
+    "rulers": [
+      120
+    ],
+    "tab_size": 2,
+    "translate_tabs_to_spaces": true
+  }
+}
