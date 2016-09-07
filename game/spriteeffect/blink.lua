@@ -27,7 +27,7 @@ blink = lux.object.new {
 function blink:__init ()
   self.color = self.color or { 255, 255, 255 }
   self.totalcount = self.counter
-  self.pixeleffect = love.graphics.newPixelEffect(pixeleffect_code)
+  self.pixeleffect = love.graphics.newShader(pixeleffect_code)
   self.pixeleffect:send('intensity', 0)
   self.pixeleffect:send('blinkcolor', normalize_color(self.color))
 end
@@ -45,7 +45,7 @@ function blink:update (sprite, dt)
 end
 
 function blink:draw (graphics, sprite)
-  graphics.setPixelEffect(self.pixeleffect)
+  graphics.setShader(self.pixeleffect)
   sprite:draw_data(graphics)
-  graphics.setPixelEffect()
+  graphics.setShader()
 end

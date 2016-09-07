@@ -192,7 +192,7 @@ function gamescene:draw(graphics)
   graphics.pop()
 
   -- Drawing the hud
-  if love.keyboard.isDown("tab") or love.joystick.isDown(1, 5) then
+  if love.keyboard.isDown("tab") then -- or love.joystick.isDown(1, 5) WTH MAN
     -- Drawing the minimap
     graphics.push()
       graphics.translate(20, 20)
