@@ -1,3 +1,4 @@
+
 module ('database', package.seeall) do
 
   local http = require("socket.http")
@@ -21,8 +22,8 @@ module ('database', package.seeall) do
     if map.file_path ~= nil then return end
 
     local contents, status = http.request(map.url)
-    
-    love.filesystem.mkdir "downloads"
+
+    love.filesystem.createDirectory "downloads"
     map.file_path = "downloads/" .. map.hash
     local file = love.filesystem.newFile(map.file_path)
     file:open("w")
@@ -35,7 +36,7 @@ module ('database', package.seeall) do
   end
 
   function save()
-    love.filesystem.mkdir "saves"
+    love.filesystem.createDirectory "saves"
     local file = love.filesystem.newFile "saves/database.lua"
     file:open("w")
     file:write('return ' .. dump{
@@ -43,15 +44,15 @@ module ('database', package.seeall) do
     })
     file:close()
   end
-  
+
   function init()
     maps = {}
 
-    local ok, chunk = pcall(love.filesystem.load, "saves/database.lua")
-    if ok then 
+    local load_ok, chunk = pcall(love.filesystem.load, "saves/database.lua")
+    if load_ok and chunk then
       setfenv(chunk, {})
-      local ok, result = pcall(chunk)
-      if ok then
+      local run_ok, result = pcall(chunk)
+      if run_ok then
         maps = result.maps or {}
       end
     end

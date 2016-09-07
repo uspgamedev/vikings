@@ -16,7 +16,7 @@ gamescene = scene:new {
   camera_pos = nil,
 
   things = nil, -- This field is overwritten by change_map, which is called even with the first map.
-  
+
   message_handlers = {}, -- Shared by all gamescenes
 }
 
@@ -26,7 +26,7 @@ function gamescene:__init()
   self.tasks   = self.tasks   or {}
   self.tasks.check_collisions = hitbox.check_collisions
   self.tasks.updatethings = function (dt)
-    for _,av in pairs(self.things) do 
+    for _,av in pairs(self.things) do
       av:update(dt, self.map)
     end
   end
@@ -138,7 +138,7 @@ function gamescene:input_pressed(button, ...)
   end
 
   if button == 'p' and self.map then
-    love.filesystem.mkdir "maps"
+    love.filesystem.createDirectory "maps"
     self.map:save_to_file(os.date "maps/dump-%Y-%m-%d_%H-%M-%S.lua")
   end
 end
