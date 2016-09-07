@@ -33,20 +33,23 @@ module ('ui', package.seeall) do
     message.send [[main]] {'change_scene', nil}
   end
 
+  local function create_gamescene(args, map_path)
+    return gamescene:new {
+      map = maploader.load(map_path, args.debug),
+      music = "data/music/JordanTrudgett-Snodom-ccby3.ogg",
+      background = love.graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
+      players = { builder.build_thing("player", vec2:new{},
+                  not args.no_joystick and love.joystick.getJoysticks()[1]) },
+    }
+  end
+
   function maplistmenu()
     function load_map(map)
       local args = message.send [[main]] {'get_cliargs'}
 
       database.fetch_content(map)
 
-      local newscene = gamescene:new {
-        map = maploader.load(map.file_path, args.debug),
-        music = "data/music/JordanTrudgett-Snodom-ccby3.ogg",
-        background = love.graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
-        players = { builder.build_thing("player", vec2:new{}, 
-                    not args.no_joystick and love.joystick.getNumJoysticks() > 0 and 1) },
-      }
-      
+      local newscene = create_gamescene(args, map.file_path)
       message.send [[main]] {'change_scene', newscene}
     end
 
@@ -97,14 +100,7 @@ module ('ui', package.seeall) do
     function startgame()
       local args = message.send [[main]] {'get_cliargs'}
 
-      local newscene = gamescene:new {
-        map = maploader.load(args.map_file, args.debug),
-        music = "data/music/JordanTrudgett-Snodom-ccby3.ogg",
-        background = love.graphics.newImage "data/background/Ardentryst-Background_SnowCave_Backing.png",
-        players = { builder.build_thing("player", vec2:new{}, 
-                    not args.no_joystick and love.joystick.getNumJoysticks() > 0 and 1) },
-      }
-
+      local newscene = create_gamescene(args, args.map_file)
       message.send [[main]] {'change_scene', newscene}
     end
     function makeinternetmenu()
