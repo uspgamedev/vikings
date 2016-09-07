@@ -39,7 +39,7 @@ function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
 end
 
-function parse_args(args)
+local function parse_args(args)
   local position_args, option_args = {}, {}
   for _, arg in ipairs(args) do
     if arg:sub(1, 2) == '--' then
@@ -54,8 +54,8 @@ function parse_args(args)
 end
 
 function love.load (args)
-  position_args, option_args = parse_args(args)
-  cli_args = { 
+  local position_args, option_args = parse_args(args)
+  cli_args = {
     map_file = (#position_args >= 2) and position_args[2]:ends(".lua") and position_args[2],
     joystick = option_args["no-joystick"] == nil,
     debug = option_args["debug"] ~= nil,
@@ -65,7 +65,7 @@ function love.load (args)
   -- Setup graphics
   graphics = {}
   setmetatable(graphics, { __index = love.graphics })
-  function graphics:get_tilesize() 
+  function graphics:get_tilesize()
     return map.get_tilesize()
   end
   function graphics:get_screensize()
@@ -125,7 +125,7 @@ local function mousetotile ()
   local x,y          = love.mouse.getPosition()
   local screencenter = vec2:new{love.graphics.getWidth(), love.graphics.getHeight()} * 0.5
   local tilesize     = map.get_tilesize()
-  return math.floor((y - screencenter.y)/tilesize + avatars.player.pos.y) + 1, 
+  return math.floor((y - screencenter.y)/tilesize + avatars.player.pos.y) + 1,
          math.floor((x - screencenter.x)/tilesize + avatars.player.pos.x) + 1
 end
 
